@@ -1,33 +1,53 @@
 local M = {}
+local uv = vim.loop
 
-function M.check()
-  vim.health.start("Godotdev.nvim")
+M.setup = function(config)
+  local lspconfig = require("lspconfig")
+  local utils = require("godotdev.utils")
+  local keymaps = require("godotdev.keymaps")
 
-  -- ncat
-  if vim.fn.executable("ncat") == 1 then
-    vim.health.ok("'ncat' is installed")
-  else
-    vim.health.error("'ncat' is missing! Required to attach to Godot editor LSP")
-  end
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  capabilities.textDocument.typeDefinition = nil
 
-  -- godot-lsp
-  if vim.fn.executable("godot-lsp") == 1 then
-    vim.health.ok("'godot-lsp' executable found")
-  else
-    vim.health.warn("'godot-lsp' not found, standalone LSP mode will not work")
-  end
+  lspconfig.godot_lsp = {
+    default_config = {
+      name = "godot_editor",
+      root_dir = lspconfig.util.root_pattern("project.godot"),
+      filetypes = { "gd", "gdscript" },
+      cmd = nil,
+      on_attach = function(client, bufnr)
+        utils.suppress_lsp_messages(client, { "Method not found: godot/reloadScript" })
+        keymaps.attach(bufnr)
+      end,
+      new_client = function(cfg)
+        local host = "127.0.0.1"
+        local port = config.editor_port or 6005
 
-  -- Godot editor port
-  local handle = io.popen("nc -z 127.0.0.1 6005 >/dev/null 2>&1 && echo ok || echo fail")
-  if handle then
-    local result = handle:read("*a")
-    handle:close()
-    if result:match("ok") then
-      vim.health.ok("Godot editor LSP detected on port 6005")
-    else
-      vim.health.warn("Godot editor LSP not detected on port 6005")
-    end
-  end
+        local sock = uv.new_tcp()
+        sock:connect(host, port, function(err)
+          if err then
+            vim.schedule(function()
+              vim.notify("Failed to connect to Godot editor LSP: " .. err, vim.log.levels.ERROR)
+            end)
+            return
+          end
+
+          vim.lsp.start_client({
+            name = "godot_editor",
+            cmd = nil,
+            root_dir = cfg.root_dir,
+            capabilities = cfg.capabilities,
+            handlers = cfg.handlers,
+            offset_encoding = "utf-8",
+            stdin = sock,
+            stdout = sock,
+          })
+        end)
+      end,
+    },
+  }
+
+  -- DO NOT call lspconfig.godot_lsp.setup()
 end
 
 return M
