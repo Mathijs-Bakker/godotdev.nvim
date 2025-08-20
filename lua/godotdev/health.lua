@@ -1,53 +1,57 @@
+local health = vim.health
 local M = {}
-local uv = vim.loop
 
-M.setup = function(config)
-  local lspconfig = require("lspconfig")
-  local utils = require("godotdev.utils")
-  local keymaps = require("godotdev.keymaps")
+-- default port
+M.opts = { editor_port = 6005 }
 
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities.textDocument.typeDefinition = nil
+function M.setup(opts)
+  M.opts = vim.tbl_extend("force", M.opts, opts or {})
+end
 
-  lspconfig.godot_lsp = {
-    default_config = {
-      name = "godot_editor",
-      root_dir = lspconfig.util.root_pattern("project.godot"),
-      filetypes = { "gd", "gdscript" },
-      cmd = nil,
-      on_attach = function(client, bufnr)
-        utils.suppress_lsp_messages(client, { "Method not found: godot/reloadScript" })
-        keymaps.attach(bufnr)
-      end,
-      new_client = function(cfg)
-        local host = "127.0.0.1"
-        local port = config.editor_port or 6005
+local function port_open(host, port)
+  local cmd
+  if vim.fn.executable("ncat") == 1 then
+    cmd = string.format("ncat -z -w 1 %s %d 2>/dev/null", host, port)
+  else
+    return false
+  end
+  vim.fn.system(cmd)
+  return vim.v.shell_error == 0
+end
 
-        local sock = uv.new_tcp()
-        sock:connect(host, port, function(err)
-          if err then
-            vim.schedule(function()
-              vim.notify("Failed to connect to Godot editor LSP: " .. err, vim.log.levels.ERROR)
-            end)
-            return
-          end
+local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
 
-          vim.lsp.start_client({
-            name = "godot_editor",
-            cmd = nil,
-            root_dir = cfg.root_dir,
-            capabilities = cfg.capabilities,
-            handlers = cfg.handlers,
-            offset_encoding = "utf-8",
-            stdin = sock,
-            stdout = sock,
-          })
-        end)
-      end,
-    },
-  }
+function M.check()
+  health.start("Godotdev.nvim")
 
-  -- DO NOT call lspconfig.godot_lsp.setup()
+  if is_windows then
+    if vim.fn.executable("ncat") == 1 then
+      health.ok("'ncat' is installed")
+    else
+      health.error([[Windows: 'ncat' not found. Install via Scoop or Chocolatey:
+  scoop install nmap
+  choco install nmap]])
+    end
+  end
+
+  local port = M.opts.editor_port
+  if port_open("127.0.0.1", port) or not is_windows then
+    health.ok("Godot editor LSP detected on port " .. port)
+  else
+    local msg = string.format(
+      [[
+Godot editor LSP not detected on port %d.
+Make sure the Godot editor is running with the LSP server enabled on this port.
+
+- Open your project in Godot.
+- Enable the LSP server (Editor Settings → Network → Enable TCP LSP server).
+- Confirm the port matches %d (change `editor_port` in your config if needed).
+]],
+      port,
+      port
+    )
+    health.warn(msg)
+  end
 end
 
 return M

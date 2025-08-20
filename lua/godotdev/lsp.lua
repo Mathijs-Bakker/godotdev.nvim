@@ -12,15 +12,23 @@ M.setup = function(config)
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities.textDocument.typeDefinition = nil -- suppress unsupported typeDefinition
 
+  local is_windows = vim.fn.has("win32") == 1 or vim.fn.has("win64") == 1
+
+  local cmd
+  if is_windows then
+    cmd = { "ncat", host, tostring(port) }
+  else
+    cmd = vim.lsp.rpc.connect(host, port)
+  end
+
   lspconfig.gdscript.setup({
     name = "godot_editor",
-    cmd = vim.lsp.rpc.connect(host, port),
+    cmd = cmd,
     filetypes = { "gd", "gdscript" },
     root_dir = lspconfig.util.root_pattern("project.godot"),
     capabilities = capabilities,
     on_attach = function(client, bufnr)
-      -- suppress known Godot unsupported messages
-      utils.suppress_lsp_messages(client, { "Method not found: godot/reloadScript" })
+      utils.suppress_unsupported_lsp_messages(client, { "Method not found: godot/reloadScript" })
       keymaps.attach(bufnr)
     end,
   })
