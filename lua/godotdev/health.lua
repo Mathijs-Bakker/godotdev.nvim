@@ -18,7 +18,6 @@ local function port_open(host, port)
     vim.fn.system(cmd)
     return vim.v.shell_error == 0
   else
-    -- On macOS/Linux, attempt nc if available; otherwise assume reachable
     if vim.fn.executable("nc") == 1 then
       local cmd = string.format("nc -z -w 1 %s %d 2>/dev/null", host, port)
       vim.fn.system(cmd)
@@ -31,7 +30,6 @@ end
 function M.check()
   health.start("Godotdev.nvim")
 
-  -- only check ncat on Windows
   if is_windows then
     if vim.fn.executable("ncat") == 1 then
       health.ok("'ncat' is installed")
@@ -42,7 +40,6 @@ function M.check()
     end
   end
 
-  -- Godot editor LSP port check
   local port = M.opts.editor_port
   if port_open("127.0.0.1", port) then
     health.ok("Godot editor LSP detected on port " .. port)
