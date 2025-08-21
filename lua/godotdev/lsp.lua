@@ -29,7 +29,7 @@ M.setup = function(config)
     capabilities = capabilities,
     on_attach = function(client, bufnr)
       utils.suppress_unsupported_lsp_messages(client, { "Method not found: godot/reloadScript" })
-      keymaps.attach(bufnr)
+      keymaps.attach_lsp(bufnr)
     end,
   })
 end

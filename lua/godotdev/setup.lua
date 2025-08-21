@@ -3,12 +3,29 @@ local M = {}
 M.opts = {
   editor_host = "127.0.0.1",
   editor_port = 6005,
+  debug_port = 6006,
 }
 
 function M.setup(opts)
   M.opts = vim.tbl_extend("force", M.opts, opts or {})
-  require("godotdev.lsp").setup({ editor_host = M.opts.editor_host, editor_port = M.opts.editor_port })
-  require("godotdev.health").setup({ port = M.opts.editor_port })
+
+  require("godotdev.lsp").setup({
+    editor_host = M.opts.editor_host,
+    editor_port = M.opts.editor_port,
+  })
+
+  require("godotdev.health").setup({
+    port = M.opts.editor_port,
+  })
+
+  local dap_ok, dap = pcall(require, "dap")
+  if dap_ok then
+    dap.adapters.godot = {
+      type = "server",
+      host = M.opts.editor_host,
+      port = M.opts.debug_port,
+    }
+  end
 end
 
 return M
