@@ -24,7 +24,7 @@ M.setup = function(config)
   lspconfig.gdscript.setup({
     name = "godot_editor",
     cmd = cmd,
-    filetypes = { "gd", "gdscript" },
+    filetypes = { "gd", "gdscript", "gdshader" },
     root_dir = lspconfig.util.root_pattern("project.godot"),
     capabilities = capabilities,
     on_attach = function(client, bufnr)
