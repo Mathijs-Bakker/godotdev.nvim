@@ -58,9 +58,9 @@ require("godotdev").setup({
 
 Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.
 
-- `Editor Settings > Text Editor > Behavior > **Auto Reload Scripts on External Change**`
-- `Editor Settings > Interface > Editor > **Save on Focus Loss**`
-- `Editor Settings > Interface > Editor > **Import Resources When Unfocused**`
+- `Editor Settings > Text Editor > Behavior > Auto Reload Scripts on External Change`
+- `Editor Settings > Interface > Editor > Save on Focus Loss`
+- `Editor Settings > Interface > Editor > Import Resources When Unfocused`
 
 ### Open .gdscript/.gdshader from Godot in Neovim
 
@@ -90,7 +90,8 @@ To make this work you always need to start Neovim like this:
 nvim --listen /tmp/godot.pipe
 ```
 
-Tip: Create an alias for that command.
+<details>
+<summary>Tip: Create an alias for that command.</summary>
 
 Open your shell config file:
 - `~/.bashrc` for Bash
@@ -110,8 +111,10 @@ Test it:
 ```bash
 gdvim
 ```
+</details>
 
 #### Windows
+
 1. Set Neovim to listen on a TCP port
    ```bash
    nvim --listen 127.0.0.1:6666
