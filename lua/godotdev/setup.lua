@@ -18,14 +18,11 @@ function M.setup(opts)
     port = M.opts.editor_port,
   })
 
-  local dap_ok, dap = pcall(require, "dap")
-  if dap_ok then
-    dap.adapters.godot = {
-      type = "server",
-      host = M.opts.editor_host,
-      port = M.opts.debug_port,
-    }
-  end
+  require("godotdev.dap").setup({
+    type = "server",
+    host = M.opts.editor_host,
+    port = M.opts.debug_port,
+  })
 end
 
 return M
