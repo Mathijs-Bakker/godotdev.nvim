@@ -1,4 +1,5 @@
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
+
 # godotdev.nvim
 
 Batteries-included Neovim plugin for **Godot game development** (Godot 4.3+), using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, and Treesitter syntax highlighting.
