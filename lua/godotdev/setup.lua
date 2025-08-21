@@ -23,6 +23,8 @@ function M.setup(opts)
     host = M.opts.editor_host,
     port = M.opts.debug_port,
   })
+
+  require("godotdev.tree-sitter")
 end
 
 return M
