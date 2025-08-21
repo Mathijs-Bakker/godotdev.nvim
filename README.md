@@ -33,26 +33,47 @@ Using [Lazy.nvim](https://github.com/folke/lazy.nvim):
 }
 ```
 
-Quickstart
+## Quickstart
 
-1. Open your Godot project and ensure the TCP LSP server is enabled.
-1. Open Neovim and edit a `.gd` or `.gdscript` file.
-1. The plugin automatically attaches the LSP client.
-1. Run healthcheck if needed:
-    ```
-    `:checkhealth godotdev`
-    ```
-1.  Use LSP keymaps:
-    - `gd` → Go to definition
-    - `gD` → Go to declaration
-    - `gy` → Type definition
-    - `gi` → Go to implementation
-    - `gr` → List references
-    - `K` → Hover documentation
-    - `<leader>rn` → Rename symbol
-    - `<leader>f` → Format buffer
-    - `gl` → Show diagnostics
-    - `[d` / `]d` → Navigate diagnostics
+```lua
+-- Lazy.nvim
+return {
+  'Mathijs-Bakker/godotdev.nvim',
+  config = function()
+    require("godotdev").setup({
+      editor_host = "127.0.0.1", -- Default: 127.0.0.1
+      editor_port = 6005,        -- GDScript language server, default: 6005
+      debug_port = 6006,         -- Debug adapter server, default: 6006
+    })
+  end,
+}
+```
+
+### LSP
+
+- Open any `.gd` or `.gdscript` file in your Godot project.
+- The plugin connects automatically to the running Godot editor LSP.
+- Keymaps for LSP features (definitions, references, symbols, etc.) are attached per buffer.
+
+### DAP
+
+- Requires `nvim-dap` and `nvim-dap-ui`.
+- Launch your game or scene directly from Neovim:
+    1. Make sure Godot is running with the debugger server enabled.
+    1. Open a `.gd` or `.gdscript` file.
+    1. Use DAP commands:
+     - `:DapContinue` – Start/Continue debugging
+     - `:DapStepOver`, `:DapStepInto`, `:DapStepOut`
+    1. The DAP UI automatically opens when debugging starts.
+
+### Healthcheck
+
+```
+:checkhealth godotdev
+```
+- Checks if the Godot editor LSP port is reachable.
+- On Windows, also checks if `ncat` is installed.
+- Gives clear instructions to fix missing dependencies or misconfigured ports.
 
 ## Configuration Options
 ```lua
