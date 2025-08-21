@@ -2,7 +2,7 @@
 
 # godotdev.nvim
 
-Batteries-included Neovim plugin for **Godot game development** (Godot 4.3+), using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, and Treesitter syntax highlighting.
+Batteries-included Neovim plugin for **Godot game development**, using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, and Treesitter syntax highlighting.
 
 ## Features
 
@@ -16,7 +16,7 @@ Batteries-included Neovim plugin for **Godot game development** (Godot 4.3+), us
 ## Requirements
 
 - Neovim 0.9+  
-- Godot 4.3+ with TCP LSP enabled  
+- Godot 4.x+ with TCP LSP enabled  
 - `nvim-lspconfig`  
 - `nvim-dap` and `nvim-dap-ui` for debugging  
 - `nvim-treesitter`  
@@ -45,6 +45,7 @@ Batteries-included Neovim plugin for **Godot game development** (Godot 4.3+), us
 
 ## Configuration
 
+### Optional settings
 ```lua
 require("godotdev").setup({
   editor_host = "127.0.0.1", -- Godot editor host
@@ -52,7 +53,16 @@ require("godotdev").setup({
   debug_port = 6006,         -- DAP port
 })
 ```
-# Keymaps
+
+### Optimize Godot editor for Neovim
+
+Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.
+
+- `Editor Settings > Text Editor > Behavior > **Auto Reload Scripts on External Change**`
+- `Editor Settings > Interface > Editor > **Save on Focus Loss**`
+- `Editor Settings > Interface > Editor > **Import Resources When Unfocused**`
+
+## Keymaps
 
 ### LSP
 - `gd` → Go to definition
@@ -83,4 +93,4 @@ require("godotdev").setup({
 
 ## License
 
-MI
+MIT
