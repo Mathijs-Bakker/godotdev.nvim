@@ -62,6 +62,65 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 - `Editor Settings > Interface > Editor > **Save on Focus Loss**`
 - `Editor Settings > Interface > Editor > **Import Resources When Unfocused**`
 
+### Open .gdscript/.gdshader from Godot in Neovim
+
+When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.
+A workaround is to to create a small script which launches the file in Neovim.
+
+#### macOS/Linux
+1. Create a launch script (e.g., ~/.local/bin/open-nvim-godot.sh):
+   ```bash
+   #!/bin/bash
+   FILE="$1" LINE="$2" COL="$3"
+   /Applications/Ghostty.app/Contents/MacOS/ghostty -- nvim "$FILE" +"$LINE:$COL"
+   # Linux: gnome-terminal -- nvim "$FILE" +"$LINE:$COL"
+   ```
+1. Make executable:
+   ```bash
+   chmod +x ~/.local/bin/open-nvim-godot.sh
+   ```
+1. Add to PATH:
+   ```bash
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+    ```
+1. Configure Godot: `Editor > Editor Settings > Text Editor > External` with full path and `{file} {line} {col}`.
+
+To make this work you always need to start Neovim like this:
+```bash
+nvim --listen /tmp/godot.pipe
+```
+
+Tip: Create an alias for that command.
+
+Open your shell config file:
+- `~/.bashrc` for Bash
+- `~/.zshrc` for Zsh
+
+Add the alias:
+```bash
+alias gdvim='nvim --listen /tmp/godot.pipe'
+```
+
+Reload the shell config:
+```bash
+source ~/.bashrc   # or ~/.zshrc for Zsh
+```
+
+Test it:
+```bash
+gdvim
+```
+
+#### Windows
+1. Set Neovim to listen on a TCP port
+   ```bash
+   nvim --listen 127.0.0.1:6666
+   ```
+   --listen works with host:port on Windows.
+1. Tell Godot to connect to that port
+   In Godot, configure your external editor or plugin to connect to `127.0.0.1:6666`.
+   Make sure the TCP port you choose is free and consistent between Neovim and Godot.
+
 ## Keymaps
 
 ### LSP
