@@ -1,3 +1,4 @@
+<div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
 # godotdev.nvim
 
 Batteries-included Neovim plugin for **Godot game development** (Godot 4.3+), using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, and Treesitter syntax highlighting.
@@ -53,30 +54,30 @@ require("godotdev").setup({
 # Keymaps
 
 ### LSP
-`gd` → Go to definition
-`gD` → Go to declaration
-`gy` → Type definition
-`gi` → Go to implementation
-`gr` → List references
-`K` → Hover
-`<C-k>` → Signature help
-`<leader>rn` → Rename symbol
-`<leader>ca` → Code action
-`<leader>f` → Format buffer
-`gl` → Show diagnostics
-`[d` / `]d` → Previous/next diagnostic
+- `gd` → Go to definition
+- `gD` → Go to declaration
+- `gy` → Type definition
+- `gi` → Go to implementation
+- `gr` → List references
+- `K` → Hover
+- `<C-k>` → Signature help
+- `<leader>rn` → Rename symbol
+- `<leader>ca` → Code action
+- `<leader>f` → Format buffer
+- `gl` → Show diagnostics
+- `[d` / `]d` → Previous/next diagnostic
 
 ### DAP
-  `F5` -> Continue/Start
-  `F10` -> Step over
-  `F11` -> Step into
-  `F12` -> Step out
-  `<leader>db` -> Toggle Breakpoint
-  `<leader>dB` -> Conditional breakpoint
+- `F5` -> Continue/Start
+- `F10` -> Step over
+- `F11` -> Step into
+- `F12` -> Step out
+- `<leader>db` -> Toggle Breakpoint
+- `<leader>dB` -> Conditional breakpoint
 
 ### DAP UI
-  `<leader>du` -> , Toggle UI 
-  `<leader>dr` -> , Open REPL
+- `<leader>du` -> , Toggle UI 
+- `<leader>dr` -> , Open REPL
 
 
 ## License
