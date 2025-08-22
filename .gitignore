@@ -39,3 +39,7 @@ luac.out
 *.x86_64
 *.hex
 
+# macOS generated files #
+######################
+.DS_Store?
+*.DS_Store
