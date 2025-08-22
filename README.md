@@ -103,28 +103,28 @@ A workaround is to to create a small script which launches the file in Neovim.
    nvim --listen /tmp/godot.pipe
    ```
 
-<details>
-<summary>Tip: Create an alias for that command.</summary>
+   <details>
+   <summary>Tip! Create an alias for that command.</summary>
 
-Open your shell config file:
-- `~/.bashrc` for Bash
-- `~/.zshrc` for Zsh
+   Open your shell config file:
+   - `~/.bashrc` for Bash
+   - `~/.zshrc` for Zsh
 
-Add the alias:
-```bash
-alias gdvim='nvim --listen /tmp/godot.pipe'
-```
+   Add the alias:
+   ```bash
+   alias gdvim='nvim --listen /tmp/godot.pipe'
+   ```
 
-Reload the shell config:
-```bash
-source ~/.bashrc   # or ~/.zshrc for Zsh
-```
+   Reload the shell config:
+   ```bash
+   source ~/.bashrc   # or ~/.zshrc for Zsh
+   ```
 
-Test it:
-```bash
-gdvim
-```
-</details>
+   Test it:
+   ```bash
+   gdvim
+   ```
+   </details>
 
 #### Windows
 
