@@ -2,7 +2,7 @@
 
 # godotdev.nvim
 
-Batteries-included Neovim plugin for **Godot game development**, using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, and Treesitter syntax highlighting.
+BBatteries-included Neovim plugin for Godot game development, using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, Treesitter syntax highlighting, and optional C# installation support.
 
 ## Features
 
@@ -11,7 +11,9 @@ Batteries-included Neovim plugin for **Godot game development**, using Neovim as
 - `.gdshader` syntax highlighting via Treesitter
 - Debug GDScript with `nvim-dap` (`127.0.0.1:6006` by default)
 - Keymaps for common LSP actions
+- Optional C# support: LSP, debugging, and tooling
 - Batteries included: everything you need for Godot development in Neovim
+- Built-in health checks via `:checkhealth godotdev`
 
 ## Requirements
 
@@ -21,27 +23,29 @@ Batteries-included Neovim plugin for **Godot game development**, using Neovim as
 - `nvim-dap` and `nvim-dap-ui` for debugging  
 - `nvim-treesitter`  
 - Windows users must have [`ncat`](https://nmap.org/ncat/) in PATH
+- Optional C# support requires:
+  - .NET SDK (dotnet)
+  - C# LSP server (csharp-ls recommended or omnisharp)
+  - netcoredbg debugger
 
 ## Installation (Lazy.nvim)
 
 ```lua
 {
   'Mathijs-Bakker/godotdev.nvim',
-  lazy = false,
   dependencies = { 'nvim-lspconfig', 'nvim-dap', 'nvim-dap-ui', 'nvim-treesitter' },
-  config = function()
-    require("godotdev").setup()
-  end,
 }
 ```
 ## Quickstart
 
 1. Open your Godot project in Neovim
 1. Start Godot editor with TCP LSP enabled (Editor Settings → Network → Enable TCP LSP server)
-1. Open a .gd or .gdshader file
+1. Open a `.gd` or `.gdshader` file
 1. LSP will automatically attach
-1. Use <leader>rn to rename, gd to go to definition, gr for references, etc.
+1. Use `<leader>rn` to rename, `gd` to go to definition, `gr` for references, etc.
 1. Start debugging with DAP (Launch scene configuration)
+1. Optional: Enable C# support by setting `csharp = true` in the plugin setup
+1. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
 
 ## Configuration
 
@@ -51,6 +55,7 @@ require("godotdev").setup({
   editor_host = "127.0.0.1", -- Godot editor host
   editor_port = 6005,        -- LSP port
   debug_port = 6006,         -- DAP port
+  csharp = true,             -- enable C# support
 })
 ```
 
@@ -152,7 +157,10 @@ gdvim
 - `<leader>du` -> , Toggle UI 
 - `<leader>dr` -> , Open REPL
 
+## C# installation Support
 
-## License
-
-MIT
+- Enable by setting `csharp = true` in `require("godotdev").setup()`
+- Health checks via `:checkhealth godotdev` will verify:
+  - .NET SDK (`dotnet`)
+  - C# LSP server (`csharp-ls` or `omnisharp`)
+  - Debugger (`netcoredbg`)

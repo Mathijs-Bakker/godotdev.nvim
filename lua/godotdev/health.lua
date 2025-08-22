@@ -1,4 +1,6 @@
 local health = vim.health
+local godotdev = require("godotdev")
+
 local M = {}
 
 M.opts = {
@@ -29,7 +31,6 @@ local function port_open(host, port)
   return vim.v.shell_error == 0
 end
 
--- Check if a plugin is installed, works with Lazy.nvim
 local function plugin_installed(name)
   if name == "nvim-lspconfig" then
     return vim.fn.exists(":LspInfo") == 2
@@ -41,58 +42,95 @@ local function plugin_installed(name)
   return false
 end
 
+local function has_exe(name)
+  return vim.fn.executable(name) == 1
+end
+
 function M.check()
   health.start("Godotdev.nvim")
 
-  -- plugin dependencies
+  -- Godot version
+  health.start("Godot version")
+  local ok, godot_version = pcall(vim.fn.system, "godot --version")
+  if ok and godot_version and godot_version ~= "" then
+    local ver = vim.trim(godot_version)
+    health.ok("Godot detected: " .. ver)
+    local major, minor = ver:match("(%d+)%.(%d+)")
+    if major and minor and (tonumber(major) < 4 or (tonumber(major) == 4 and tonumber(minor) < 3)) then
+      health.warn("Godot version is below 4.3. Some features may not work correctly.")
+    end
+  else
+    health.info("Godot executable not found. Make sure 'godot' is in your PATH.")
+  end
+
+  -- Dependencies
+  health.start("Dependencies")
   for _, plugin in ipairs({ "nvim-lspconfig", "nvim-treesitter", "nvim-dap" }) do
     if plugin_installed(plugin) then
-      health.ok("Dependency '" .. plugin .. "' is installed")
+      health.ok("✅ OK Dependency '" .. plugin .. "' is installed")
     else
-      health.warn("Dependency '" .. plugin .. "' not found. Some features may not work.")
+      health.warn("⚠️ WARNING Dependency '" .. plugin .. "' not found. Some features may not work.")
     end
   end
 
-  -- Godot editor LSP
+  -- Godot detection
+  health.start("Godot detection")
   local editor_port = M.opts.editor_port
   if port_open("127.0.0.1", editor_port) then
-    health.ok("Godot editor LSP detected on port " .. editor_port)
+    health.ok("✅ OK Godot editor LSP detected on port " .. editor_port)
   else
     health.warn(string.format(
-      [[
-Godot editor LSP not detected on port %d.
+      [[⚠️ WARNING Godot editor LSP not detected on port %d.
 Make sure the Godot editor is running with LSP server enabled.
-
-- Open your project in Godot.
-- Enable the LSP server (Editor Settings → Network → Enable TCP LSP server).
-- Confirm the port matches %d (change `editor_port` in your config if needed).
-]],
+- Enable TCP LSP server in Editor Settings → Network
+- Confirm port matches %d]],
       editor_port,
       editor_port
     ))
   end
 
-  -- Godot editor debug server
   local debug_port = M.opts.debug_port
   if plugin_installed("nvim-dap") then
     if port_open("127.0.0.1", debug_port) then
-      health.ok("Godot editor debug server detected on port " .. debug_port)
+      health.ok("✅ OK Godot editor debug server detected on port " .. debug_port)
     else
-      health.warn("Godot editor debug server not detected on port " .. debug_port)
+      health.warn("⚠️ WARNING Godot editor debug server not detected on port " .. debug_port)
     end
   end
 
-  -- Windows: ncat check
   if is_windows then
-    if vim.fn.executable("ncat") == 1 then
-      health.ok("'ncat' is installed")
+    if has_exe("ncat") then
+      health.ok("✅ OK 'ncat' is installed")
     else
       health.error([[
-Windows: 'ncat' not found. Install via Scoop or Chocolatey:
+❌ ERROR Windows: 'ncat' not found. Install via Scoop or Chocolatey:
   scoop install nmap
-  choco install nmap
-]])
+  choco install nmap]])
     end
+  end
+
+  -- Optional C# support
+  if godotdev.opts.csharp then
+    health.start("C# support")
+    if has_exe("dotnet") then
+      health.ok("✅ OK 'dotnet' found")
+    else
+      health.error("❌ ERROR 'dotnet' not found. Install the .NET SDK: https://dotnet.microsoft.com/download")
+    end
+
+    if has_exe("csharp-ls") or has_exe("omnisharp") then
+      health.ok("✅ OK C# LSP server found (csharp-ls or omnisharp)")
+    else
+      health.error("❌ ERROR No C# LSP server found. Install 'csharp-ls' (recommended) or 'omnisharp'.")
+    end
+
+    if has_exe("netcoredbg") then
+      health.ok("✅ OK 'netcoredbg' found")
+    else
+      health.error("❌ ERROR 'netcoredbg' not found. Install from: https://github.com/Samsung/netcoredbg")
+    end
+  else
+    health.info("ℹ️ C# checks skipped (csharp=false)")
   end
 end
 
