@@ -2,7 +2,7 @@
 
 # godotdev.nvim
 
-BBatteries-included Neovim plugin for Godot game development, using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, Treesitter syntax highlighting, and optional C# installation support.
+Neovim plugin for Godot game development, using Neovim as an external editor. Provides LSP support for GDScript and Godot shaders, DAP debugging, Treesitter syntax highlighting, and optional C# installation support.
 
 ## Features
 
@@ -53,9 +53,9 @@ BBatteries-included Neovim plugin for Godot game development, using Neovim as an
 ```lua
 require("godotdev").setup({
   editor_host = "127.0.0.1", -- Godot editor host
-  editor_port = 6005,        -- LSP port
-  debug_port = 6006,         -- DAP port
-  csharp = true,             -- enable C# support
+  editor_port = 6005,        -- Godot LSP port
+  debug_port = 6006,         -- Godot debugger port
+  csharp = true,             -- Enable C# Installation Support
 })
 ```
 
@@ -157,7 +157,7 @@ gdvim
 - `<leader>du` -> , Toggle UI 
 - `<leader>dr` -> , Open REPL
 
-## C# installation Support
+## C# Installation Support
 
 - Enable by setting `csharp = true` in `require("godotdev").setup()`
 - Health checks via `:checkhealth godotdev` will verify:
