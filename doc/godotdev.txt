@@ -1,0 +1,135 @@
+godotdev.nvim                                *godotdev.txt*  *godotdev*
+
+==============================================================================
+Introduction                                         *godotdev-intro*
+
+godotdev.nvim is a batteries-included Neovim plugin for Godot 4.3+
+game development using Neovim as an external editor. It provides:
+
+- LSP support for GDScript and .gdshader files
+- Debugging via nvim-dap
+- Treesitter syntax highlighting
+- Keymaps for common LSP and DAP actions
+- Optional C# support with dotnet, csharp-ls/OmniSharp, and netcoredbg
+
+See |godotdev-quickstart| for a quick start guide.
+
+==============================================================================
+Quickstart                                         *godotdev-quickstart*
+
+1. Open your Godot project in Neovim
+2. Start Godot editor with TCP LSP enabled
+   (Editor Settings → Network → Enable TCP LSP server)
+3. Open a .gd or .gdshader file
+4. LSP will automatically attach
+5. Use keymaps:
+   - gd → Go to definition
+   - gr → List references
+   - <leader>rn → Rename symbol
+   - See |godotdev-keymaps| for full list
+6. Start debugging with DAP (Launch scene configuration)
+7. Optional: Enable C# support by passing `csharp=true` to setup
+
+==============================================================================
+Configuration                                     *godotdev-configuration*
+
+Example setup:
+
+  require("godotdev").setup({
+      editor_host = "127.0.0.1", -- Godot editor host
+      editor_port = 6005,        -- LSP port
+      debug_port  = 6006,        -- DAP port
+      csharp      = true,        -- enable C# support
+  })
+
+Recommended Godot editor settings for external Neovim integration:
+
+- Editor Settings > Text Editor > Behavior > Auto Reload Scripts on External Change
+- Editor Settings > Interface > Editor > Save on Focus Loss
+- Editor Settings > Interface > Editor > Import Resources When Unfocused
+
+==============================================================================
+External editor integration                        *godotdev-external*
+
+macOS/Linux:
+
+1. Create launch script (e.g., ~/.local/bin/open-nvim-godot.sh):
+
+   #!/bin/bash
+   FILE="$1" LINE="$2" COL="$3"
+   /Applications/Ghostty.app/Contents/MacOS/ghostty -- nvim "$FILE" +"$LINE:$COL"
+   # Linux: gnome-terminal -- nvim "$FILE" +"$LINE:$COL"
+
+2. Make executable:
+   chmod +x ~/.local/bin/open-nvim-godot.sh
+
+3. Add to PATH:
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+
+4. Configure Godot (Editor > Editor Settings > Text Editor > External):
+   - Full path: ~/.local/bin/open-nvim-godot.sh
+   - Parameters: {file} {line} {col}
+
+5. Start Neovim with:
+   nvim --listen /tmp/godot.pipe
+   Optionally add alias:
+   alias gdvim='nvim --listen /tmp/godot.pipe'
+
+Windows:
+
+1. Start Neovim listening on TCP:
+   nvim --listen 127.0.0.1:6666
+2. Configure Godot to connect to the same host:port.
+
+==============================================================================
+Keymaps                                           *godotdev-keymaps*
+
+LSP:
+- gd → Go to definition
+- gD → Go to declaration
+- gy → Type definition
+- gi → Go to implementation
+- gr → List references
+- K → Hover
+- <C-k> → Signature help
+- <leader>rn → Rename symbol
+- <leader>ca → Code action
+- <leader>f → Format buffer
+- gl → Show diagnostics
+- [d / ]d → Previous/Next diagnostic
+
+DAP:
+- F5 → Continue / Start
+- F10 → Step over
+- F11 → Step into
+- F12 → Step out
+- <leader>db → Toggle breakpoint
+- <leader>dB → Conditional breakpoint
+- <leader>du → Toggle UI
+- <leader>dr → Open REPL
+
+==============================================================================
+Health checks                                     *godotdev-checkhealth*
+
+Use `:checkhealth godotdev` to verify:
+
+Dependencies:
+- nvim-lspconfig
+- nvim-treesitter
+- nvim-dap
+- nvim-dap-ui
+- Windows users: ncat
+
+Godot editor:
+- LSP server
+- Debug server
+
+Optional C# support:
+- dotnet SDK
+- C# LSP server (csharp-ls or OmniSharp)
+- netcoredbg debugger
+
+==============================================================================
+License                                           *godotdev-license*
+
+MIT
