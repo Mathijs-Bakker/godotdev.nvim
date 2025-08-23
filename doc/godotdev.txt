@@ -130,6 +130,29 @@ Optional C# support:
 - netcoredbg debugger
 
 ==============================================================================
+INDENTATION                                             *godotdev-indent*
+
+Godot (both GDScript and C#) expects **spaces, 4 per indent**.
+If you use tabs, the LSP often reports this diagnostic:
+
+    Used tab character for indentation instead of space as used before in the file. [-1] [-1]
+
+To fix this, you should use an `.editorconfig` file. Godot, Neovim
+(via editorconfig plugins), VSCode, and Rider all respect this.
+
+Example `.editorconfig`:
+
+    [*.gd]
+    indent_style = space
+    indent_size = 4
+
+    [*.cs]
+    indent_style = space
+    indent_size = 4
+
+See also: `:checkhealth godotdev`
+
+==============================================================================
 License                                           *godotdev-license*
 
 MIT
