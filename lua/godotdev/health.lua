@@ -46,6 +46,23 @@ local function has_exe(name)
   return vim.fn.executable(name) == 1
 end
 
+local function check_indent()
+  health.start("Indentation")
+
+  local handle = io.popen("grep -P '\t' -R --include='*.gd' --include='*.cs' . 2>/dev/null | head -n 1")
+  if handle then
+    local result = handle:read("*a")
+    handle:close()
+    if result ~= "" then
+      health.warn(
+        "Mixed indentation detected (tabs found in .gd or .cs files). Godot expects spaces, 4 per indent. See :help godotdev-indent"
+      )
+    else
+      health.ok("Indentation style looks consistent (no tabs in .gd or .cs files).")
+    end
+  end
+end
+
 function M.check()
   health.start("Godotdev.nvim")
 
@@ -132,6 +149,7 @@ Make sure the Godot editor is running with LSP server enabled.
   else
     health.info("ℹ️ C# checks skipped (csharp=false)")
   end
-end
 
+  check_indent()
+end
 return M

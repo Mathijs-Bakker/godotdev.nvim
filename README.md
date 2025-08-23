@@ -17,11 +17,11 @@ Neovim plugin for Godot game development, using Neovim as an external editor. Pr
 
 ## Requirements
 
-- Neovim 0.9+  
-- Godot 4.x+ with TCP LSP enabled  
-- `nvim-lspconfig`  
-- `nvim-dap` and `nvim-dap-ui` for debugging  
-- `nvim-treesitter`  
+- Neovim 0.9+
+- Godot 4.x+ with TCP LSP enabled
+- `nvim-lspconfig`
+- `nvim-dap` and `nvim-dap-ui` for debugging
+- `nvim-treesitter`
 - Windows users must have [`ncat`](https://nmap.org/ncat/) in PATH
 - Optional C# support requires:
   - .NET SDK (dotnet)
@@ -64,7 +64,7 @@ require("godotdev").setup({
 Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.
 
 - `Editor Settings > Text Editor > Behavior > Auto Reload Scripts on External Change`
-   
+
    <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-auto-reload-script.png"></details>
 - `Editor Settings > Interface > Editor > Save on Focus Loss`
 
@@ -95,7 +95,7 @@ A workaround is to to create a small script which launches the file in Neovim.
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
     ```
 1. Configure Godot: `Editor > Editor Settings > Text Editor > External` with full path and `{file} {line} {col}`.
-   
+
    <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-settings-for-neovim.png"></details>
 
 1. To make this work you always need to start Neovim like this:
@@ -162,7 +162,7 @@ A workaround is to to create a small script which launches the file in Neovim.
 - `<leader>dB` -> Conditional breakpoint
 
 ### DAP UI
-- `<leader>du` -> , Toggle UI 
+- `<leader>du` -> , Toggle UI
 - `<leader>dr` -> , Open REPL
 
 ## C# Installation Support
@@ -172,3 +172,15 @@ A workaround is to to create a small script which launches the file in Neovim.
   - .NET SDK (`dotnet`)
   - C# LSP server (`csharp-ls` or `omnisharp`)
   - Debugger (`netcoredbg`)
+
+## Indentation
+
+Godot expects **spaces, 4 per indent** (for both GDScript and C#).
+If you see diagnostics like:
+```
+Used tab character for indentation instead of space as used before in the file. [-1] [-1]
+```
+You should configure indentation properly.
+It's recommend adding an [`.editorconfig`](./.editorconfig) to your project.
+
+For more info: `:help godotdev-indent`
