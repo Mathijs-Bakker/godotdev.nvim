@@ -184,5 +184,6 @@ You should configure indentation properly.
 It's recommend adding an [`.editorconfig`](./.editorconfig) to your project.
 
 For more info: `:help godotdev-indent`
+
 ## Hints/Tips
-- [Hide Godot related files in file explorers]("doc/hide-files-in-file-explores.md")
+- [Hide Godot related files in file explorers](doc/hide-files-in-file-explores.md)
