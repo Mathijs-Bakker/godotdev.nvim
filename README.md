@@ -186,8 +186,14 @@ It's recommend adding an [`.editorconfig`](./.editorconfig) to your project.
 
 For more info: `:help godotdev-indent`
 
-## Sponsor
-[<img src="https://private-user-images.githubusercontent.com/7645831/483198011-85f45fc1-779e-4f18-b794-4a4190156f10.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTYzOTE0NDksIm5iZiI6MTc1NjM5MTE0OSwicGF0aCI6Ii83NjQ1ODMxLzQ4MzE5ODAxMS04NWY0NWZjMS03NzllLTRmMTgtYjc5NC00YTQxOTAxNTZmMTAucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDgyOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA4MjhUMTQyNTQ5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MDBkMDdhZjM5MzFlYmI3YzJjMjBjM2JlMDIxNWYwZTQ2NzIxMjI4NzFmMzFhNjc2ODVjNjhmNDc0ZTQ1MTc1NiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.TjrBF77IU1gvZNo2h95s3wxHserSRMSklwpGbjs5c8c" width=150>](https://buymeacoffee.com/mathijs.bakker)
-
 ## Hints/Tips
+
 - [Hide Godot related files in file explorers](doc/hide-files-in-file-explores.md)
+
+
+## ☕ + ❤️ = `<code>`
+
+Hi, I'm Mathijs! I build and maintain these projects in my free time. If you use them and would like to support my work, a [coffee](https://buymeacoffee.com/mathijs.bakker
+) is always appreciated!  
+
+[<img src="https://private-user-images.githubusercontent.com/7645831/483198011-85f45fc1-779e-4f18-b794-4a4190156f10.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTYzOTE0NDksIm5iZiI6MTc1NjM5MTE0OSwicGF0aCI6Ii83NjQ1ODMxLzQ4MzE5ODAxMS04NWY0NWZjMS03NzllLTRmMTgtYjc5NC00YTQxOTAxNTZmMTAucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI1MDgyOCUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNTA4MjhUMTQyNTQ5WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9MDBkMDdhZjM5MzFlYmI3YzJjMjBjM2JlMDIxNWYwZTQ2NzIxMjI4NzFmMzFhNjc2ODVjNjhmNDc0ZTQ1MTc1NiZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QifQ.TjrBF77IU1gvZNo2h95s3wxHserSRMSklwpGbjs5c8c" width=150>](https://buymeacoffee.com/mathijs.bakker)
