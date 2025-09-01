@@ -14,9 +14,7 @@ function M.setup(opts)
     editor_port = M.opts.editor_port,
   })
 
-  require("godotdev.health").setup({
-    port = M.opts.editor_port,
-  })
+  require("godotdev.reconnect_lsp")
 
   require("godotdev.dap").setup({
     type = "server",
@@ -25,6 +23,10 @@ function M.setup(opts)
   })
 
   require("godotdev.tree-sitter")
+
+  require("godotdev.health").setup({
+    port = M.opts.editor_port,
+  })
 
   if opts.csharp then
     local dap = require("dap")
