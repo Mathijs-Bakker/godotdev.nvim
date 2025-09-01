@@ -91,9 +91,15 @@ A workaround is to to create a small script which launches the file in Neovim.
    chmod +x ~/.local/bin/open-nvim-godot.sh
    ```
 1. Add to PATH:
+   zsh:
+   ```zsh
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc 
+   ```
+   <details><summary>If zsh no works... fall back to bash.</summary>
    ```bash
     echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
     ```
+   </details>
 1. Configure Godot: `Editor > Editor Settings > Text Editor > External` with full path and `{file} {line} {col}`.
 
    <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-settings-for-neovim.png"></details>
