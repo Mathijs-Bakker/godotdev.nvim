@@ -7,12 +7,17 @@ M.reconnect_lsp = function()
       vim.lsp.stop_client(client.id, true)
     end
   end
-  vim.cmd("edit") -- triggers LSP reattach for current buffer
+  vim.cmd("edit") -- triggers LSP reattach
   vim.notify("Godot LSP reconnected", vim.log.levels.INFO)
 end
 
-vim.api.nvim_create_user_command("GodotReconnectLSP", function()
-  M.reconnect_lsp()
-end, {})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "gdscript", "gdresource", "gdshader" }, -- adjust patterns if needed
+  callback = function()
+    vim.api.nvim_buf_create_user_command(0, "GodotReconnect", function()
+      M.reconnect_lsp()
+    end, { desc = "Reconnect to the Godot LSP server" })
+  end,
+})
 
 return M
