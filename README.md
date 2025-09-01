@@ -78,7 +78,8 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.
 A workaround is to to create a small script which launches the file in Neovim.
 
-#### macOS/Linux
+------------------------------
+#### >> macOS/Linux
 1. Create a launch script (e.g., ~/.local/bin/open-nvim-godot.sh):
    ```bash
    #!/bin/bash
@@ -131,8 +132,8 @@ A workaround is to to create a small script which launches the file in Neovim.
    gdvim
    ```
    </details>
-
-#### Windows
+------------------------------
+#### >> Windows
 
 1. Set Neovim to listen on a TCP port
    ```bash
@@ -142,6 +143,11 @@ A workaround is to to create a small script which launches the file in Neovim.
 1. Tell Godot to connect to that port
    In Godot, configure your external editor or plugin to connect to `127.0.0.1:6666`.
    Make sure the TCP port you choose is free and consistent between Neovim and Godot.
+
+
+## Reconnect to Godot's LSP server
+
+When you lose connection or launched a script in Neovim earlier than Godot use the `:GodotReconnect` command to connect.
 
 ## Keymaps
 
