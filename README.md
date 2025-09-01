@@ -93,7 +93,7 @@ A workaround is to to create a small script which launches the file in Neovim.
 1. Add to PATH:
    zsh:
    ```zsh
-   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc 
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
    ```
    <details><summary>If zsh no works... fall back to bash.</summary>
    ```bash
@@ -193,5 +193,5 @@ For more info: `:help godotdev-indent`
 
 ## Hints/Tips
 
-- [Hide Godot related files in file explorers](doc/hide-files-in-file-explores.md)
+- [Hide Godot related files in file explorers](doc/hide-files-in-file-explorers.md)
 
