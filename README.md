@@ -76,63 +76,11 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 ### Open .gdscript/.gdshader from Godot in Neovim
 
 When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.
-A workaround is to to create a small script which launches the file in Neovim.
+A [workaround](doc/neovim-external-editor-setup.md) is to to create a small script which launches the file in Neovim.
 
-------------------------------
 #### >> macOS/Linux
-1. Create a launch script (e.g., ~/.local/bin/open-nvim-godot.sh):
-   ```bash
-   #!/bin/bash
-   FILE="$1" LINE="$2" COL="$3"
-   /Applications/Ghostty.app/Contents/MacOS/ghostty -- nvim "$FILE" +"$LINE:$COL"
-   # Linux: gnome-terminal -- nvim "$FILE" +"$LINE:$COL"
-   ```
-1. Make executable:
-   ```bash
-   chmod +x ~/.local/bin/open-nvim-godot.sh
-   ```
-1. Add to PATH:
-   zsh:
-   ```zsh
-   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
-   ```
-   <details><summary>If zsh no works... fall back to bash.</summary>
-   ```bash
-    echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
-    ```
-   </details>
-1. Configure Godot: `Editor > Editor Settings > Text Editor > External` with full path and `{file} {line} {col}`.
+Complete instructions [here](doc/neovim-external-editor-setup.md)
 
-   <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-settings-for-neovim.png"></details>
-
-1. To make this work you always need to start Neovim like this:
-   ```bash
-   nvim --listen /tmp/godot.pipe
-   ```
-
-   <details>
-   <summary>Tip! Create an alias for that command.</summary>
-
-   Open your shell config file:
-   - `~/.bashrc` for Bash
-   - `~/.zshrc` for Zsh
-
-   Add the alias:
-   ```bash
-   alias gdvim='nvim --listen /tmp/godot.pipe'
-   ```
-
-   Reload the shell config:
-   ```bash
-   source ~/.bashrc   # or ~/.zshrc for Zsh
-   ```
-
-   Test it:
-   ```bash
-   gdvim
-   ```
-   </details>
-------------------------------
 #### >> Windows
 
 1. Set Neovim to listen on a TCP port
