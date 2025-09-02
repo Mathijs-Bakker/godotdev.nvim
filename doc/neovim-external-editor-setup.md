@@ -44,9 +44,9 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 
 ```mermaid
 flowchart TD
-    A[Godot Editor] -- clicks script --> B[godot-nvr.sh script]
-    B -- opens/jumps file --> C[Neovim (via nvr)]
-    C -- brings to front --> D[GUI Terminal (Ghostty, Alacritty, etc.)]
+    A[Godot Editor] --> B[godot-nvr.sh script]
+    B --> C[Neovim (via nvr)]
+    C --> D[GUI Terminal<br/>(Ghostty, Alacritty, etc.)]
 ```
 
 ## Requirements
@@ -65,7 +65,61 @@ flowchart TD
 1. Save the launcher script:
    ```bash
    mkdir -p ~/.local/bin
-   nano ~/.local/bin/godot-nvr.sh
+   touch ~/.local/bin/godot-nvr.sh
+   ```
+1. Create the script:
+   Save this as `~/.local/bin/godot-nvr.sh`
+   ```bash
+   #!/usr/bin/env bash
+   #
+   # godot-nvr.sh
+   #
+   # Usage:
+   #   godot-nvr.sh [TERMINAL_NAME] [--tab|--vsplit] <file>[:line[:col]]
+   #
+   # Example:
+   #   godot-nvr.sh ghostty --tab ~/project/main.gd:10
+
+   TERMINAL_APP="${1:-ghostty}" # default: ghostty
+   shift
+
+   MODE=""
+   FILE=""
+   while [[ $# -gt 0 ]]; do
+     case "$1" in
+       --tab)
+         MODE="--remote-tab"
+         shift
+         ;;
+       --vsplit)
+         MODE="--remote-send '<C-w>v:edit '"
+         shift
+         ;;
+       *)
+         FILE="$1"
+         shift
+         ;;
+     esac
+   done
+
+   # Open file in Neovim
+   if [[ -n "$MODE" && "$MODE" == *remote-send* ]]; then
+     nvr --remote-send "<C-\\><C-n><C-w>v:edit ${FILE}<CR>"
+   elif [[ -n "$MODE" ]]; then
+     nvr $MODE "$FILE"
+   else
+     nvr --remote "$FILE"
+   fi
+
+   # Bring terminal GUI to front
+   if command -v osascript &>/dev/null; then
+     osascript -e "tell application \"$TERMINAL_APP\" to activate"
+   fi
+
+   ```
+   And make it executable:
+   ```bash
+   chmod +x ~/.local/bin/godot-nvr.sh
    ```
 1. Paste the script (see previous section) and make executable:
    ```bash
@@ -79,6 +133,7 @@ flowchart TD
 
    ```bash
     /Users/YOUR_USERNAME/.local/bin/godot-nvr.sh
+:w
 
    ```
 1. Set Exec Flags:
@@ -89,26 +144,26 @@ flowchart TD
 
       ```
 
-1. Open in a tab:
+    - Open in a tab:
 
-   ```bash
-   --tab +{line} {file}
+      ```bash
+      --tab +{line} {file}
 
-   ```
+      ```
 
-1. Open in vertical split:
+    - Open in vertical split:
 
-   ```bash
-   --vsplit +{line} {file}
+      ```bash
+      --vsplit +{line} {file}
 
-   ```
+      ```
 
-1. Specify terminal explicitly:
+    - Specify terminal explicitly:
 
-   ```bash
-   Alacritty +{line} {file}
+      ```bash
+      Alacritty +{line} {file}
 
-   ```
+      ```
 
 ## Usage
 
@@ -124,3 +179,53 @@ flowchart TD
 - Ensure the Neovim socket path (/private/tmp/nvim.pipe) matches your setup
 - Tested with Ghostty, should work with other GUI terminals
 - This README now provides clear instructions and a visual workflow so other users can reproduce your Godot → Neovim + Ghostty setup easily.
+
+## Troubleshooting
+
+### Quick Test (outside Godot)
+
+Before testing inside Godot, confirm the script works standalone:
+```bash
+~/.local/bin/godot-nvr.sh /path/to/file.gd:10
+```
+Expected:
+- The file opens in your running Neovim instance.
+- The buffer is focused.
+- Your terminal (e.g. Ghostty) comes to the front.
+If this fails, fix the setup before trying again in Godot.
+
+### `command not found: nvr`
+
+ - Make sure `nvr` is installed and in your `$PATH`:
+   ```bash
+   pip install neovim-remote
+   which nvr
+   ```
+
+ - If it’s not found, add `~/.local/bin` to your `$PATH`.
+
+### Godot shows "Cannot execute"
+
+- Check the `Exec Path` in Godot points to the script and is executable:
+  ```bash
+  chmod +x ~/.local/bin/godot-nvr.sh
+  ```
+- Use the absolute path (e.g. /Users/you/.local/bin/godot-nvr.sh).
+
+### Terminal doesn’t come to the front (macOS)
+- Ensure you set the correct terminal app name (case-sensitive!):
+  - `ghostty` → `"Ghostty"`
+  - `iTerm` → `"iTerm2"`
+  - `alacritty` → `"Alacritty"`
+- To check the exact name macOS expects, run:
+  ```bash
+  osascript -e 'name of every application process'
+  ```
+- Test manually (from another terminal app):
+  ```bash
+  osascript -e 'tell application "ghostty" to activate'
+  ```
+
+## Wrong file/line opens
+- Make sure you’re using `{file}:{line}` in Godot’s Exec Flags.
+- For column support, you can use `{file}:{line}:{col}`.
