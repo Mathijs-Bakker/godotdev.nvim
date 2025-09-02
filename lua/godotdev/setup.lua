@@ -14,6 +14,7 @@ function M.setup(opts)
     editor_port = M.opts.editor_port,
   })
 
+  require("godotdev.start_editor_server")
   require("godotdev.reconnect_lsp")
 
   require("godotdev.dap").setup({
