@@ -21,20 +21,20 @@ This setup allows you to click on a script in Godot and open it directly in Neov
                                                     |
                                                     | opens/jumps file
                                                     v
-                                          +-------------------------+
-                                          |                         |
-                                          |      Neovim             |
-                                          |  (remote buffer via     |
-                                          |     nvr socket)         |
-                                          +-------------------------+
+                                            +-------------------------+
+                                            |                         |
+                                            |      Neovim             |
+                                            |  (remote buffer via     |
+                                            |     nvr socket)         |
+                                            +-------------------------+
                                                     |
                                                     | brings terminal to front
                                                     v
-                                          +-------------------------+
-                                          |                         |
-                                          |   GUI Terminal          |
-                                          |   (Ghostty, Alacritty)  |
-                                          +-------------------------+
+                                            +-------------------------+
+                                            |                         |
+                                            |   GUI Terminal          |
+                                            |   (Ghostty, Alacritty)  |
+                                            +-------------------------+
 
 ```
 - **Step 1:** Click a script in Godot
@@ -148,7 +148,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
     - Specify terminal explicitly:
 
       ```bash
-      Alacritty +{line} {file}
+      alacritty +{line} {file}
 
       ```
 
@@ -202,8 +202,9 @@ If this fails, fix the setup before trying again in Godot.
 ### Terminal doesn’t come to the front (macOS)
 - Ensure you set the correct terminal app name (case-sensitive!):
   - `ghostty` → `"Ghostty"`
-  - `iTerm` → `"iTerm2"`
+  - `Terminal` → `"Terminal"`
   - `alacritty` → `"Alacritty"`
+  - `kitty` -> `"Kitty"`
 - To check the exact name macOS expects, run:
   ```bash
   osascript -e 'name of every application process'
