@@ -14,7 +14,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 
 ```text
 +----------------+      clicks script       +-------------------------+
-|                | ----------------------> |                         |
+|                | ---------------------->  |                         |
 |     Godot      |                          |    godot-nvr.sh script  |
 |  (Editor UI)   |                          |  (external launcher)    |
 +----------------+                          +-------------------------+
@@ -33,7 +33,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
                                           +-------------------------+
                                           |                         |
                                           |   GUI Terminal          |
-                                          |   (Ghostty, Alacritty) |
+                                          |   (Ghostty, Alacritty)  |
                                           +-------------------------+
 
 ```
@@ -41,13 +41,6 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 - **Step 2:** `godot-nvr.sh` is called
 - **Step 3:** File opens in Neovim via `nvr`
 - **Step 4:** GUI terminal is brought to the front
-
-```mermaid
-flowchart TD
-    A[Godot Editor] --> B[godot-nvr.sh script]
-    B --> C[Neovim (via nvr)]
-    C --> D[GUI Terminal<br/>(Ghostty, Alacritty, etc.)]
-```
 
 ## Requirements
 
@@ -117,11 +110,7 @@ flowchart TD
    fi
 
    ```
-   And make it executable:
-   ```bash
-   chmod +x ~/.local/bin/godot-nvr.sh
-   ```
-1. Paste the script (see previous section) and make executable:
+1. And make it executable:
    ```bash
    chmod +x ~/.local/bin/godot-nvr.sh
    ```
@@ -133,8 +122,6 @@ flowchart TD
 
    ```bash
     /Users/YOUR_USERNAME/.local/bin/godot-nvr.sh
-:w
-
    ```
 1. Set Exec Flags:
     - Default (same window):
