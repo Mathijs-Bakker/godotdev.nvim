@@ -13,7 +13,7 @@ local function start_editor_server(pipe)
 end
 
 -- User command
-vim.api.nvim_create_user_command("GodotEditorServer", function(opts)
+vim.api.nvim_create_user_command("GodotStartEditorServer", function(opts)
   start_editor_server(opts.args ~= "" and opts.args or nil)
 end, {
   nargs = "?",
