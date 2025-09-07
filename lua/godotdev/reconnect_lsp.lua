@@ -1,23 +1,29 @@
 local M = {}
 
-M.reconnect_lsp = function()
-  local clients = vim.lsp.get_clients()
-  for _, client in ipairs(clients) do
-    if client.name == "godot" then
-      vim.lsp.stop_client(client.id, true)
+M.reconnect_all = function()
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_loaded(bufnr) then
+      local ft = vim.bo[bufnr].filetype
+      if ft == "gdscript" or ft == "gdresource" or ft == "gdshader" then
+        vim.api.nvim_buf_call(bufnr, function()
+          vim.cmd("edit") -- retriggers LSP attach
+        end)
+      end
     end
   end
-  vim.cmd("edit") -- triggers LSP reattach
-  vim.notify("Godot LSP reconnected", vim.log.levels.INFO)
+
+  vim.notify("Godot LSP reconnected for all Godot buffers", vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "gdscript", "gdresource", "gdshader" }, -- adjust patterns if needed
+  pattern = { "gdscript", "gdresource", "gdshader" },
   callback = function()
-    vim.api.nvim_buf_create_user_command(0, "GodotReconnect", function()
-      M.reconnect_lsp()
-    end, { desc = "Reconnect to the Godot LSP server" })
+    -- Define command once per session
+    if not vim.g._godot_reconnect_all_defined then
+      vim.api.nvim_create_user_command("GodotReconnectLSP", function()
+        M.reconnect_all()
+      end, { desc = "Reconnect Godot LSP for all buffers" })
+      vim.g._godot_reconnect_all_defined = true
+    end
   end,
 })
-
-return M
