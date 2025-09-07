@@ -16,6 +16,7 @@ function M.setup(opts)
 
   require("godotdev.start_editor_server")
   require("godotdev.reconnect_lsp")
+  require("godotdev.force_spaces")
 
   require("godotdev.dap").setup({
     type = "server",
