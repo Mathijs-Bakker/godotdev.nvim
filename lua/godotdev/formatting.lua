@@ -1,23 +1,23 @@
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "gdscript",
   callback = function()
-    vim.bo.expandtab = true -- convert <Tab> to spaces
-    vim.bo.shiftwidth = 4 -- number of spaces for indent
-    vim.bo.softtabstop = 4 -- spaces when pressing <Tab>
+    vim.bo.expandtab = true
+    vim.bo.shiftwidth = 4
     vim.bo.softtabstop = 4
-    vim.bo.tabstop = 4 -- Show tabs as 4 spaces
-    vim.bo.autoindent = true -- Enable autoindent
+    vim.bo.tabstop = 4
+    vim.bo.autoindent = true
     vim.bo.smartindent = true
   end,
 })
 
--- Autoformat .gd files on save using gdformat
 vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = "*.gd",
   callback = function()
-    -- Run gdformat on the file
-    vim.cmd("silent !gdformat %")
-    -- Reload the buffer to reflect changes
-    vim.cmd("edit")
+    if vim.fn.executable("gdformat") == 1 then
+      vim.cmd("silent !gdformat %")
+      vim.cmd("checktime")
+    else
+      vim.notify("gdformat not found in PATH", vim.log.levels.WARN)
+    end
   end,
 })
