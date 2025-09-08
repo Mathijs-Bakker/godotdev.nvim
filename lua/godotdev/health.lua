@@ -150,6 +150,28 @@ Make sure the Godot editor is running with LSP server enabled.
     health.info("ℹ️ C# checks skipped (csharp=false)")
   end
 
+  health.start("Formatter: gdformat")
+
+  if vim.fn.executable("gdformat") == 1 then
+    health.ok("✅ OK 'gdformat' found")
+  else
+    local install_instructions = [[
+❌ ERROR 'gdformat' not found.
+Install it with Python pip or Homebrew:
+
+Linux / macOS:
+  pip install gdtoolkit
+
+macOS (Homebrew):
+  brew install gdtoolkit
+
+Windows:
+  pip install gdtoolkit
+]]
+    health.warn(install_instructions)
+  end
+
   check_indent()
 end
+
 return M
