@@ -212,7 +212,7 @@ Reconnects **all Godot buffers** to the LSP.
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 This plugin automatically sets buffer options for `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save with [`gdformat`](https://github.com/godotengine/gdformat):
+Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit):
 
 ```vim
 :w
