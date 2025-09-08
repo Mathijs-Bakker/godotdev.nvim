@@ -10,3 +10,14 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.bo.smartindent = true
   end,
 })
+
+-- Autoformat .gd files on save using gdformat
+vim.api.nvim_create_autocmd("BufWritePost", {
+  pattern = "*.gd",
+  callback = function()
+    -- Run gdformat on the file
+    vim.cmd("silent !gdformat %")
+    -- Reload the buffer to reflect changes
+    vim.cmd("edit")
+  end,
+})
