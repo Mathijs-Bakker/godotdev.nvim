@@ -36,7 +36,7 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 - Optional C# debugging via `netcoredbg`
 
 ### Formatting
-- Automatic `.gd` file formatting using [`gdformat`](https://pypi.org/project/gdformat/)
+- Automatic `.gd` file formatting using [`gdtoolkit`](https://pypi.org/project/gdtoolkit/)
 - Reloads buffer after formatting for immediate feedback
 - Recommended `.editorconfig` included for consistent indentation (4 spaces per indent)
 
