@@ -17,7 +17,7 @@ Neovim plugin for Godot game development, using Neovim as an external editor. Pr
 
 ## Requirements
 
-- Neovim 0.9+
+- Neovim 0.11+
 - Godot 4.x+ with TCP LSP enabled
 - `nvim-lspconfig`
 - `nvim-dap` and `nvim-dap-ui` for debugging
@@ -56,6 +56,7 @@ require("godotdev").setup({
   editor_port = 6005,        -- Godot LSP port
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
+  autostart_editor_server = true,  -- Enable auto start Nvim server
 })
 ```
 
@@ -92,10 +93,33 @@ Complete instructions [here](doc/neovim-external-editor-setup.md)
    In Godot, configure your external editor or plugin to connect to `127.0.0.1:6666`.
    Make sure the TCP port you choose is free and consistent between Neovim and Godot.
 
+## Godot editor server
+
+You can manually start the Neovim editor server used by Godot:
+
+```vim
+:GodotStartEditorServer
+```
+
+Or automatically on plugin setup:
+
+```lua
+require("godotdev").setup({
+  autostart_editor_server = true,
+})
+```
+
+This ensures Godot can communicate with Neovim as an external editor.
 
 ## Reconnect to Godot's LSP server
 
-When you lose connection or launched a script in Neovim earlier than Godot use the `:GodotReconnect` command to connect.
+If the LSP disconnects or you opened a script before Neovim, run:
+
+```vim
+:GodotReconnectLSP
+```
+
+Reconnects **all Godot buffers** to the LSP.
 
 ## Keymaps
 
@@ -133,17 +157,20 @@ When you lose connection or launched a script in Neovim earlier than Godot use t
   - C# LSP server (`csharp-ls` or `omnisharp`)
   - Debugger (`netcoredbg`)
 
-## Indentation
+## Autoformatting / Indentation
 
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
-If you see diagnostics like:
-```
-Used tab character for indentation instead of space as used before in the file. [-1] [-1]
-```
-You should configure indentation properly.
-It's recommend adding an [`.editorconfig`](./.editorconfig) to your project.
+This plugin automatically sets buffer options for `.gd` files.
 
-For more info: `:help godotdev-indent`
+Additionally, `.gd` files are autoformatted on save with [`gdformat`](https://github.com/godotengine/gdformat):
+
+```vim
+:w
+```
+
+Make sure `gdformat` is installed and in your PATH. If not, you will see a warning notification.
+
+For more info on indentation: `:help godotdev-indent`
 
 ## Hints/Tips
 
