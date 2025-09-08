@@ -2,18 +2,68 @@
 
 # godotdev.nvim
 
-**godotdev.nvim** is a batteries-included Neovim plugin for Godot 4.x game development. It turns Neovim into a fully featured external editor for Godot, providing LSP support for GDScript and Godot shaders, DAP debugging, Treesitter syntax highlighting, automatic code formatting for .gd files with gdformat, and optional C# support. It also includes built-in health checks to verify your environment, dependencies, and editor integration. While all of this can be configured manually, godotdev.nvim simplifies the setup, ensuring a consistent, reliable, and cross-platform development experience with minimal effort.
+**godotdev.nvim** is a batteries-included Neovim plugin for Godot 4.x game development.
+It allows you to use Neovim as a fully featured external editor for Godot, with minimal setup.
+
+This plugin provides:
+
+- **LSP support** for GDScript and Godot shaders (`.gdshader` files)
+- **Debugging** via `nvim-dap` for GDScript
+- **Treesitter syntax highlighting** for Godot shader files
+- **Automatic formatting** of `.gd` files using `gdformat`
+- **Optional C# support** including LSP, debugging, and tooling
+- **Built-in health checks** to verify environment, dependencies, and editor integration
+
+While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, keymaps, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
 
 ## Features
 
-- Connect to Godot editor LSP over TCP (`127.0.0.1:6005` by default)
-- Full GDScript language support
-- `.gdshader` syntax highlighting via Treesitter
-- Debug GDScript with `nvim-dap` (`127.0.0.1:6006` by default)
-- Keymaps for common LSP actions
-- Optional C# support: LSP, debugging, and tooling
-- Batteries included: everything you need for Godot development in Neovim
-- Built-in health checks via `:checkhealth godotdev`
+godotdev.nvim provides a complete Neovim environment for Godot 4.x development, with minimal setup. Key features include:
+
+### LSP Support
+- Full GDScript language support (Go to definition, references, hover, rename, code actions, etc.)
+- `.gdshader` syntax highlighting and language features via Treesitter
+- Optional C# LSP support (`csharp-ls` or OmniSharp) for Godot projects with C# scripts
+
+### Debugging (DAP)
+- Debug GDScript directly from Neovim using `nvim-dap`
+- Keymaps for standard debugging actions:
+  - Continue/Start: `F5`
+  - Step over: `F10`
+  - Step into: `F11`
+  - Step out: `F12`
+  - Toggle breakpoints: `<leader>db` / `<leader>dB`
+- Optional C# debugging via `netcoredbg`
+
+### Formatting
+- Automatic `.gd` file formatting using [`gdformat`](https://pypi.org/project/gdformat/)
+- Reloads buffer after formatting for immediate feedback
+- Recommended `.editorconfig` included for consistent indentation (4 spaces per indent)
+
+### Health Checks
+- `:checkhealth godotdev` validates:
+  - Required dependencies: `nvim-lspconfig`, `nvim-dap`, `nvim-dap-ui`, `nvim-treesitter`
+  - Godot editor LSP and debug servers
+  - Optional C# tooling: `dotnet`, `csharp-ls`/OmniSharp, `netcoredbg`
+  - Formatter: `gdformat` (with installation instructions)
+- Detects common issues like mixed indentation in GDScript/C# files
+
+### Editor Integration
+- Commands to start or reconnect to Godot’s editor LSP:
+  - `:GodotStartEditorServer`
+  - `:GodotReconnectLSP`
+- Automatic LSP attachment for Godot filetypes (`.gd`, `.gdshader`, `.gdresource`, optional `.cs`)
+- Works cross-platform (macOS, Linux, Windows) with TCP or named pipes
+
+### Keymaps
+- LSP: `gd`, `gD`, `gr`, `K`, `<leader>rn`, `<leader>ca`, `<leader>f`, etc.
+- DAP: `F5`, `F10`, `F11`, `F12`, `<leader>db`, `<leader>dB`
+- DAP UI: `<leader>du` (toggle), `<leader>dr` (REPL)
+
+### Optional C# Support
+- Enable by setting `csharp = true` in `require("godotdev").setup()`
+- Health checks and DAP integration included
+- Supports cross-platform debugging and LSP integration
 
 ## Requirements
 
