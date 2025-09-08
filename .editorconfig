@@ -1,9 +1,5 @@
-[*.lua]
-indent_size = 2
-indent_style = space
-
-# Consistent indentation for Godot projects.
-# Copy and paste this in your own.
+# EditorConfig for Godot projects
+# https://editorconfig.org
 
 root = true
 
@@ -13,13 +9,20 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-# GDScript
+# GDScript files
 [*.gd]
 indent_style = space
 indent_size = 4
+continuation_indent_size = 4
 
-# C#
+# Godot shader files
+[*.gdshader]
+indent_style = space
+indent_size = 4
+continuation_indent_size = 4
+
+# C# files
 [*.cs]
 indent_style = space
 indent_size = 4
-
+continuation_indent_size = 4

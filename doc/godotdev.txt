@@ -11,6 +11,7 @@ game development using Neovim as an external editor. It provides:
 - Treesitter syntax highlighting
 - Keymaps for common LSP and DAP actions
 - Optional C# support with dotnet, csharp-ls/OmniSharp, and netcoredbg
+- Autoformatting `.gd` files with `gdformat`
 
 See |godotdev-quickstart| for a quick start guide.
 
@@ -29,6 +30,9 @@ Quickstart                                         *godotdev-quickstart*
    - See |godotdev-keymaps| for full list
 6. Start debugging with DAP (Launch scene configuration)
 7. Optional: Enable C# support by passing `csharp=true` to setup
+8. Optional: Automatically start Neovim editor server on setup
+   - `require("godotdev").setup({ autostart_editor_server = true })`
+9. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
 
 ==============================================================================
 Configuration                                     *godotdev-configuration*
@@ -40,6 +44,7 @@ Example setup:
       editor_port = 6005,        -- LSP port
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
+      autostart_editor_server = true, -- optional, start server automatically
   })
 
 Recommended Godot editor settings for external Neovim integration:
@@ -105,13 +110,37 @@ DAP:
 - F12 → Step out
 - <leader>db → Toggle breakpoint
 - <leader>dB → Conditional breakpoint
+
+DAP UI:
 - <leader>du → Toggle UI
 - <leader>dr → Open REPL
 
 ==============================================================================
+Reconnect LSP                                      *godotdev-reconnect*
+
+If the LSP disconnects or you opened a script before Neovim, run:
+
+  :GodotReconnectLSP
+
+Reconnects **all buffers** for GDScript, GDShader, and GDResource files.
+
+==============================================================================
+Editor server                                     *godotdev-editor-server*
+
+You can manually start the Neovim editor server for Godot:
+
+  :GodotStartEditorServer
+
+Or automatically on plugin setup:
+
+    require("godotdev").setup({ autostart_editor_server = true })
+
+This ensures Godot can communicate with Neovim as an external editor.
+
+==============================================================================
 Health checks                                     *godotdev-checkhealth*
 
-Use `:checkhealth godotdev` to verify:
+Use `:checkhealth godotdev` to verify and troubleshoot:
 
 Dependencies:
 - nvim-lspconfig
@@ -129,28 +158,24 @@ Optional C# support:
 - C# LSP server (csharp-ls or OmniSharp)
 - netcoredbg debugger
 
+Optional formatter:
+- gdformat (for autoformatting `.gd` files)
+
 ==============================================================================
-INDENTATION                                             *godotdev-indent*
+Autoformat / Indentation                           *godotdev-indent*
 
-Godot (both GDScript and C#) expects **spaces, 4 per indent**.
-If you use tabs, the LSP often reports this diagnostic:
+Godot expects **spaces, 4 per indent** (for both GDScript and C#).
+The plugin automatically sets buffer options on `.gd` files.
 
-    Used tab character for indentation instead of space as used before in the file. [-1] [-1]
+Additionally, `.gd` files are autoformatted on save using `gdformat` (if installed).
+Check notifications for warnings if `gdformat` is missing.
 
-To fix this, you should use an `.editorconfig` file. Godot, Neovim
-(via editorconfig plugins), VSCode, and Rider all respect this.
+For more info on indentation: `:help godotdev-indent`
 
-Example `.editorconfig`:
+==============================================================================
+Hide Godot files in explorers                       *godotdev-hidefiles*
 
-    [*.gd]
-    indent_style = space
-    indent_size = 4
-
-    [*.cs]
-    indent_style = space
-    indent_size = 4
-
-See also: `:checkhealth godotdev`
+See [Hide Godot related files in file explorers](hide-files-in-file-explorers.md)
 
 ==============================================================================
 License                                           *godotdev-license*
