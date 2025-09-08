@@ -4,6 +4,7 @@ M.opts = {
   editor_host = "127.0.0.1",
   editor_port = 6005,
   debug_port = 6006,
+  autostart_editor_server = false,
 }
 
 function M.setup(opts)
@@ -15,6 +16,13 @@ function M.setup(opts)
   })
 
   require("godotdev.start_editor_server")
+
+  local editor_server = require("godotdev.start_editor_server")
+  -- autostart editor server if enabled
+  if M.opts.autostart_editor_server then
+    editor_server.start_editor_server()
+  end
+
   require("godotdev.reconnect_lsp")
   require("godotdev.formatting")
 
