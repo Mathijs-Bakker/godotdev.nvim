@@ -5,6 +5,8 @@ M.opts = {
   editor_port = 6005,
   debug_port = 6006,
   autostart_editor_server = false,
+  formatter = "gdformat", -- "gdformat" | "gdscript-format"
+  formatter_cmd = nil, -- allow override, e.g. "gdscript-format --check"
 }
 
 function M.setup(opts)

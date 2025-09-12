@@ -150,14 +150,19 @@ Make sure the Godot editor is running with LSP server enabled.
     health.info("ℹ️ C# checks skipped (csharp=false)")
   end
 
-  health.start("Formatter: gdformat")
+  -- Code Formatting:
+  health.start("GDScript Formatter")
 
-  if vim.fn.executable("gdformat") == 1 then
-    health.ok("✅ OK 'gdformat' found")
+  local formatter = godotdev.opts.formatter or "gdformat"
+  local exe = godotdev.opts.formatter_cmd or formatter
+
+  if has_exe(exe) then
+    health.ok("✅ OK '" .. exe .. "' found")
   else
-    local install_instructions = [[
+    if formatter == "gdformat" then
+      health.warn([[
 ❌ ERROR 'gdformat' not found.
-Install it with Python pip or Homebrew:
+Install with Python pip or Homebrew:
 
 Linux / macOS:
   pip install gdtoolkit
@@ -166,9 +171,13 @@ macOS (Homebrew):
   brew install gdtoolkit
 
 Windows:
-  pip install gdtoolkit
-]]
-    health.warn(install_instructions)
+  pip install gdtoolkit]])
+    elseif formatter == "gdscript-format" then
+      health.warn([[
+❌ ERROR 'gdscript-format' not found.
+Install from the repo: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+Follow instructions in README.md]])
+    end
   end
 
   check_indent()
