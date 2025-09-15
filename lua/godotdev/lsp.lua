@@ -4,7 +4,6 @@ M.setup = function(config)
   config = config or {}
   local lspconfig = require("lspconfig")
   local utils = require("godotdev.utils")
-  local keymaps = require("godotdev.keymaps")
 
   local host = config.editor_host or "127.0.0.1"
   local port = config.editor_port or 6005
@@ -29,7 +28,6 @@ M.setup = function(config)
     capabilities = capabilities,
     on_attach = function(client, bufnr)
       utils.suppress_unsupported_lsp_messages(client, { "Method not found: godot/reloadScript" })
-      keymaps.attach_lsp(bufnr)
     end,
   })
 end

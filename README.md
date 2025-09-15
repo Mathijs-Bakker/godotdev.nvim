@@ -14,7 +14,7 @@ This plugin provides:
 - **Optional C# support** including LSP, debugging, and tooling
 - **Built-in health checks** to verify environment, dependencies, and editor integration
 
-While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, keymaps, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
+While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
 
 ## Features
 
@@ -27,12 +27,7 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 
 ### Debugging (DAP)
 - Debug GDScript directly from Neovim using `nvim-dap`
-- Keymaps for standard debugging actions:
-  - Continue/Start: `F5`
-  - Step over: `F10`
-  - Step into: `F11`
-  - Step out: `F12`
-  - Toggle breakpoints: `<leader>db` / `<leader>dB`
+- For setting up keymaps see: `:help dap-mappings`
 - Optional C# debugging via `netcoredbg`
 
 ### Formatting
@@ -54,11 +49,6 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
   - `:GodotReconnectLSP`
 - Automatic LSP attachment for Godot filetypes (`.gd`, `.gdshader`, `.gdresource`, optional `.cs`)
 - Works cross-platform (macOS, Linux, Windows) with TCP or named pipes
-
-### Keymaps
-- LSP: `gd`, `gD`, `gr`, `K`, `<leader>rn`, `<leader>ca`, `<leader>f`, etc.
-- DAP: `F5`, `F10`, `F11`, `F12`, `<leader>db`, `<leader>dB`
-- DAP UI: `<leader>du` (toggle), `<leader>dr` (REPL)
 
 ### Optional C# Support
 - Enable by setting `csharp = true` in `require("godotdev").setup()`
@@ -170,34 +160,6 @@ If the LSP disconnects or you opened a script before Neovim, run:
 ```
 
 Reconnects **all Godot buffers** to the LSP.
-
-## Keymaps
-
-### LSP
-- `gd` → Go to definition
-- `gD` → Go to declaration
-- `gy` → Type definition
-- `gi` → Go to implementation
-- `gr` → List references
-- `K` → Hover
-- `<C-k>` → Signature help
-- `<leader>rn` → Rename symbol
-- `<leader>ca` → Code action
-- `<leader>f` → Format buffer
-- `gl` → Show diagnostics
-- `[d` / `]d` → Previous/next diagnostic
-
-### DAP
-- `F5` -> Continue/Start
-- `F10` -> Step over
-- `F11` -> Step into
-- `F12` -> Step out
-- `<leader>db` -> Toggle Breakpoint
-- `<leader>dB` -> Conditional breakpoint
-
-### DAP UI
-- `<leader>du` -> , Toggle UI
-- `<leader>dr` -> , Open REPL
 
 ## C# Installation Support
 
