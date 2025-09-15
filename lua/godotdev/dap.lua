@@ -3,7 +3,6 @@ local M = {}
 function M.setup(config)
   local dap = require("dap")
   local dapui = require("dapui")
-  require("godotdev.keymaps").attach_dap()
 
   dap.adapters.godot = {
     type = "server",
