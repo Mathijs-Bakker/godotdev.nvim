@@ -64,50 +64,69 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    Save this as `~/.local/bin/godot-nvr.sh`
    ```bash
    #!/usr/bin/env bash
-   #
-   # godot-nvr.sh
-   #
+   # Godot → Neovim launcher with GUI terminal focus
    # Usage:
-   #   godot-nvr.sh [TERMINAL_NAME] [--tab|--vsplit] <file>[:line[:col]]
-   #
-   # Example:
-   #   godot-nvr.sh ghostty --tab ~/project/main.gd:10
+   #   godot-nvr.sh [terminal_name] +{line} {file} [--tab|--vsplit]
 
-   TERMINAL_APP="${1:-ghostty}" # default: ghostty
-   shift
+   # -----------------------------
+   # Arguments
+   # -----------------------------
+   DEFAULT_TERMINAL="ghostty"
+   ARG0="$1"
 
-   MODE=""
+   if [[ "$ARG0" == +* || "$ARG0" == --* || -f "$ARG0" ]]; then
+      # No terminal argument provided, use default
+      GODOT_TERMINAL="$DEFAULT_TERMINAL"
+   else
+      # First argument is terminal name
+      GODOT_TERMINAL="$ARG0"
+      shift
+   fi
+
+   SOCKET="/private/tmp/godot.pipe"   # Neovim socket path
+   NVR="/Library/Frameworks/Python.framework/Versions/3.8/bin/nvr"
+
+   OPEN_MODE="window"
+   LINE=""
    FILE=""
+
+   # -----------------------------
+   # Parse remaining arguments
+   # -----------------------------
    while [[ $# -gt 0 ]]; do
-     case "$1" in
-       --tab)
-         MODE="--remote-tab"
-         shift
-         ;;
-       --vsplit)
-         MODE="--remote-send '<C-w>v:edit '"
-         shift
-         ;;
-       *)
-         FILE="$1"
-         shift
-         ;;
-     esac
+      case "$1" in
+        --tab) OPEN_MODE="tab"; shift ;;
+        --vsplit) OPEN_MODE="vsplit"; shift ;;
+        +[0-9]*) LINE="${1#+}"; shift ;;
+        *) FILE="$1"; shift ;;
+      esac
    done
 
-   # Open file in Neovim
-   if [[ -n "$MODE" && "$MODE" == *remote-send* ]]; then
-     nvr --remote-send "<C-\\><C-n><C-w>v:edit ${FILE}<CR>"
-   elif [[ -n "$MODE" ]]; then
-     nvr $MODE "$FILE"
+   [ -z "$FILE" ] && exit 0
+
+   # -----------------------------
+   # Open file in Neovim or jump to buffer
+   # -----------------------------
+   if $NVR --servername "$SOCKET" --remote-expr \
+     "bufexists(fnamemodify('$FILE', ':p'))" | grep -q 1; then
+     CMD=":buffer $(basename "$FILE")"
    else
-     nvr --remote "$FILE"
+      case "$OPEN_MODE" in
+        window) CMD=":e $FILE" ;;
+        tab) CMD=":tabedit $FILE" ;;
+        vsplit) CMD=":vsplit $FILE" ;;
+      esac
    fi
 
-   # Bring terminal GUI to front
-   if command -v osascript &>/dev/null; then
-     osascript -e "tell application \"$TERMINAL_APP\" to activate"
-   fi
+   [ -n "$LINE" ] && CMD="$CMD | call cursor($LINE,1)"
+   CMD="$CMD | normal! zz"
+
+   $NVR --servername "$SOCKET" --remote-send "<C-\\><C-N>${CMD}<CR>"
+
+   # -----------------------------
+   # Focus GUI terminal (macOS)
+   # -----------------------------
+   osascript -e "tell application \"$GODOT_TERMINAL\" to activate"
 
    ```
 1. And make it executable:
