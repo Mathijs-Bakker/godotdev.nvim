@@ -2,7 +2,6 @@ local M = {}
 
 M.setup = function(config)
   config = config or {}
-  local lspconfig = require("lspconfig")
   local utils = require("godotdev.utils")
 
   local host = config.editor_host or "127.0.0.1"
@@ -20,16 +19,18 @@ M.setup = function(config)
     cmd = vim.lsp.rpc.connect(host, port)
   end
 
-  lspconfig.gdscript.setup({
+  vim.lsp.config["gdscript"] = {
     name = "godot_editor",
     cmd = cmd,
-    filetypes = { "gd", "gdscript", "gdshader" },
-    root_dir = lspconfig.util.root_pattern("project.godot"),
+    filetypes = { "gd", "gdscript", "gdshader", "gdscript3" },
+    root_markers = { "project.godot", ".git" },
     capabilities = capabilities,
     on_attach = function(client, bufnr)
       utils.suppress_unsupported_lsp_messages(client, { "Method not found: godot/reloadScript" })
     end,
-  })
+  }
+
+  vim.lsp.enable("gdscript")
 end
 
 return M
