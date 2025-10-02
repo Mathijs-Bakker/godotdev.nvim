@@ -1,7 +1,7 @@
 # File Explorers: hide Godot files
 
 ## Oil.nvim
-```
+```lua
 return {
   "stevearc/oil.nvim",
   opts = {
