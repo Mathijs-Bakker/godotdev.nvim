@@ -1,7 +1,7 @@
 # File Explorers: hide Godot files
 The following setups are for [Lazy.nvim](https://github.com/folke/lazy.nvim)
 
-## Oil.nvim
+## oil.nvim
 ```lua
 return {
   "stevearc/oil.nvim",
