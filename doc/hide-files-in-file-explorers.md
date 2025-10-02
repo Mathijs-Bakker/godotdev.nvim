@@ -1,13 +1,16 @@
 # File Explorers: hide Godot files
+The following setups are for [Lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ## Oil.nvim
 ```lua
 return {
   "stevearc/oil.nvim",
+  lazy = false,
   opts = {
     default_file_explorer = true,
+    -- Make sure you have this in your options:
     view_options = {
-      show_hidden = false, -- dotfiles off by default
+      show_hidden = false,
       is_hidden_file = function(name, _)
         local godot_patterns = {
           '%.uid[/]?$',   -- .uid files
