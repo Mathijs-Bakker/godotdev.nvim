@@ -1,5 +1,37 @@
 # File Explorers: hide Godot files
 
+## Oil.nvim
+```
+return {
+  "stevearc/oil.nvim",
+  opts = {
+    default_file_explorer = true,
+    view_options = {
+      show_hidden = false, -- dotfiles off by default
+      is_hidden_file = function(name, _)
+        local godot_patterns = {
+          '%.uid[/]?$',   -- .uid files
+          '%.import[/]?$', -- .import files
+          '^%.godot[/]?$', -- .godot directory
+          '^%.mono[/]?$',  -- .mono directory
+          'godot.*%.tmp$', -- godot temp files
+        }
+        for _, pat in ipairs(godot_patterns) do
+          if name:match(pat) then
+            return true
+          end
+        end
+        return false
+      end,
+    },
+  },
+  dependencies = { "nvim-tree/nvim-web-devicons" },
+  keys = {
+    { "-", "<CMD>Oil<CR>", desc = "Open parent directory" },
+  },
+}
+```
+
 ## mini.files
 
 The filtering option doesn't work as expected in mini.files. Somehow the filtering system is broken.
