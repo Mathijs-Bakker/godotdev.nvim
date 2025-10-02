@@ -184,7 +184,9 @@ Make sure `gdformat` is installed and in your PATH. If not, you will see a warni
 
 For more info on indentation: `:help godotdev-indent`
 
-## Hints/Tips
-
-- [Hide Godot related files in file explorers](doc/hide-files-in-file-explorers.md)
+## Hiding Godot Project Files in oil.nvim and mini.files
+Godot generates files and folders like `.uid`, `.import`, or `.godot/` that can clutter your file explorer.
+You can hide them in both [oil.nvim](https://github.com/stevearc/oil.nvim) and [mini.files](https://github.com/nvim-mini/mini.nvim
+) by filtering against their patterns.
+[Show me how](doc/hide-files-in-file-explorers.md)
 
