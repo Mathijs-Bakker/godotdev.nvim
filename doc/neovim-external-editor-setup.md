@@ -83,7 +83,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
       shift
    fi
 
-   SOCKET="/private/tmp/godot.pipe"   # Neovim socket path
+   SOCKET="/tmp/godot.pipe"   # Neovim socket path
    NVR="/Library/Frameworks/Python.framework/Versions/3.8/bin/nvr"
 
    OPEN_MODE="window"
