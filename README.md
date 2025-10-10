@@ -91,13 +91,13 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 
 ### Optional settings
 ```lua
-require("godotdev").setup({
+vim.lsp.config("godotdev") = {
   editor_host = "127.0.0.1", -- Godot editor host
   editor_port = 6005,        -- Godot LSP port
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = true,  -- Enable auto start Nvim server
-})
+}
 ```
 
 ### Optimize Godot editor for Neovim
