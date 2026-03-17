@@ -72,19 +72,24 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    # Arguments
    # -----------------------------
    DEFAULT_TERMINAL="ghostty"
-   ARG0="$1"
+   ARG0="${1:-}"
 
-   if [[ "$ARG0" == +* || "$ARG0" == --* || -f "$ARG0" ]]; then
-      # No terminal argument provided, use default
-      GODOT_TERMINAL="$DEFAULT_TERMINAL"
+   if [[ -n "$ARG0" && "$ARG0" != +* && "$ARG0" != --* && ! -f "$ARG0" ]]; then
+     # First argument is terminal name
+     GODOT_TERMINAL="$ARG0"
+     shift
    else
-      # First argument is terminal name
-      GODOT_TERMINAL="$ARG0"
-      shift
+     # No terminal argument provided, use default
+     GODOT_TERMINAL="$DEFAULT_TERMINAL"
    fi
 
-   SOCKET="/tmp/godot.pipe"   # Neovim socket path
-   NVR="/Library/Frameworks/Python.framework/Versions/3.8/bin/nvr"
+   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.nvim}" # Neovim socket path
+   NVR="${NVR:-nvr}"
+
+   if ! command -v "$NVR" >/dev/null 2>&1; then
+     echo "nvr not found in PATH (set NVR=/path/to/nvr)" >&2
+     exit 1
+   fi
 
    OPEN_MODE="window"
    LINE=""
@@ -105,28 +110,26 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    [ -z "$FILE" ] && exit 0
 
    # -----------------------------
-   # Open file in Neovim or jump to buffer
+   # Open file in Neovim
    # -----------------------------
-   if $NVR --servername "$SOCKET" --remote-expr \
-     "bufexists(fnamemodify('$FILE', ':p'))" | grep -q 1; then
-     CMD=":buffer $(basename "$FILE")"
-   else
-      case "$OPEN_MODE" in
-        window) CMD=":e $FILE" ;;
-        tab) CMD=":tabedit $FILE" ;;
-        vsplit) CMD=":vsplit $FILE" ;;
-      esac
-   fi
+   FILE_VIM="${FILE//\'/\'\'}"
+   case "$OPEN_MODE" in
+     window) CMD=":execute 'edit ' . fnameescape('${FILE_VIM}')" ;;
+     tab) CMD=":execute 'tabedit ' . fnameescape('${FILE_VIM}')" ;;
+     vsplit) CMD=":execute 'vsplit ' . fnameescape('${FILE_VIM}')" ;;
+   esac
 
    [ -n "$LINE" ] && CMD="$CMD | call cursor($LINE,1)"
    CMD="$CMD | normal! zz"
 
-   $NVR --servername "$SOCKET" --remote-send "<C-\\><C-N>${CMD}<CR>"
+   "$NVR" --servername "$SOCKET" --remote-send "<C-\\><C-N>${CMD}<CR>"
 
    # -----------------------------
    # Focus GUI terminal (macOS)
    # -----------------------------
-   osascript -e "tell application \"$GODOT_TERMINAL\" to activate"
+   if command -v osascript >/dev/null 2>&1; then
+     osascript -e "tell application \"$GODOT_TERMINAL\" to activate"
+   fi
 
    ```
 1. And make it executable:
