@@ -27,7 +27,6 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 
 ### Debugging (DAP)
 - Debug GDScript directly from Neovim using `nvim-dap`
-- For setting up keymaps see: `:help dap-mappings`
 - Optional C# debugging via `netcoredbg`
 
 ### Formatting
@@ -189,4 +188,3 @@ Godot generates files and folders like `.uid`, `.import`, or `.godot/` that can 
 You can hide them in both [oil.nvim](https://github.com/stevearc/oil.nvim) and [mini.files](https://github.com/nvim-mini/mini.nvim
 ) by filtering against their patterns.
 [Show me how](doc/hide-files-in-file-explorers.md)
-

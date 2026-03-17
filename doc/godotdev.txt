@@ -9,7 +9,6 @@ game development using Neovim as an external editor. It provides:
 - LSP support for GDScript and .gdshader files
 - Debugging via nvim-dap
 - Treesitter syntax highlighting
-- Keymaps for common LSP and DAP actions
 - Optional C# support with dotnet, csharp-ls/OmniSharp, and netcoredbg
 - Autoformatting `.gd` files with `gdformat`
 
@@ -23,16 +22,11 @@ Quickstart                                         *godotdev-quickstart*
    (Editor Settings → Network → Enable TCP LSP server)
 3. Open a .gd or .gdshader file
 4. LSP will automatically attach
-5. Use keymaps:
-   - gd → Go to definition
-   - gr → List references
-   - <leader>rn → Rename symbol
-   - See |godotdev-keymaps| for full list
-6. Start debugging with DAP (Launch scene configuration)
-7. Optional: Enable C# support by passing `csharp=true` to setup
-8. Optional: Automatically start Neovim editor server on setup
+5. Start debugging with DAP (Launch scene configuration)
+6. Optional: Enable C# support by passing `csharp=true` to setup
+7. Optional: Automatically start Neovim editor server on setup
    - `require("godotdev").setup({ autostart_editor_server = true })`
-9. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
+8. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
 
 ==============================================================================
 Configuration                                     *godotdev-configuration*
@@ -85,35 +79,6 @@ Windows:
 1. Start Neovim listening on TCP:
    nvim --listen 127.0.0.1:6666
 2. Configure Godot to connect to the same host:port.
-
-==============================================================================
-Keymaps                                           *godotdev-keymaps*
-
-LSP:
-- gd → Go to definition
-- gD → Go to declaration
-- gy → Type definition
-- gi → Go to implementation
-- gr → List references
-- K → Hover
-- <C-k> → Signature help
-- <leader>rn → Rename symbol
-- <leader>ca → Code action
-- <leader>f → Format buffer
-- gl → Show diagnostics
-- [d / ]d → Previous/Next diagnostic
-
-DAP:
-- F5 → Continue / Start
-- F10 → Step over
-- F11 → Step into
-- F12 → Step out
-- <leader>db → Toggle breakpoint
-- <leader>dB → Conditional breakpoint
-
-DAP UI:
-- <leader>du → Toggle UI
-- <leader>dr → Open REPL
 
 ==============================================================================
 Reconnect LSP                                      *godotdev-reconnect*

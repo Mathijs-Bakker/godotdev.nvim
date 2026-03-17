@@ -23,12 +23,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
       pcall(mod.setup, {})
     end
 
-    -- Reattach keymaps + lsp
-    local ok_keymaps, keymaps = pcall(require, "godotdev.keymaps")
-    if ok_keymaps and keymaps.attach and vim.api.nvim_get_current_buf() then
-      keymaps.attach(vim.api.nvim_get_current_buf())
-    end
-
+    -- Reattach lsp
     local ok_lsp, lsp = pcall(require, "godotdev.lsp")
     if ok_lsp and lsp.setup then
       lsp.setup({})
