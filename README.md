@@ -11,7 +11,7 @@ This plugin provides:
 - **Debugging** via `nvim-dap` for GDScript
 - **Treesitter syntax highlighting** for Godot shader files
 - **Automatic formatting** of `.gd` files using `gdformat`
-- **Optional C# support** including LSP, debugging, and tooling
+- **Optional C# support** (user-managed LSP, plus debugging and tooling checks)
 - **Built-in health checks** to verify environment, dependencies, and editor integration
 
 While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
@@ -23,7 +23,7 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 ### LSP Support
 - Full GDScript language support (Go to definition, references, hover, rename, code actions, etc.)
 - `.gdshader` syntax highlighting and language features via Treesitter
-- Optional C# LSP support (`csharp-ls` or OmniSharp) for Godot projects with C# scripts
+- Optional C# LSP support (user-managed `csharp-ls` or OmniSharp) for Godot projects with C# scripts
 
 ### Debugging (DAP)
 - Debug GDScript directly from Neovim using `nvim-dap`
@@ -51,8 +51,8 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 
 ### Optional C# Support
 - Enable by setting `csharp = true` in `require("godotdev").setup()`
+- C# LSP is configured by you (the plugin only checks that `csharp-ls` or OmniSharp is installed)
 - Health checks and DAP integration included
-- Supports cross-platform debugging and LSP integration
 
 ## Requirements
 
@@ -62,7 +62,7 @@ godotdev.nvim provides a complete Neovim environment for Godot 4.x development, 
 - `nvim-dap` and `nvim-dap-ui` for debugging
 - `nvim-treesitter`
 - Windows users must have [`ncat`](https://nmap.org/ncat/) in PATH
-- Optional C# support requires:
+- Optional C# support requires (you manage the LSP configuration):
   - .NET SDK (dotnet)
   - C# LSP server (csharp-ls recommended or omnisharp)
   - netcoredbg debugger
@@ -163,7 +163,7 @@ Reconnects **all Godot buffers** to the LSP.
 ## C# Installation Support
 
 - Enable by setting `csharp = true` in `require("godotdev").setup()`
-- Health checks via `:checkhealth godotdev` will verify:
+- C# LSP setup is user-managed; `:checkhealth godotdev` will only verify tooling is installed:
   - .NET SDK (`dotnet`)
   - C# LSP server (`csharp-ls` or `omnisharp`)
   - Debugger (`netcoredbg`)

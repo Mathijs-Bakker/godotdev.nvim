@@ -9,7 +9,7 @@ game development using Neovim as an external editor. It provides:
 - LSP support for GDScript and .gdshader files
 - Debugging via nvim-dap
 - Treesitter syntax highlighting
-- Optional C# support with dotnet, csharp-ls/OmniSharp, and netcoredbg
+- Optional C# support (user-managed LSP) with dotnet, csharp-ls/OmniSharp, and netcoredbg
 - Autoformatting `.gd` files with `gdformat`
 
 See |godotdev-quickstart| for a quick start guide.
@@ -24,6 +24,7 @@ Quickstart                                         *godotdev-quickstart*
 4. LSP will automatically attach
 5. Start debugging with DAP (Launch scene configuration)
 6. Optional: Enable C# support by passing `csharp=true` to setup
+   (C# LSP configuration is user-managed; health checks only verify tooling)
 7. Optional: Automatically start Neovim editor server on setup
    - `require("godotdev").setup({ autostart_editor_server = true })`
 8. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
@@ -118,7 +119,7 @@ Godot editor:
 - LSP server
 - Debug server
 
-Optional C# support:
+Optional C# support (user-managed LSP):
 - dotnet SDK
 - C# LSP server (csharp-ls or OmniSharp)
 - netcoredbg debugger
