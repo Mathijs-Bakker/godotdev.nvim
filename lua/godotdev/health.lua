@@ -49,17 +49,22 @@ end
 local function check_indent()
   health.start("Indentation")
 
-  local handle = io.popen("grep -P '\t' -R --include='*.gd' --include='*.cs' . 2>/dev/null | head -n 1")
-  if handle then
-    local result = handle:read("*a")
-    handle:close()
-    if result ~= "" then
-      health.warn(
-        "Mixed indentation detected (tabs found in .gd or .cs files). Godot expects spaces, 4 per indent. See :help godotdev-indent"
-      )
-    else
-      health.ok("Indentation style looks consistent (no tabs in .gd or .cs files).")
-    end
+  local result = {}
+  if vim.fn.executable("rg") == 1 then
+    result = vim.fn.systemlist({ "rg", "-n", "-m", "1", "\t", "-g", "*.gd", "-g", "*.cs", "." })
+  elseif vim.fn.executable("grep") == 1 then
+    result = vim.fn.systemlist({ "grep", "-R", "-n", "-m", "1", "\t", "--include=*.gd", "--include=*.cs", "." })
+  else
+    health.info("Indentation check skipped (rg or grep not found).")
+    return
+  end
+
+  if result and #result > 0 then
+    health.warn(
+      "Mixed indentation detected (tabs found in .gd or .cs files). Godot expects spaces, 4 per indent. See :help godotdev-indent"
+    )
+  else
+    health.ok("Indentation style looks consistent (no tabs in .gd or .cs files).")
   end
 end
 
