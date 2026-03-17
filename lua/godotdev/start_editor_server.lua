@@ -23,6 +23,8 @@ local function start_editor_server(pipe)
   vim.notify("Godot editor server started on " .. pipe, vim.log.levels.INFO)
 end
 
+M.start_editor_server = start_editor_server
+
 -- User command
 vim.api.nvim_create_user_command("GodotStartEditorServer", function(opts)
   start_editor_server(opts.args ~= "" and opts.args or nil)
