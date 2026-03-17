@@ -1,3 +1,7 @@
+if not vim.g.godotdev_dev_reload then
+  return
+end
+
 local plugin_name = "godotdev.nvim"
 local plugin_path = vim.fn.expand("~/Repositories/" .. plugin_name)
 
