@@ -25,7 +25,7 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = { "*.gd", "*.cs" },
   callback = function()
     local config = require("godotdev")
-    if config.autostart_editor_server then
+    if config.opts and config.opts.autostart_editor_server then
       start_editor_server()
     end
   end,
