@@ -2,7 +2,7 @@ local M = {}
 
 function M.setup(config)
   local dap = require("dap")
-  local dapui = require("dapui")
+  local ok_dapui, dapui = pcall(require, "dapui")
 
   dap.adapters.godot = {
     type = "server",
@@ -20,16 +20,20 @@ function M.setup(config)
     },
   }
 
-  dapui.setup()
+  if ok_dapui then
+    dapui.setup()
+  end
 
-  dap.listeners.after.event_initialized["dapui_config"] = function()
-    dapui.open()
-  end
-  dap.listeners.before.event_terminated["dapui_config"] = function()
-    dapui.close()
-  end
-  dap.listeners.before.event_exited["dapui_config"] = function()
-    dapui.close()
+  if ok_dapui then
+    dap.listeners.after.event_initialized["dapui_config"] = function()
+      dapui.open()
+    end
+    dap.listeners.before.event_terminated["dapui_config"] = function()
+      dapui.close()
+    end
+    dap.listeners.before.event_exited["dapui_config"] = function()
+      dapui.close()
+    end
   end
 end
 
