@@ -4,11 +4,22 @@ local default_pipe = (vim.loop.os_uname().version:match("Windows")) and [[\\.\pi
 
 local function start_editor_server(pipe)
   pipe = pipe or default_pipe
+  if vim.v.servername ~= "" and vim.v.servername ~= pipe then
+    vim.notify(
+      "Neovim server already running on " .. vim.v.servername .. "; skipping start on " .. pipe,
+      vim.log.levels.WARN
+    )
+    return
+  end
   if vim.v.servername == pipe then
     vim.notify("Godot editor server already running on " .. pipe, vim.log.levels.INFO)
     return
   end
-  vim.fn.serverstart(pipe)
+  local ok, err = pcall(vim.fn.serverstart, pipe)
+  if not ok then
+    vim.notify("Failed to start Godot editor server on " .. pipe .. ": " .. tostring(err), vim.log.levels.ERROR)
+    return
+  end
   vim.notify("Godot editor server started on " .. pipe, vim.log.levels.INFO)
 end
 
