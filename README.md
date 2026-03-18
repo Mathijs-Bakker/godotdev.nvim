@@ -1,11 +1,13 @@
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
-
+  ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
+  ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
+  ![Stars](https://img.shields.io/github/stars/Mathijs-Bakker/godotdev.nvim?style=social)
+  ![Last commit](https://img.shields.io/github/last-commit/Mathijs-Bakker/godotdev.nvim)
+  ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
+  ![Godot](https://img.shields.io/badge/Godot-4.3%2B-blue?logo=godot-engine)
 # godotdev.nvim
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
-
-**godotdev.nvim** is a Neovim plugin for Godot 4 that provides GDScript and GDShader language support, debugging (DAP), formatting, and editor
-  integration with minimal setup.
 
 This plugin provides:
 
@@ -18,9 +20,14 @@ This plugin provides:
 
 While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
 
+## Why godotdev.nvim?
+- Turn Neovim into a first‑class external editor for Godot 4 projects.
+- Get LSP features for GDScript/GDShader without manual wiring.
+- Debug GDScript via DAP and validate setup with built‑in health checks.
+
 ## Features
 
-godotdev.nvim provides a complete Neovim environment for Godot 4.x development, with minimal setup. Key features include:
+Below is a quick overview of what you get out of the box:
 
 ### LSP Support
 - Full GDScript language support (Go to definition, references, hover, rename, code actions, etc.)
@@ -190,3 +197,4 @@ Godot generates files and folders like `.uid`, `.import`, or `.godot/` that can 
 You can hide them in both [oil.nvim](https://github.com/stevearc/oil.nvim) and [mini.files](https://github.com/nvim-mini/mini.nvim
 ) by filtering against their patterns.
 [Show me how](doc/hide-files-in-file-explorers.md)
+
