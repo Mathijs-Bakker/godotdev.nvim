@@ -2,8 +2,10 @@
 
 # godotdev.nvim
 
-**godotdev.nvim** is a batteries-included Neovim plugin for Godot 4.x game development.
-It allows you to use Neovim as a fully featured external editor for Godot, with minimal setup.
+A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
+
+**godotdev.nvim** is a Neovim plugin for Godot 4 that provides GDScript and GDShader language support, debugging (DAP), formatting, and editor
+  integration with minimal setup.
 
 This plugin provides:
 
