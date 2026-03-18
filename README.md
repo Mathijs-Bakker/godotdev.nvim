@@ -1,4 +1,5 @@
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
+
 ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
 ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
 ![Stars](https://img.shields.io/github/stars/Mathijs-Bakker/godotdev.nvim?style=social)
