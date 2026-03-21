@@ -1,4 +1,8 @@
-[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
+<div align="right">
+  
+  [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
+  
+</div>
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
 
 # godotdev.nvim
