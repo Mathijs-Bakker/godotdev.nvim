@@ -1,13 +1,13 @@
+[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
 
 # godotdev.nvim
 
-![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
+[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
 ![Godot](https://img.shields.io/badge/Godot-4.0%2B-blue?logo=godot-engine)
+![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
 ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
-![Last commit](https://img.shields.io/github/last-commit/Mathijs-Bakker/godotdev.nvim)
 ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
-![Stars](https://img.shields.io/github/stars/Mathijs-Bakker/godotdev.nvim?style=social)
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
@@ -199,4 +199,6 @@ Godot generates files and folders like `.uid`, `.import`, or `.godot/` that can 
 You can hide them in both [oil.nvim](https://github.com/stevearc/oil.nvim) and [mini.files](https://github.com/nvim-mini/mini.nvim
 ) by filtering against their patterns.
 [Show me how](doc/hide-files-in-file-explorers.md)
+
+[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
 
