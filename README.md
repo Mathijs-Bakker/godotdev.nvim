@@ -5,8 +5,6 @@
 </div>
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
 
-# godotdev.nvim
-
 <div align="center">
   
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
@@ -16,6 +14,8 @@
 ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
 
 </div>
+
+# godotdev.nvim
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
