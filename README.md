@@ -7,11 +7,15 @@
 
 # godotdev.nvim
 
+<div align="center">
+  
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
 ![Godot](https://img.shields.io/badge/Godot-4.0%2B-blue?logo=godot-engine)
 ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
 ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
 ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
+
+</div>
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
