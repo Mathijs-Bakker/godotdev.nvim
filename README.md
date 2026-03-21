@@ -3,7 +3,7 @@
 # godotdev.nvim
 
 ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
-![Godot](https://img.shields.io/badge/Godot-4.3%2B-blue?logo=godot-engine)
+![Godot](https://img.shields.io/badge/Godot-4.0%2B-blue?logo=godot-engine)
 ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
 ![Last commit](https://img.shields.io/github/last-commit/Mathijs-Bakker/godotdev.nvim)
 ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
