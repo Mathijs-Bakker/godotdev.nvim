@@ -19,7 +19,7 @@
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
-This plugin provides:
+This plugin helps you to set up:
 
 - **LSP support** for GDScript and Godot shaders (`.gdshader` files)
 - **Debugging** via `nvim-dap` for GDScript
