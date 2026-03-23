@@ -118,6 +118,14 @@ require("godotdev").setup({
 })
 ```
 
+**Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
+
+See `:help dap-mappings` and `:help dap-user-commands` for more details.
+
+Additional references:
+- [DAP documentation](https://github.com/mfussenegger/nvim-dap/blob/master/doc/dap.txt)
+- [DAP README / usage](https://github.com/mfussenegger/nvim-dap/tree/master?tab=readme-ov-file#usage)
+
 ### Optimize Godot editor for Neovim
 
 Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.
