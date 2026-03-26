@@ -149,6 +149,7 @@ Dependencies:
 - nvim-dap
 - nvim-dap-ui
 - Windows users: ncat
+- Floating Godot docs: curl and active docs source configuration
 
 Godot editor:
 - LSP server

@@ -155,6 +155,25 @@ Make sure the Godot editor is running with LSP server enabled.
     health.info("ℹ️ C# checks skipped (csharp=false)")
   end
 
+  health.start("Godot docs")
+  local docs_opts = godotdev.opts.docs or {}
+  local docs_renderer = docs_opts.renderer or "float"
+  local docs_source = docs_opts.source_base_url
+    or ("https://raw.githubusercontent.com/godotengine/godot-docs/" .. (docs_opts.source_ref or "master"))
+
+  health.info("Docs renderer: " .. docs_renderer)
+  health.info("Docs source: " .. docs_source)
+
+  if docs_renderer == "float" then
+    if has_exe("curl") then
+      health.ok("✅ OK 'curl' found for floating Godot docs")
+    else
+      health.warn("⚠️ WARNING 'curl' not found. Floating Godot docs rendering requires 'curl'.")
+    end
+  else
+    health.info("ℹ️ Floating docs dependency checks skipped (docs.renderer ~= 'float').")
+  end
+
   -- Code Formatting:
   health.start("GDScript Formatter")
 
