@@ -2,6 +2,9 @@ local M = {}
 
 local state = {
   index_cache = nil,
+  doc_url_cache = {},
+  rst_cache = {},
+  markdown_cache = {},
 }
 
 local heading_levels = {
@@ -108,6 +111,76 @@ local function build_docs_source_base_url()
   return ("https://raw.githubusercontent.com/godotengine/godot-docs/%s"):format(ref)
 end
 
+local function is_cache_enabled()
+  local config = get_config()
+  if config.cache == nil then
+    return true
+  end
+
+  if type(config.cache) == "boolean" then
+    return config.cache
+  end
+
+  return config.cache.enabled ~= false
+end
+
+local function cache_max_entries()
+  local config = get_config()
+  local cache = config.cache
+  if type(cache) == "table" and type(cache.max_entries) == "number" and cache.max_entries > 0 then
+    return math.floor(cache.max_entries)
+  end
+  return 64
+end
+
+local function cache_key(parts)
+  return table.concat(parts, "::")
+end
+
+local function cache_get(bucket, key)
+  if not is_cache_enabled() then
+    return nil
+  end
+
+  local entry = bucket[key]
+  if not entry then
+    return nil
+  end
+
+  entry.last_used = vim.loop.hrtime()
+  return entry.value
+end
+
+local function cache_put(bucket, key, value)
+  if not is_cache_enabled() then
+    return value
+  end
+
+  bucket[key] = {
+    value = value,
+    last_used = vim.loop.hrtime(),
+  }
+
+  local max_entries = cache_max_entries()
+  local count = 0
+  local oldest_key
+  local oldest_time
+
+  for existing_key, entry in pairs(bucket) do
+    count = count + 1
+    if not oldest_time or entry.last_used < oldest_time then
+      oldest_time = entry.last_used
+      oldest_key = existing_key
+    end
+  end
+
+  if count > max_entries and oldest_key then
+    bucket[oldest_key] = nil
+  end
+
+  return value
+end
+
 local function class_slug(symbol)
   return symbol:lower():gsub("%s+", "")
 end
@@ -154,6 +227,18 @@ local function fetch_url(url, on_success, on_error)
   end)
 end
 
+local function fetch_text(url, bucket, key, on_success, on_error)
+  local cached = cache_get(bucket, key)
+  if cached ~= nil then
+    on_success(cached)
+    return
+  end
+
+  fetch_url(url, function(text)
+    on_success(cache_put(bucket, key, text))
+  end, on_error)
+end
+
 local function parse_index(html)
   local items = {}
 
@@ -183,9 +268,17 @@ local function fetch_index(callback)
 end
 
 local function resolve_doc_url(symbol, callback)
+  local key = cache_key({ build_base_url(), symbol:lower() })
+  local cached = cache_get(state.doc_url_cache, key)
+  if cached ~= nil then
+    callback(cached.url, cached.html)
+    return
+  end
+
   local direct_url = page_url_from_symbol(symbol)
 
-  fetch_url(direct_url, function(html)
+  fetch_text(direct_url, state.rst_cache, cache_key({ "page-html", direct_url }), function(html)
+    cache_put(state.doc_url_cache, key, { url = direct_url, html = html })
     callback(direct_url, html)
   end, function(_)
     fetch_index(function(index)
@@ -196,7 +289,8 @@ local function resolve_doc_url(symbol, callback)
       end
 
       local resolved_url = href:match("^https?://") and href or (build_base_url() .. "/" .. href:gsub("^/", ""))
-      fetch_url(resolved_url, function(html)
+      fetch_text(resolved_url, state.rst_cache, cache_key({ "page-html", resolved_url }), function(html)
+        cache_put(state.doc_url_cache, key, { url = resolved_url, html = html })
         callback(resolved_url, html)
       end, function(_)
         callback(nil, nil)
@@ -214,6 +308,19 @@ local function normalize_whitespace(text)
 end
 
 local function normalize_inline_rst(text)
+  if text == "" then
+    return ""
+  end
+
+  if
+    not text:find("\\ ", 1, true)
+    and not text:find("|", 1, true)
+    and not text:find("`", 1, true)
+    and not text:find(":", 1, true)
+  then
+    return trim(text)
+  end
+
   text = text:gsub("\\ ", "")
   text = text:gsub("|bitfield|", "BitField")
   text = text:gsub("|const|", "const")
@@ -235,6 +342,41 @@ local function normalize_inline_rst(text)
   text = text:gsub("`([^`]+)`__", "%1")
   text = text:gsub("__%s*%.%.?$", "")
   return trim(text)
+end
+
+local function is_admonition(line)
+  return line:match("^%.%. note::")
+    or line:match("^%.%. warning::")
+    or line:match("^%.%. tip::")
+    or line:match("^%.%. important::")
+    or line:match("^%.%. deprecated::")
+end
+
+local function consume_paragraph(lines, index)
+  local paragraph = {}
+  local i = index
+
+  while i <= #lines do
+    local line = lines[i]
+    local next_line = lines[i + 1]
+
+    if line == "" or line:match("^%s+$") then
+      break
+    end
+
+    if line:match("^%.%. ") or line:match("^%+") or line:match("^%- ") then
+      break
+    end
+
+    if next_line and next_line:match('^([=~%^"%-])%1+$') and #trim(line) > 0 then
+      break
+    end
+
+    table.insert(paragraph, normalize_inline_rst(trim(line)))
+    i = i + 1
+  end
+
+  return table.concat(paragraph, " "), i
 end
 
 local function split_table_row(line)
@@ -336,11 +478,12 @@ local function rst_to_markdown(rst)
   while i <= #lines do
     local line = lines[i]
     local next_line = lines[i + 1]
+    local trimmed = trim(line)
 
-    if next_line and next_line:match('^([=~%^"%-])%1+$') and #trim(line) > 0 then
+    if next_line and next_line:match('^([=~%^"%-])%1+$') and #trimmed > 0 then
       local marker = next_line:sub(1, 1)
       local heading = heading_levels[marker] or "##"
-      table.insert(output, ("%s %s"):format(heading, normalize_inline_rst(trim(line))))
+      table.insert(output, ("%s %s"):format(heading, normalize_inline_rst(trimmed)))
       table.insert(output, "")
       i = i + 2
     elseif line:match("^%.%. _") then
@@ -355,13 +498,7 @@ local function rst_to_markdown(rst)
       table.insert(output, "```")
       table.insert(output, "")
       i = next_index
-    elseif
-      line:match("^%.%. note::")
-      or line:match("^%.%. warning::")
-      or line:match("^%.%. tip::")
-      or line:match("^%.%. important::")
-      or line:match("^%.%. deprecated::")
-    then
+    elseif is_admonition(line) then
       local kind = line:match("^%.%.%s+([%a_]+)::"):upper()
       local block, next_index = consume_indented_block(lines, i + 1, "   ")
       local markdown_block = { ("> [!%s]"):format(kind) }
@@ -389,8 +526,12 @@ local function rst_to_markdown(rst)
       table.insert(output, "")
       i = i + 1
     else
-      table.insert(output, normalize_inline_rst(line))
-      i = i + 1
+      local paragraph, next_index = consume_paragraph(lines, i)
+      if paragraph ~= "" then
+        table.insert(output, paragraph)
+        table.insert(output, "")
+      end
+      i = next_index
     end
   end
 
@@ -439,9 +580,15 @@ end
 local function open_in_float_from_rst(symbol, page_url)
   local rst_url = rst_url_from_symbol(symbol)
   local config = get_config()
+  local source_key = cache_key({ build_docs_source_base_url(), symbol:lower() })
 
-  fetch_url(rst_url, function(rst)
-    local markdown = rst_to_markdown(rst)
+  fetch_text(rst_url, state.rst_cache, source_key, function(rst)
+    local markdown_key = cache_key({ source_key, "markdown" })
+    local markdown = cache_get(state.markdown_cache, markdown_key)
+    if markdown == nil then
+      markdown = cache_put(state.markdown_cache, markdown_key, rst_to_markdown(rst))
+    end
+
     if markdown == "" then
       if config.fallback_renderer == "browser" then
         open_in_browser(page_url)
