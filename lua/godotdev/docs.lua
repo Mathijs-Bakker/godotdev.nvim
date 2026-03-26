@@ -4,6 +4,14 @@ local state = {
   index_cache = nil,
 }
 
+local heading_levels = {
+  ["="] = "#",
+  ["-"] = "##",
+  ["~"] = "###",
+  ["^"] = "####",
+  ['"'] = "#####",
+}
+
 local function codepoint_to_char(codepoint)
   if vim.fn.has("nvim-0.11") == 1 then
     return vim.fn.nr2char(codepoint)
@@ -43,7 +51,8 @@ local function show_feedback(message)
 end
 
 local function trim(text)
-  return (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+  local trimmed = (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+  return trimmed
 end
 
 local function decode_html_entities(text)
@@ -88,12 +97,27 @@ local function build_base_url()
   return ("https://docs.godotengine.org/%s/%s"):format(language, version)
 end
 
+local function build_docs_source_base_url()
+  local config = get_config()
+
+  if config.source_base_url and config.source_base_url ~= "" then
+    return config.source_base_url:gsub("/$", "")
+  end
+
+  local ref = config.source_ref or "master"
+  return ("https://raw.githubusercontent.com/godotengine/godot-docs/%s"):format(ref)
+end
+
 local function class_slug(symbol)
   return symbol:lower():gsub("%s+", "")
 end
 
 local function page_url_from_symbol(symbol)
   return ("%s/classes/class_%s.html"):format(build_base_url(), class_slug(symbol))
+end
+
+local function rst_url_from_symbol(symbol)
+  return ("%s/classes/class_%s.rst"):format(build_docs_source_base_url(), class_slug(symbol))
 end
 
 local function extract_symbol(input)
@@ -181,53 +205,199 @@ local function resolve_doc_url(symbol, callback)
   end)
 end
 
-local function html_to_text(html)
-  local content = html:match("<main.->(.*)</main>") or html
-
-  content = content:gsub("<script.-</script>", "")
-  content = content:gsub("<style.-</style>", "")
-  content = content:gsub("<nav.->.-</nav>", "")
-  content = content:gsub("<table", "\n<table")
-  content = content:gsub("</h[1-6]>", "\n")
-  content = content:gsub("<h1[^>]->", "\n# ")
-  content = content:gsub("<h2[^>]->", "\n## ")
-  content = content:gsub("<h3[^>]->", "\n### ")
-  content = content:gsub("<h4[^>]->", "\n#### ")
-  content = content:gsub("<h5[^>]->", "\n##### ")
-  content = content:gsub("<h6[^>]->", "\n###### ")
-  content = content:gsub("<br%s*/?>", "\n")
-  content = content:gsub("</p>", "\n\n")
-  content = content:gsub("</div>", "\n")
-  content = content:gsub("</section>", "\n")
-  content = content:gsub("</article>", "\n")
-  content = content:gsub("</li>", "\n")
-  content = content:gsub("<li[^>]->", "- ")
-  content = content:gsub("</tr>", "\n")
-  content = content:gsub("</td>", " ")
-  content = content:gsub("</th>", " ")
-  content = content:gsub("<pre[^>]->", "\n```text\n")
-  content = content:gsub("</pre>", "\n```\n")
-  content = content:gsub("<code[^>]->", "`")
-  content = content:gsub("</code>", "`")
-  content = content:gsub('<span[^>]-class="pre"[^>]->', "`")
-  content = content:gsub("</span>", "")
-  content = content:gsub('<a [^>]-href="([^"]+)"[^>]->(.-)</a>', function(href, label)
-    local clean_label = label:gsub("<[^>]->", "")
-    if clean_label == "" then
-      return href
-    end
-    return ("%s (%s)"):format(clean_label, href)
-  end)
-  content = content:gsub("<[^>]->", "")
-  content = decode_html_entities(content)
-  content = content:gsub("[ \t]+\n", "\n")
-  content = content:gsub("\n[ \t]+", "\n")
-  content = content:gsub("\n\n\n+", "\n\n")
-
-  return trim(content)
+local function normalize_whitespace(text)
+  text = text:gsub("\r\n", "\n")
+  text = text:gsub("[ \t]+\n", "\n")
+  text = text:gsub("\n[ \t]+", "\n")
+  text = text:gsub("\n\n\n+", "\n\n")
+  return trim(text)
 end
 
-local function open_in_float(title, text, url)
+local function normalize_inline_rst(text)
+  text = text:gsub("\\ ", "")
+  text = text:gsub("|bitfield|", "BitField")
+  text = text:gsub("|const|", "const")
+  text = text:gsub("|virtual|", "virtual")
+  text = text:gsub("|vararg|", "vararg")
+  text = text:gsub("|static|", "static")
+  text = text:gsub("|operator|", "operator")
+  text = text:gsub("``([^`]+)``", "`%1`")
+  text = text:gsub(":ref:`([^`<]+)%s*<[^`>]+>`", "`%1`")
+  text = text:gsub(":ref:`([^`]+)`", "`%1`")
+  text = text:gsub(":doc:`([^`<]+)%s*<[^`>]+>`", "%1")
+  text = text:gsub(":doc:`([^`]+)`", "%1")
+  text = text:gsub(":abbr:`([^`<]+)%s*%(([^`]+)%)`", "%1 (%2)")
+  text = text:gsub(":abbr:`([^`]+)`", "%1")
+  text = text:gsub(":code:`([^`]+)`", "`%1`")
+  text = text:gsub(":kbd:`([^`]+)`", "`%1`")
+  text = text:gsub(":math:`([^`]+)`", "`%1`")
+  text = text:gsub(":literal:`([^`]+)`", "`%1`")
+  text = text:gsub("`([^`]+)`__", "%1")
+  text = text:gsub("__%s*%.%.?$", "")
+  return trim(text)
+end
+
+local function split_table_row(line)
+  local row = {}
+  local inner = line:sub(2, -2)
+
+  for cell in (inner .. "|"):gmatch("(.-)|") do
+    table.insert(row, normalize_inline_rst(trim(cell)))
+  end
+
+  return row
+end
+
+local function format_markdown_table(rows)
+  if #rows == 0 then
+    return {}
+  end
+
+  local columns = 0
+  for _, row in ipairs(rows) do
+    columns = math.max(columns, #row)
+  end
+
+  for _, row in ipairs(rows) do
+    while #row < columns do
+      table.insert(row, "")
+    end
+  end
+
+  local header = rows[1]
+  local separator = {}
+  local markdown = {
+    "| " .. table.concat(header, " | ") .. " |",
+  }
+
+  for _ = 1, columns do
+    table.insert(separator, "---")
+  end
+  table.insert(markdown, "| " .. table.concat(separator, " | ") .. " |")
+
+  for i = 2, #rows do
+    table.insert(markdown, "| " .. table.concat(rows[i], " | ") .. " |")
+  end
+
+  return markdown
+end
+
+local function consume_grid_table(lines, index)
+  local rows = {}
+  local i = index
+
+  while i <= #lines do
+    local line = lines[i]
+    if not line:match("^%+") and not line:match("^|") then
+      break
+    end
+
+    if line:match("^|") then
+      table.insert(rows, split_table_row(line))
+    end
+
+    i = i + 1
+  end
+
+  return format_markdown_table(rows), i
+end
+
+local function consume_indented_block(lines, index, indent)
+  local block = {}
+  local i = index
+
+  while i <= #lines do
+    local line = lines[i]
+    if line == "" then
+      table.insert(block, "")
+      i = i + 1
+    elseif line:match("^" .. indent .. "%S") then
+      table.insert(block, line:gsub("^" .. indent, "", 1))
+      i = i + 1
+    else
+      break
+    end
+  end
+
+  return block, i
+end
+
+local function append_lines(output, lines_to_add)
+  for _, line in ipairs(lines_to_add) do
+    table.insert(output, line)
+  end
+end
+
+local function rst_to_markdown(rst)
+  local lines = vim.split(rst:gsub("\r\n", "\n"), "\n", { plain = true })
+  local output = {}
+  local i = 1
+
+  while i <= #lines do
+    local line = lines[i]
+    local next_line = lines[i + 1]
+
+    if next_line and next_line:match('^([=~%^"%-])%1+$') and #trim(line) > 0 then
+      local marker = next_line:sub(1, 1)
+      local heading = heading_levels[marker] or "##"
+      table.insert(output, ("%s %s"):format(heading, normalize_inline_rst(trim(line))))
+      table.insert(output, "")
+      i = i + 2
+    elseif line:match("^%.%. _") then
+      i = i + 1
+    elseif line:match("^%.%. rst%-class::") then
+      i = i + 1
+    elseif line:match("^%.%. code%-block::") then
+      local language = trim(line:match("^%.%. code%-block::%s*(.*)$") or "")
+      local block, next_index = consume_indented_block(lines, i + 1, "   ")
+      table.insert(output, "```" .. language)
+      append_lines(output, block)
+      table.insert(output, "```")
+      table.insert(output, "")
+      i = next_index
+    elseif
+      line:match("^%.%. note::")
+      or line:match("^%.%. warning::")
+      or line:match("^%.%. tip::")
+      or line:match("^%.%. important::")
+      or line:match("^%.%. deprecated::")
+    then
+      local kind = line:match("^%.%.%s+([%a_]+)::"):upper()
+      local block, next_index = consume_indented_block(lines, i + 1, "   ")
+      local markdown_block = { ("> [!%s]"):format(kind) }
+      for _, block_line in ipairs(block) do
+        if block_line == "" then
+          table.insert(markdown_block, ">")
+        else
+          table.insert(markdown_block, "> " .. normalize_inline_rst(block_line))
+        end
+      end
+      append_lines(output, markdown_block)
+      table.insert(output, "")
+      i = next_index
+    elseif line:match("^%.%. ") then
+      i = i + 1
+    elseif line:match("^%+") then
+      local markdown_table, next_index = consume_grid_table(lines, i)
+      append_lines(output, markdown_table)
+      table.insert(output, "")
+      i = next_index
+    elseif line:match("^%- ") then
+      table.insert(output, "- " .. normalize_inline_rst(trim(line:sub(3))))
+      i = i + 1
+    elseif line:match("^%s+$") or line == "" then
+      table.insert(output, "")
+      i = i + 1
+    else
+      table.insert(output, normalize_inline_rst(line))
+      i = i + 1
+    end
+  end
+
+  return normalize_whitespace(table.concat(output, "\n"))
+end
+
+local function open_in_float(title, text, source_url, page_url)
   local config = get_config()
   local float = config.float or {}
   local width = math.min(math.max(math.floor(vim.o.columns * (float.width or 0.8)), 60), vim.o.columns)
@@ -236,7 +406,8 @@ local function open_in_float(title, text, url)
   local col = math.floor((vim.o.columns - width) / 2)
 
   local buf = vim.api.nvim_create_buf(false, true)
-  local lines = vim.split(("# %s\n\nSource: %s\n\n%s"):format(title, url, text), "\n", { plain = true })
+  local header = ("# %s\n\nSource: %s\nDocs: %s\n\n%s"):format(title, source_url, page_url, text)
+  local lines = vim.split(header, "\n", { plain = true })
 
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
   vim.bo[buf].bufhidden = "wipe"
@@ -265,6 +436,33 @@ local function open_in_browser(url)
   end
 end
 
+local function open_in_float_from_rst(symbol, page_url)
+  local rst_url = rst_url_from_symbol(symbol)
+  local config = get_config()
+
+  fetch_url(rst_url, function(rst)
+    local markdown = rst_to_markdown(rst)
+    if markdown == "" then
+      if config.fallback_renderer == "browser" then
+        open_in_browser(page_url)
+        return
+      end
+
+      show_feedback(("Could not render Godot docs for `%s`."):format(symbol))
+      return
+    end
+
+    open_in_float(symbol, markdown, rst_url, page_url)
+  end, function(_)
+    if config.fallback_renderer == "browser" then
+      open_in_browser(page_url)
+      return
+    end
+
+    show_feedback(("Could not find Godot docs for `%s`."):format(symbol))
+  end)
+end
+
 function M.open(symbol, renderer)
   local resolved_symbol = extract_symbol(symbol)
   if resolved_symbol == "" then
@@ -275,26 +473,18 @@ function M.open(symbol, renderer)
   local config = get_config()
   local chosen_renderer = renderer or config.renderer or "float"
 
-  if chosen_renderer == "browser" then
-    resolve_doc_url(resolved_symbol, function(url, _)
-      open_in_browser(url or page_url_from_symbol(resolved_symbol))
-    end)
-    return
-  end
-
-  resolve_doc_url(resolved_symbol, function(url, html)
-    if not url or not html then
+  resolve_doc_url(resolved_symbol, function(url, _)
+    if not url then
       show_feedback(("Could not find Godot docs for `%s`."):format(resolved_symbol))
       return
     end
 
-    local fallback = config.fallback_renderer
-    if chosen_renderer ~= "browser" and fallback == "browser" and not html_to_text(html):match("%S") then
+    if chosen_renderer == "browser" then
       open_in_browser(url)
       return
     end
 
-    open_in_float(resolved_symbol, html_to_text(html), url)
+    open_in_float_from_rst(resolved_symbol, url)
   end)
 end
 
