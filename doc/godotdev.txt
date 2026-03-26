@@ -67,6 +67,14 @@ Recommended Godot editor settings for external Neovim integration:
 - Editor Settings > Interface > Editor > Save on Focus Loss
 - Editor Settings > Interface > Editor > Import Resources When Unfocused
 
+Recommended docs mapping:
+
+  vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+
+Alternative leader mapping:
+
+  vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+
 ==============================================================================
 External editor integration                        *godotdev-external*
 
