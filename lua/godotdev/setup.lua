@@ -10,6 +10,7 @@ M.opts = {
   docs = {
     renderer = "float", -- "float" | "browser"
     fallback_renderer = "browser", -- nil | "browser"
+    missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",
     language = "en",
     timeout_ms = 10000,

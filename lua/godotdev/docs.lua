@@ -30,6 +30,18 @@ local function get_config()
   return godotdev.opts.docs or {}
 end
 
+local function show_feedback(message)
+  local config = get_config()
+  local mode = config.missing_symbol_feedback or "message"
+
+  if mode == "notify" then
+    vim.notify(message, vim.log.levels.WARN)
+    return
+  end
+
+  vim.api.nvim_echo({ { message, "WarningMsg" } }, false, {})
+end
+
 local function trim(text)
   return (text or ""):gsub("^%s+", ""):gsub("%s+$", "")
 end
@@ -256,7 +268,7 @@ end
 function M.open(symbol, renderer)
   local resolved_symbol = extract_symbol(symbol)
   if resolved_symbol == "" then
-    vim.notify("No Godot symbol provided and nothing found under cursor.", vim.log.levels.WARN)
+    show_feedback("No Godot symbol provided and nothing found under cursor.")
     return
   end
 
@@ -272,13 +284,13 @@ function M.open(symbol, renderer)
 
   resolve_doc_url(resolved_symbol, function(url, html)
     if not url or not html then
-      local fallback = config.fallback_renderer
-      if fallback == "browser" then
-        open_in_browser(page_url_from_symbol(resolved_symbol))
-        return
-      end
+      show_feedback(("Could not find Godot docs for `%s`."):format(resolved_symbol))
+      return
+    end
 
-      vim.notify(("Could not find Godot docs for `%s`."):format(resolved_symbol), vim.log.levels.WARN)
+    local fallback = config.fallback_renderer
+    if chosen_renderer ~= "browser" and fallback == "browser" and not html_to_text(html):match("%S") then
+      open_in_browser(url)
       return
     end
 

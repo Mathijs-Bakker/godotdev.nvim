@@ -43,6 +43,7 @@ Example setup:
       docs = {
         renderer = "float",      -- "float" | "browser"
         fallback_renderer = "browser",
+        missing_symbol_feedback = "message", -- "message" | "notify"
         version = "stable",
         language = "en",
         timeout_ms = 10000,
@@ -118,6 +119,8 @@ Default behavior:
 If `:GodotDocs` is called without an argument, it uses the symbol under cursor.
 The default renderer is configured through `require("godotdev").setup({ docs = { renderer = "float" } })`.
 Floating-window rendering fetches content from the official Godot docs site and requires `curl`.
+When a symbol does not resolve to a Godot class page, the plugin shows a regular message by default.
+Set `docs.missing_symbol_feedback = "notify"` to use notifications instead.
 
 ==============================================================================
 Editor server                                     *godotdev-editor-server*
