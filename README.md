@@ -146,6 +146,18 @@ require("godotdev").setup({
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
 
+Recommended docs mapping:
+
+```lua
+vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+```
+
+If you prefer a leader mapping instead:
+
+```lua
+vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+```
+
 See `:help dap-mappings` and `:help dap-user-commands` for more details.
 
 Additional references:
