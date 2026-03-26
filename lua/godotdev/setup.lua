@@ -7,10 +7,22 @@ M.opts = {
   autostart_editor_server = false,
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
   formatter_cmd = nil, -- allow override, e.g. "gdscript-format --check"
+  docs = {
+    renderer = "float", -- "float" | "browser"
+    fallback_renderer = "browser", -- nil | "browser"
+    version = "stable",
+    language = "en",
+    timeout_ms = 10000,
+    float = {
+      width = 0.8,
+      height = 0.8,
+      border = "rounded",
+    },
+  },
 }
 
 function M.setup(opts)
-  M.opts = vim.tbl_extend("force", M.opts, opts or {})
+  M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
 
   require("godotdev.lsp").setup({
     editor_host = M.opts.editor_host,
@@ -27,6 +39,7 @@ function M.setup(opts)
 
   require("godotdev.reconnect_lsp")
   require("godotdev.formatting")
+  require("godotdev.docs").setup()
 
   require("godotdev.dap").setup({
     type = "server",
@@ -40,11 +53,11 @@ function M.setup(opts)
     port = M.opts.editor_port,
   })
 
-  if opts.csharp then
+  if M.opts.csharp then
     local dap = require("dap")
     dap.adapters.coreclr = {
       type = "executable",
-      command = opts.netcoredbg_path or "netcoredbg",
+      command = M.opts.netcoredbg_path or "netcoredbg",
       args = { "--interpreter=vscode" },
     }
     dap.configurations.cs = {

@@ -40,6 +40,18 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = true, -- optional, start server automatically
+      docs = {
+        renderer = "float",      -- "float" | "browser"
+        fallback_renderer = "browser",
+        version = "stable",
+        language = "en",
+        timeout_ms = 10000,
+        float = {
+          width = 0.8,
+          height = 0.8,
+          border = "rounded",
+        },
+      },
   })
 
 Recommended Godot editor settings for external Neovim integration:
@@ -89,6 +101,23 @@ If the LSP disconnects or you opened a script before Neovim, run:
   :GodotReconnectLSP
 
 Reconnects **all buffers** for GDScript, GDShader, and GDResource files.
+
+==============================================================================
+Godot docs                                       *godotdev-docs*
+
+Open the official Godot class reference from inside Neovim:
+
+  :GodotDocs Node
+
+Default behavior:
+- `:GodotDocs [ClassName]` opens docs using the configured renderer
+- `:GodotDocsFloat [ClassName]` forces a floating window
+- `:GodotDocsBrowser [ClassName]` opens in the system browser
+- `:GodotDocsCursor` opens docs for the symbol under the cursor
+
+If `:GodotDocs` is called without an argument, it uses the symbol under cursor.
+The default renderer is configured through `require("godotdev").setup({ docs = { renderer = "float" } })`.
+Floating-window rendering fetches content from the official Godot docs site and requires `curl`.
 
 ==============================================================================
 Editor server                                     *godotdev-editor-server*

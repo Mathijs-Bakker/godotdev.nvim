@@ -65,6 +65,11 @@ Below is a quick overview of what you get out of the box:
 - Commands to start or reconnect to Godot’s editor LSP:
   - `:GodotStartEditorServer`
   - `:GodotReconnectLSP`
+- Commands to open Godot class reference docs:
+  - `:GodotDocs [ClassName]`
+  - `:GodotDocsFloat [ClassName]`
+  - `:GodotDocsBrowser [ClassName]`
+  - `:GodotDocsCursor`
 - Automatic LSP attachment for Godot filetypes (`.gd`, `.gdshader`, `.gdresource`, optional `.cs`)
 - Works cross-platform (macOS, Linux, Windows) with TCP or named pipes
 
@@ -115,6 +120,18 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = true,  -- Enable auto start Nvim server
+  docs = {
+    renderer = "float",      -- default: open docs in a floating window
+    fallback_renderer = "browser",
+    version = "stable",      -- e.g. "stable", "latest", "4.5"
+    language = "en",
+    timeout_ms = 10000,
+    float = {
+      width = 0.8,
+      height = 0.8,
+      border = "rounded",
+    },
+  },
 })
 ```
 
@@ -187,6 +204,24 @@ If the LSP disconnects or you opened a script before Neovim, run:
 
 Reconnects **all Godot buffers** to the LSP.
 
+## Godot class docs
+
+Open the official Godot class reference from Neovim:
+
+```vim
+:GodotDocs Node
+```
+
+By default, `:GodotDocs` renders the docs in a floating window. You can also:
+
+```vim
+:GodotDocsFloat Node
+:GodotDocsBrowser Node
+:GodotDocsCursor
+```
+
+If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener, while floating-window rendering fetches from the official Godot docs site with `curl`.
+
 ## C# Installation Support
 
 - Enable by setting `csharp = true` in `require("godotdev").setup()`
@@ -217,4 +252,3 @@ You can hide them in both [oil.nvim](https://github.com/stevearc/oil.nvim) and [
 [Show me how](doc/hide-files-in-file-explorers.md)
 
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
-
