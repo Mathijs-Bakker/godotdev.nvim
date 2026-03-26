@@ -123,6 +123,7 @@ require("godotdev").setup({
   docs = {
     renderer = "float",      -- default: open docs in a floating window
     fallback_renderer = "browser",
+    missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",      -- e.g. "stable", "latest", "4.5"
     language = "en",
     timeout_ms = 10000,
@@ -221,6 +222,7 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 ```
 
 If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener, while floating-window rendering fetches from the official Godot docs site with `curl`.
+When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
 ## C# Installation Support
 
