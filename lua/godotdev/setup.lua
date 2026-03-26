@@ -16,6 +16,10 @@ M.opts = {
     source_ref = "master",
     source_base_url = nil, -- optional override for raw godot-docs source
     timeout_ms = 10000,
+    cache = {
+      enabled = true,
+      max_entries = 64,
+    },
     float = {
       width = 0.8,
       height = 0.8,

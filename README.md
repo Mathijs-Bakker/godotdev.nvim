@@ -131,6 +131,10 @@ require("godotdev").setup({
     source_ref = "master",   -- godot-docs git ref used for floating docs
     source_base_url = nil,   -- optional override for raw docs source
     timeout_ms = 10000,
+    cache = {
+      enabled = true,
+      max_entries = 64,
+    },
     float = {
       width = 0.8,
       height = 0.8,
@@ -227,6 +231,7 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 
 - If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener.
 - Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
 - The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
