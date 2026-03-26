@@ -146,18 +146,6 @@ require("godotdev").setup({
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
 
-Recommended docs mapping:
-
-```lua
-vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
-```
-
-If you prefer a leader mapping instead:
-
-```lua
-vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
-```
-
 See `:help dap-mappings` and `:help dap-user-commands` for more details.
 
 Additional references:
@@ -246,6 +234,26 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 - Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
 - The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
+
+Recommended docs mapping:
+
+```lua
+vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+```
+
+If you prefer a leader mapping instead:
+
+```lua
+vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
+```
+
+> Why gK:
+>
+>   - K is commonly LSP hover under cursor.
+>   - gK is close enough semantically to “keyword docs” and is usually free.
+>   - gd, gD, gr are already established LSP/navigation motions.
+>    - <leader>gd reads like [g]odot [d]ocs.
+>   - It fits well because :GodotDocs already defaults to the symbol under cursor.
 
 ## C# Installation Support
 
