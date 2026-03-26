@@ -1,12 +1,12 @@
 <div align="left">
-  
+
   [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
-  
+
 </div>
 <div align="center"><img src="assets/godotdev-nvim-logo.svg" width="300"></div>
 
 <div align="center">
-  
+
 [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
 ![Godot](https://img.shields.io/badge/Godot-4.0%2B-blue?logo=godot-engine)
 ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
@@ -22,6 +22,7 @@ A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, an
 This plugin helps you to set up:
 
 - **LSP support** for GDScript and Godot shaders (`.gdshader` files)
+- **Godot class docs** in Neovim, rendered from the official docs source as Markdown
 - **Debugging** via `nvim-dap` for GDScript
 - **Treesitter syntax highlighting** for Godot shader files
 - **Automatic formatting** of `.gd` files using `gdformat`
@@ -223,9 +224,10 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 :GodotDocsCursor
 ```
 
-If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener. Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
-The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as `MeanderingProgrammer/render-markdown.nvim` can improve its presentation.
-When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
+- If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener.
+- Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
+- When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
 ## C# Installation Support
 
