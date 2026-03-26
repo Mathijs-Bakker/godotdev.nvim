@@ -247,13 +247,13 @@ If you prefer a leader mapping instead:
 vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
 ```
 
-> Why gK:
->
->   - K is commonly LSP hover under cursor.
->   - gK is close enough semantically to “keyword docs” and is usually free.
->   - gd, gD, gr are already established LSP/navigation motions.
->    - <leader>gd reads like [g]odot [d]ocs.
->   - It fits well because :GodotDocs already defaults to the symbol under cursor.
+Why `gK`:
+
+  - `K` is commonly LSP hover under cursor.
+  - `gK` is close enough semantically to “keyword docs” and is usually free.
+  - `gd`, `gD`, `gr` are already established LSP/navigation motions.
+  - `<leader>gd` reads like `g`odot `d`ocs.
+  - It fits well because :GodotDocs already defaults to the symbol under cursor.
 
 ## C# Installation Support
 
