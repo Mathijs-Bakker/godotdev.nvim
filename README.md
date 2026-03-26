@@ -235,7 +235,7 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 - The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
-Recommended docs mapping:
+ℹ️ Recommended docs mapping:
 
 ```lua
 vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
@@ -250,10 +250,10 @@ vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
 Why `gK`:
 
   - `K` is commonly LSP hover under cursor.
-  - `gK` is close enough semantically to “keyword docs” and is usually free.
+  - :white_check_mark: `gK` is close enough semantically to “keyword docs” and is usually free.
   - `gd`, `gD`, `gr` are already established LSP/navigation motions.
-  - `<leader>gd` reads like `g`odot `d`ocs.
-  - It fits well because :GodotDocs already defaults to the symbol under cursor.
+  - :white_check_mark:`<leader>gd` reads like `g`odot `d`ocs.
+  - It fits well because `:GodotDocs` already defaults to the symbol under cursor.
 
 ## C# Installation Support
 
