@@ -121,6 +121,7 @@ Default behavior:
 If `:GodotDocs` is called without an argument, it uses the symbol under cursor.
 The default renderer is configured through `require("godotdev").setup({ docs = { renderer = "float" } })`.
 Floating-window rendering fetches the class `.rst` source from `godotengine/godot-docs`, converts it to markdown, and requires `curl`.
+The floating docs buffer uses the `markdown` filetype, so markdown rendering plugins can enhance its presentation.
 When a symbol does not resolve to a Godot class page, the plugin shows a regular message by default.
 Set `docs.missing_symbol_feedback = "notify"` to use notifications instead.
 
