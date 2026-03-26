@@ -46,6 +46,8 @@ Example setup:
         missing_symbol_feedback = "message", -- "message" | "notify"
         version = "stable",
         language = "en",
+        source_ref = "master",
+        source_base_url = nil,   -- optional override for raw docs source
         timeout_ms = 10000,
         float = {
           width = 0.8,
@@ -118,7 +120,7 @@ Default behavior:
 
 If `:GodotDocs` is called without an argument, it uses the symbol under cursor.
 The default renderer is configured through `require("godotdev").setup({ docs = { renderer = "float" } })`.
-Floating-window rendering fetches content from the official Godot docs site and requires `curl`.
+Floating-window rendering fetches the class `.rst` source from `godotengine/godot-docs`, converts it to markdown, and requires `curl`.
 When a symbol does not resolve to a Godot class page, the plugin shows a regular message by default.
 Set `docs.missing_symbol_feedback = "notify"` to use notifications instead.
 

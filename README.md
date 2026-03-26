@@ -126,6 +126,8 @@ require("godotdev").setup({
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",      -- e.g. "stable", "latest", "4.5"
     language = "en",
+    source_ref = "master",   -- godot-docs git ref used for floating docs
+    source_base_url = nil,   -- optional override for raw docs source
     timeout_ms = 10000,
     float = {
       width = 0.8,
@@ -221,7 +223,7 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 :GodotDocsCursor
 ```
 
-If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener, while floating-window rendering fetches from the official Godot docs site with `curl`.
+If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener. Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
 When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
 ## C# Installation Support

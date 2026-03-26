@@ -1,3 +1,6 @@
+# This plugin
+.nvimlog
+
 # Compiled Lua sources
 luac.out
 
