@@ -5,6 +5,10 @@ M.opts = {
   editor_port = 6005,
   debug_port = 6006,
   autostart_editor_server = false,
+  editor_server = {
+    address = nil, -- nil uses the current server or the platform default
+    remove_stale_socket = true,
+  },
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
   formatter_cmd = nil, -- allow override, e.g. "gdscript-format --check"
   docs = {
@@ -45,7 +49,7 @@ function M.setup(opts)
   local editor_server = require("godotdev.start_editor_server")
   -- autostart editor server if enabled
   if M.opts.autostart_editor_server then
-    editor_server.start_editor_server()
+    editor_server.start_editor_server(M.opts.editor_server and M.opts.editor_server.address or nil)
   end
 
   require("godotdev.reconnect_lsp")
@@ -61,7 +65,10 @@ function M.setup(opts)
   require("godotdev.tree-sitter")
 
   require("godotdev.health").setup({
-    port = M.opts.editor_port,
+    editor_port = M.opts.editor_port,
+    debug_port = M.opts.debug_port,
+    editor_server_address = M.opts.editor_server and M.opts.editor_server.address or nil,
+    autostart_editor_server = M.opts.autostart_editor_server,
   })
 
   if M.opts.csharp then

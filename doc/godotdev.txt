@@ -40,6 +40,10 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = true, -- optional, start server automatically
+      editor_server = {
+        address = nil,           -- nil uses the current server or the platform default
+        remove_stale_socket = true,
+      },
       docs = {
         renderer = "float",      -- "float" | "browser" | "buffer"
         fallback_renderer = "browser", -- nil | "browser" | "buffer"
@@ -102,9 +106,11 @@ macOS/Linux:
    - Parameters: {file} {line} {col}
 
 5. Start Neovim with:
-   nvim --listen /tmp/godot.pipe
+   ~/.local/bin/godotdev
    Optionally add alias:
-   alias gdvim='nvim --listen /tmp/godot.pipe'
+   alias gdvim='~/.local/bin/godotdev'
+
+   This wrapper can remove a stale `/tmp/godot.pipe` socket after crashes before starting `nvim --listen /tmp/godot.pipe`.
 
 Windows:
 
@@ -152,11 +158,20 @@ You can manually start the Neovim editor server for Godot:
 
   :GodotStartEditorServer
 
+If Neovim is already running with `--listen`, the plugin reuses that address instead of starting a second server.
+
 Or automatically on plugin setup:
 
     require("godotdev").setup({ autostart_editor_server = true })
 
-This ensures Godot can communicate with Neovim as an external editor.
+You can also set a fixed address:
+
+    require("godotdev").setup({
+      autostart_editor_server = true,
+      editor_server = { address = "/tmp/godot.pipe" },
+    })
+
+On macOS/Linux, plugin-managed startup removes stale Unix socket files before retrying. This hardens `:GodotStartEditorServer`, but it does not affect a raw shell launch such as `nvim --listen /tmp/godot.pipe`, because that failure happens before the plugin loads.
 
 ==============================================================================
 Health checks                                     *godotdev-checkhealth*

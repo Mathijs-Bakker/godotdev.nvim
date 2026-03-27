@@ -55,6 +55,31 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    ```bash
    pip3 install neovim-remote
    ```
+1. Create a small Neovim startup wrapper to recover from stale sockets after crashes:
+   Save this as `~/.local/bin/godotdev`
+   ```bash
+   #!/usr/bin/env bash
+   set -euo pipefail
+
+   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.pipe}"
+   NVR="${NVR:-nvr}"
+
+   if [[ -S "$SOCKET" ]]; then
+     if command -v "$NVR" >/dev/null 2>&1 && "$NVR" --servername "$SOCKET" --remote-expr '1' >/dev/null 2>&1; then
+       echo "Neovim server already running at $SOCKET"
+       exit 0
+     fi
+
+     echo "Removing stale socket: $SOCKET"
+     rm -f "$SOCKET"
+   fi
+
+   exec nvim --listen "$SOCKET" "$@"
+   ```
+1. Make the startup wrapper executable:
+   ```bash
+   chmod +x ~/.local/bin/godotdev
+   ```
 1. Save the launcher script:
    ```bash
    mkdir -p ~/.local/bin
@@ -83,7 +108,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
      GODOT_TERMINAL="$DEFAULT_TERMINAL"
    fi
 
-   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.nvim}" # Neovim socket path
+   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.pipe}" # Neovim socket path
    NVR="${NVR:-nvr}"
 
    if ! command -v "$NVR" >/dev/null 2>&1; then
@@ -176,6 +201,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 
 ## Usage
 
+- Start Neovim with `godotdev`
 - Click a script in Godot → opens in Neovim
 - Neovim buffer is focused
 - GUI terminal comes to front
@@ -185,7 +211,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 ## Notes
 
 - tmux pane switching is not supported reliably from Godot
-- Ensure the Neovim socket path (/private/tmp/nvim.pipe) matches your setup
+- Ensure the Neovim socket path (`/tmp/godot.pipe` by default) matches your setup
 - Tested with Ghostty, should work with other GUI terminals
 - This README now provides clear instructions and a visual workflow so other users can reproduce your Godot → Neovim + Ghostty setup easily.
 
@@ -195,13 +221,30 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 
 Before testing inside Godot, confirm the script works standalone:
 ```bash
+~/.local/bin/godotdev
 ~/.local/bin/godot-nvr.sh /path/to/file.gd:10
 ```
 Expected:
+- Neovim starts and listens on `/tmp/godot.pipe`.
 - The file opens in your running Neovim instance.
 - The buffer is focused.
 - Your terminal (e.g. Ghostty) comes to the front.
 If this fails, fix the setup before trying again in Godot.
+
+### `nvim --listen /tmp/godot.pipe` fails after a crash
+
+This usually means the old Unix socket file still exists even though the old Neovim process is gone.
+
+- Start Neovim with the wrapper instead:
+  ```bash
+  ~/.local/bin/godotdev
+  ```
+- The wrapper probes the socket with `nvr`, removes it if it is stale, and then starts `nvim --listen /tmp/godot.pipe`.
+- If you still prefer the raw command, remove the stale socket manually:
+  ```bash
+  rm -f /tmp/godot.pipe
+  nvim --listen /tmp/godot.pipe
+  ```
 
 ### `command not found: nvr`
 

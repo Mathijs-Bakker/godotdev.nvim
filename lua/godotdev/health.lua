@@ -6,6 +6,8 @@ local M = {}
 M.opts = {
   editor_port = 6005,
   debug_port = 6006,
+  editor_server_address = nil,
+  autostart_editor_server = false,
 }
 
 function M.setup(opts)
@@ -44,6 +46,15 @@ end
 
 local function has_exe(name)
   return vim.fn.executable(name) == 1
+end
+
+local function editor_server_target()
+  if type(M.opts.editor_server_address) == "string" and M.opts.editor_server_address ~= "" then
+    return M.opts.editor_server_address
+  end
+
+  local start_editor_server = require("godotdev.start_editor_server")
+  return vim.v.servername ~= "" and vim.v.servername or start_editor_server.default_pipe
 end
 
 local function check_indent()
@@ -118,6 +129,16 @@ Make sure the Godot editor is running with LSP server enabled.
     else
       health.warn("⚠️ WARNING Godot editor debug server not detected on port " .. debug_port)
     end
+  end
+
+  health.start("Editor server")
+  health.info("Autostart editor server: " .. (M.opts.autostart_editor_server and "enabled" or "disabled"))
+  health.info("Editor server target: " .. editor_server_target())
+
+  if vim.v.servername ~= "" then
+    health.ok("✅ OK Neovim server listening on " .. vim.v.servername)
+  else
+    health.info("ℹ️ No active Neovim server address in this session.")
   end
 
   if is_windows then
