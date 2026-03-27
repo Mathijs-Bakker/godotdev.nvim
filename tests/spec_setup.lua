@@ -81,4 +81,31 @@ return {
       h.assert_equal(vim.fn.exists(":GodotDocsCursor"), 2)
     end,
   },
+  {
+    name = "main setup does not abort when dap is unavailable",
+    run = function()
+      local notifications = {}
+
+      h.clear_module("godotdev")
+      h.clear_module("godotdev.setup")
+
+      h.with_temp("notify", function(message, level)
+        table.insert(notifications, { message = message, level = level })
+      end, function()
+        h.with_package("godotdev.dap", {
+          setup = function()
+            error("dap unavailable")
+          end,
+        }, function()
+          local godotdev = require("godotdev")
+          godotdev.setup({ autostart_editor_server = false })
+        end)
+      end)
+
+      h.assert_truthy(#notifications > 0)
+      h.assert_truthy(notifications[1].message:match("failed to configure DAP integration") ~= nil)
+      h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
+      h.assert_equal(vim.fn.exists(":GodotStartEditorServer"), 2)
+    end,
+  },
 }
