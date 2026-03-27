@@ -280,6 +280,7 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 - Configure persistent buffer placement with `docs.buffer.position = "right" | "bottom" | "current"` and `docs.buffer.size = 0.4`.
 - Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
 - The float and buffer renderers use the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
+- `docs.fallback_renderer = "browser"` is the only fallback that can recover when the rendered `.rst` source cannot be fetched. A `buffer` fallback only changes presentation after rendering succeeds.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
 ℹ️ Recommended docs mapping:

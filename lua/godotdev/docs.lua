@@ -716,11 +716,6 @@ local function open_from_rst(symbol, page_url, renderer)
       return
     end
 
-    if config.fallback_renderer == "buffer" and renderer ~= "buffer" then
-      open_from_rst(symbol, page_url, "buffer")
-      return
-    end
-
     show_feedback(("Could not find Godot docs for `%s`."):format(symbol))
   end)
 end

@@ -164,6 +164,7 @@ The buffer renderer reuses a scratch markdown buffer so the docs stay available 
 Configure buffer placement with `docs.buffer.position = "right" | "bottom" | "current"` and `docs.buffer.size = 0.4`.
 Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
 The float and buffer renderers use the `markdown` filetype, so markdown rendering plugins can enhance presentation.
+`docs.fallback_renderer = "browser"` is the only fallback that can recover when the rendered `.rst` source cannot be fetched. A `buffer` fallback only changes presentation after rendering succeeds.
 When a symbol does not resolve to a Godot class page, the plugin shows a regular message by default.
 Set `docs.missing_symbol_feedback = "notify"` to use notifications instead.
 
