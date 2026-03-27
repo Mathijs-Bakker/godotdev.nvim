@@ -40,6 +40,54 @@ M.opts = {
   },
 }
 
+local function setup_dap()
+  local ok, dap_module = pcall(require, "godotdev.dap")
+  if not ok then
+    vim.notify("godotdev.nvim: failed to load DAP integration: " .. tostring(dap_module), vim.log.levels.WARN)
+    return false
+  end
+
+  local ok_setup, err = pcall(dap_module.setup, {
+    type = "server",
+    host = M.opts.editor_host,
+    port = M.opts.debug_port,
+  })
+  if not ok_setup then
+    vim.notify("godotdev.nvim: failed to configure DAP integration: " .. tostring(err), vim.log.levels.WARN)
+    return false
+  end
+
+  return true
+end
+
+local function setup_csharp_dap()
+  if not M.opts.csharp then
+    return
+  end
+
+  local ok, dap = pcall(require, "dap")
+  if not ok then
+    vim.notify("godotdev.nvim: C# support requires nvim-dap to be installed", vim.log.levels.WARN)
+    return
+  end
+
+  dap.adapters.coreclr = {
+    type = "executable",
+    command = M.opts.netcoredbg_path or "netcoredbg",
+    args = { "--interpreter=vscode" },
+  }
+  dap.configurations.cs = {
+    {
+      type = "coreclr",
+      name = "launch - netcoredbg",
+      request = "launch",
+      program = function()
+        return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/bin/Debug/net6.0/", "file")
+      end,
+    },
+  }
+end
+
 function M.setup(opts)
   M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
 
@@ -58,12 +106,7 @@ function M.setup(opts)
   require("godotdev.reconnect_lsp").setup()
   require("godotdev.formatting").setup()
   require("godotdev.docs").setup()
-
-  require("godotdev.dap").setup({
-    type = "server",
-    host = M.opts.editor_host,
-    port = M.opts.debug_port,
-  })
+  setup_dap()
 
   require("godotdev.tree-sitter").setup()
 
@@ -74,24 +117,7 @@ function M.setup(opts)
     autostart_editor_server = M.opts.autostart_editor_server,
   })
 
-  if M.opts.csharp then
-    local dap = require("dap")
-    dap.adapters.coreclr = {
-      type = "executable",
-      command = M.opts.netcoredbg_path or "netcoredbg",
-      args = { "--interpreter=vscode" },
-    }
-    dap.configurations.cs = {
-      {
-        type = "coreclr",
-        name = "launch - netcoredbg",
-        request = "launch",
-        program = function()
-          return vim.fn.input("Path to dll: ", vim.fn.getcwd() .. "/bin/Debug/net6.0/", "file")
-        end,
-      },
-    }
-  end
+  setup_csharp_dap()
 end
 
 return M
