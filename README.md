@@ -70,6 +70,7 @@ Below is a quick overview of what you get out of the box:
 - Commands to open Godot class reference docs:
   - `:GodotDocs [ClassName]`
   - `:GodotDocsFloat [ClassName]`
+  - `:GodotDocsBuffer [ClassName]`
   - `:GodotDocsBrowser [ClassName]`
   - `:GodotDocsCursor`
 - Automatic LSP attachment for Godot filetypes (`.gd`, `.gdshader`, `.gdresource`, optional `.cs`)
@@ -122,9 +123,13 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = true,  -- Enable auto start Nvim server
+  editor_server = {
+    address = nil,           -- nil uses the current server or the platform default
+    remove_stale_socket = true,
+  },
   docs = {
     renderer = "float",      -- default: open docs in a floating window
-    fallback_renderer = "browser",
+    fallback_renderer = "browser", -- nil | "browser" | "buffer"
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",      -- e.g. "stable", "latest", "4.5"
     language = "en",
@@ -139,6 +144,10 @@ require("godotdev").setup({
       width = 0.8,
       height = 0.8,
       border = "rounded",
+    },
+    buffer = {
+      position = "right",    -- "right" | "bottom" | "current"
+      size = 0.4,
     },
   },
 })
@@ -174,6 +183,8 @@ A [workaround](doc/neovim-external-editor-setup.md) is to to create a small scri
 #### >> macOS/Linux
 Complete instructions [here](doc/neovim-external-editor-setup.md)
 
+If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev` wrapper instead of raw `nvim --listen ...` so stale socket files are cleaned up automatically after crashes.
+
 #### >> Windows
 
 1. Set Neovim to listen on a TCP port
@@ -193,6 +204,8 @@ You can manually start the Neovim editor server used by Godot:
 :GodotStartEditorServer
 ```
 
+If Neovim is already running with `--listen`, the plugin will reuse that address instead of trying to start a second server.
+
 Or automatically on plugin setup:
 
 ```lua
@@ -201,7 +214,18 @@ require("godotdev").setup({
 })
 ```
 
-This ensures Godot can communicate with Neovim as an external editor.
+You can also pin a specific address:
+
+```lua
+require("godotdev").setup({
+  autostart_editor_server = true,
+  editor_server = {
+    address = "/tmp/godot.pipe",
+  },
+})
+```
+
+On macOS/Linux, plugin-managed startup removes stale Unix socket files before retrying. This hardens `:GodotStartEditorServer`, but it does not affect a raw shell launch like `nvim --listen /tmp/godot.pipe`, because that failure happens before the plugin loads.
 
 ## Reconnect to Godot's LSP server
 
@@ -225,14 +249,17 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 
 ```vim
 :GodotDocsFloat Node
+:GodotDocsBuffer Node
 :GodotDocsBrowser Node
 :GodotDocsCursor
 ```
 
 - If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener.
-- Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- Float and buffer rendering fetch the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- `:GodotDocsBuffer` reuses a scratch markdown buffer so the docs stay open while you keep working.
+- Configure persistent buffer placement with `docs.buffer.position = "right" | "bottom" | "current"` and `docs.buffer.size = 0.4`.
 - Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
-- The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
+- The float and buffer renderers use the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
 ℹ️ Recommended docs mapping:
@@ -252,7 +279,7 @@ Why `gK`:
   - `K` is commonly LSP hover under cursor.
   - :white_check_mark: `gK` is close enough semantically to “keyword docs” and is usually free.
   - `gd`, `gD`, `gr` are already established LSP/navigation motions.
-  - :white_check_mark:`<leader>gd` reads like `g`odot `d`ocs.
+  - :white_check_mark: `<leader>gd` reads like `g`odot `d`ocs.
   - It fits well because `:GodotDocs` already defaults to the symbol under cursor.
 
 ## C# Installation Support
