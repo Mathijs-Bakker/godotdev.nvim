@@ -169,4 +169,100 @@ return {
       h.assert_equal(opened_url, html_url)
     end,
   },
+  {
+    name = "docs resolve symbols through the index when direct page lookup fails",
+    run = function()
+      h.clear_module("godotdev.docs")
+      local docs = require("godotdev.docs")
+
+      local opened_url
+      local direct_url = "https://docs.godotengine.org/en/stable/classes/class_animatedsprite2d.html"
+      local index_url = "https://docs.godotengine.org/en/stable/classes/index.html"
+      local resolved_url = "https://docs.godotengine.org/en/stable/classes/class_animated_sprite_2d.html"
+
+      h.with_package("godotdev", {
+        opts = {
+          docs = {
+            renderer = "browser",
+            version = "stable",
+            language = "en",
+          },
+        },
+      }, function()
+        h.with_field(vim.fn, "executable", function(name)
+          if name == "curl" then
+            return 1
+          end
+          return vim.fn.executable(name)
+        end, function()
+          with_mock_system({
+            [direct_url] = { code = 1, stdout = "", stderr = "not found" },
+            [index_url] = {
+              code = 0,
+              stdout = [[<a href="classes/class_animated_sprite_2d.html">AnimatedSprite2D</a>]],
+              stderr = "",
+            },
+            [resolved_url] = { code = 0, stdout = "<html>resolved</html>", stderr = "" },
+          }, function()
+            h.with_field(vim.ui, "open", function(url)
+              opened_url = url
+              return true
+            end, function()
+              docs.open("AnimatedSprite2D", "browser")
+              vim.wait(50, function()
+                return opened_url ~= nil
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(opened_url, resolved_url)
+    end,
+  },
+  {
+    name = "docs show feedback when a symbol cannot be resolved",
+    run = function()
+      h.clear_module("godotdev.docs")
+      local docs = require("godotdev.docs")
+
+      local messages = {}
+      local direct_url = "https://docs.godotengine.org/en/stable/classes/class_notarealsymbol.html"
+      local index_url = "https://docs.godotengine.org/en/stable/classes/index.html"
+
+      h.with_package("godotdev", {
+        opts = {
+          docs = {
+            renderer = "float",
+            version = "stable",
+            language = "en",
+            missing_symbol_feedback = "message",
+          },
+        },
+      }, function()
+        h.with_field(vim.fn, "executable", function(name)
+          if name == "curl" then
+            return 1
+          end
+          return vim.fn.executable(name)
+        end, function()
+          with_mock_system({
+            [direct_url] = { code = 1, stdout = "", stderr = "not found" },
+            [index_url] = { code = 0, stdout = "<html></html>", stderr = "" },
+          }, function()
+            h.with_field(vim.api, "nvim_echo", function(chunks)
+              table.insert(messages, chunks[1][1])
+            end, function()
+              docs.open("NotARealSymbol", nil)
+              vim.wait(50, function()
+                return #messages > 0
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_truthy(messages[1]:match("Could not find Godot docs for `NotARealSymbol`") ~= nil)
+    end,
+  },
 }
