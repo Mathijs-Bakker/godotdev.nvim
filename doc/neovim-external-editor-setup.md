@@ -55,8 +55,13 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    ```bash
    pip3 install neovim-remote
    ```
-1. Create a small Neovim startup wrapper to recover from stale sockets after crashes:
-   Save this as `~/.local/bin/godotdev`
+   
+1. Create the launcher file:
+   ```bash
+   touch ~/.local/bin/godotdev.sh
+   ```
+   
+1. Copy and paste the small Neovim startup wrapper to recover from stale sockets after crashes:
    ```bash
    #!/usr/bin/env bash
    set -euo pipefail
@@ -80,13 +85,13 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    ```bash
    chmod +x ~/.local/bin/godotdev
    ```
-1. Save the launcher script:
+1. Create the launcher file:
    ```bash
-   mkdir -p ~/.local/bin
    touch ~/.local/bin/godot-nvr.sh
    ```
 1. Create the script:
-   Save this as `~/.local/bin/godot-nvr.sh`
+   Open `~/.local/bin/godot-nvr.sh` in neovim. And copy-paste the code below.
+   Change the default terminal to your likings and save. 
    ```bash
    #!/usr/bin/env bash
    # Godot → Neovim launcher with GUI terminal focus
@@ -157,7 +162,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    fi
 
    ```
-1. And make it executable:
+1. Make it executable:
    ```bash
    chmod +x ~/.local/bin/godot-nvr.sh
    ```
