@@ -40,6 +40,8 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = true, -- optional, start server automatically
+      formatter = "gdformat",    -- "gdformat" | "gdscript-format"
+      formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
@@ -68,6 +70,10 @@ Example setup:
         },
       },
   })
+
+For formatter commands with flags, prefer an argv list:
+
+  formatter_cmd = { "gdscript-format", "--check" }
 
 Recommended Godot editor settings for external Neovim integration:
 

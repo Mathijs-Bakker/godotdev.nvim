@@ -48,6 +48,20 @@ local function has_exe(name)
   return vim.fn.executable(name) == 1
 end
 
+local function formatter_command_argv(opts)
+  local cmd = opts.formatter_cmd or opts.formatter or "gdformat"
+
+  if type(cmd) == "table" then
+    return vim.deepcopy(cmd)
+  end
+
+  if type(cmd) ~= "string" or cmd == "" then
+    return { "gdformat" }
+  end
+
+  return vim.split(cmd, "%s+", { trimempty = true })
+end
+
 local function editor_server_target()
   if type(M.opts.editor_server_address) == "string" and M.opts.editor_server_address ~= "" then
     return M.opts.editor_server_address
@@ -199,7 +213,12 @@ Make sure the Godot editor is running with LSP server enabled.
   health.start("GDScript Formatter")
 
   local formatter = godotdev.opts.formatter or "gdformat"
-  local exe = godotdev.opts.formatter_cmd or formatter
+  local formatter_argv = formatter_command_argv(godotdev.opts)
+  local exe = formatter_argv[1] or formatter
+
+  if type(godotdev.opts.formatter_cmd) == "table" then
+    health.info("Formatter command: " .. table.concat(formatter_argv, " "))
+  end
 
   if has_exe(exe) then
     health.ok("✅ OK '" .. exe .. "' found")
