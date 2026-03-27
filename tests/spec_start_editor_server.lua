@@ -26,30 +26,32 @@ return {
 
       h.with_temp("uv", fake_uv, function()
         h.with_temp("loop", fake_uv, function()
-          h.with_package("godotdev", {
-            opts = {
-              editor_server = {
-                address = "/tmp/godot.pipe",
-                remove_stale_socket = true,
+          h.with_temp("v", setmetatable({ servername = "" }, { __index = vim.v }), function()
+            h.with_package("godotdev", {
+              opts = {
+                editor_server = {
+                  address = "/tmp/godot.pipe",
+                  remove_stale_socket = true,
+                },
               },
-            },
-          }, function()
-            h.with_field(vim.fn, "sockconnect", function(_, address)
-              h.assert_equal(address, "/tmp/godot.pipe")
-              return 0
-            end, function()
-              h.with_field(vim.fn, "chanclose", function() end, function()
-                h.with_field(vim.fn, "serverstart", function(address)
-                  started = address
-                  return address
-                end, function()
-                  h.with_temp("notify", function(message, level)
-                    table.insert(notifications, { message = message, level = level })
+            }, function()
+              h.with_field(vim.fn, "sockconnect", function(_, address)
+                h.assert_equal(address, "/tmp/godot.pipe")
+                return 0
+              end, function()
+                h.with_field(vim.fn, "chanclose", function() end, function()
+                  h.with_field(vim.fn, "serverstart", function(address)
+                    started = address
+                    return address
                   end, function()
-                    h.clear_module("godotdev.start_editor_server")
-                    local mod = require("godotdev.start_editor_server")
-                    local ok = mod.start_editor_server()
-                    h.assert_equal(ok, true)
+                    h.with_temp("notify", function(message, level)
+                      table.insert(notifications, { message = message, level = level })
+                    end, function()
+                      h.clear_module("godotdev.start_editor_server")
+                      local mod = require("godotdev.start_editor_server")
+                      local ok = mod.start_editor_server()
+                      h.assert_equal(ok, true)
+                    end)
                   end)
                 end)
               end)
