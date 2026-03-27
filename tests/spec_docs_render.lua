@@ -122,4 +122,51 @@ return {
       end)
     end,
   },
+  {
+    name = "docs fall back to browser when rendered docs fetch fails",
+    run = function()
+      h.clear_module("godotdev.docs")
+      local docs = require("godotdev.docs")
+
+      local opened_url
+      local html_url = "https://docs.godotengine.org/en/stable/classes/class_node.html"
+      local rst_url = "https://raw.githubusercontent.com/godotengine/godot-docs/master/classes/class_node.rst"
+
+      h.with_package("godotdev", {
+        opts = {
+          docs = {
+            renderer = "float",
+            fallback_renderer = "browser",
+            version = "stable",
+            language = "en",
+            source_ref = "master",
+          },
+        },
+      }, function()
+        h.with_field(vim.fn, "executable", function(name)
+          if name == "curl" then
+            return 1
+          end
+          return vim.fn.executable(name)
+        end, function()
+          with_mock_system({
+            [html_url] = { code = 0, stdout = "<html>node</html>", stderr = "" },
+            [rst_url] = { code = 1, stdout = "", stderr = "fetch failed" },
+          }, function()
+            h.with_field(vim.ui, "open", function(url)
+              opened_url = url
+              return true
+            end, function()
+              docs.open("Node", "float")
+              vim.wait(50, function()
+                return opened_url ~= nil
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(opened_url, html_url)
+    end,
+  },
 }
