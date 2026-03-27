@@ -8,8 +8,8 @@ M.opts = {
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
   formatter_cmd = nil, -- allow override, e.g. "gdscript-format --check"
   docs = {
-    renderer = "float", -- "float" | "browser"
-    fallback_renderer = "browser", -- nil | "browser"
+    renderer = "float", -- "float" | "browser" | "buffer"
+    fallback_renderer = "browser", -- nil | "browser" | "buffer"
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",
     language = "en",
@@ -24,6 +24,10 @@ M.opts = {
       width = 0.8,
       height = 0.8,
       border = "rounded",
+    },
+    buffer = {
+      position = "right", -- "right" | "bottom" | "current"
+      size = 0.4,
     },
   },
 }

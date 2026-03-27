@@ -70,6 +70,7 @@ Below is a quick overview of what you get out of the box:
 - Commands to open Godot class reference docs:
   - `:GodotDocs [ClassName]`
   - `:GodotDocsFloat [ClassName]`
+  - `:GodotDocsBuffer [ClassName]`
   - `:GodotDocsBrowser [ClassName]`
   - `:GodotDocsCursor`
 - Automatic LSP attachment for Godot filetypes (`.gd`, `.gdshader`, `.gdresource`, optional `.cs`)
@@ -124,7 +125,7 @@ require("godotdev").setup({
   autostart_editor_server = true,  -- Enable auto start Nvim server
   docs = {
     renderer = "float",      -- default: open docs in a floating window
-    fallback_renderer = "browser",
+    fallback_renderer = "browser", -- nil | "browser" | "buffer"
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",      -- e.g. "stable", "latest", "4.5"
     language = "en",
@@ -139,6 +140,10 @@ require("godotdev").setup({
       width = 0.8,
       height = 0.8,
       border = "rounded",
+    },
+    buffer = {
+      position = "right",    -- "right" | "bottom" | "current"
+      size = 0.4,
     },
   },
 })
@@ -225,17 +230,20 @@ By default, `:GodotDocs` renders the docs in a floating window. You can also:
 
 ```vim
 :GodotDocsFloat Node
+:GodotDocsBuffer Node
 :GodotDocsBrowser Node
 :GodotDocsCursor
 ```
 
 - If `:GodotDocs` is called without an argument, it uses the symbol under the cursor. Browser opening uses your configured system opener.
-- Floating-window rendering fetches the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- Float and buffer rendering fetch the class reference source from `godotengine/godot-docs` with `curl`, converts the `.rst` to markdown, and displays that inside Neovim.
+- `:GodotDocsBuffer` reuses a scratch markdown buffer so the docs stay open while you keep working.
+- Configure persistent buffer placement with `docs.buffer.position = "right" | "bottom" | "current"` and `docs.buffer.size = 0.4`.
 - Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
-- The floating docs buffer uses the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
+- The float and buffer renderers use the `markdown` filetype, so Markdown rendering plugins such as [MeanderingProgrammer/render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim) can improve its presentation.
 - When a symbol does not resolve to a Godot class page, the plugin shows a regular Neovim message by default. Set `docs.missing_symbol_feedback = "notify"` if you prefer notifications instead.
 
-Recommended docs mapping:
+ℹ️ Recommended docs mapping:
 
 ```lua
 vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
@@ -250,10 +258,10 @@ vim.keymap.set("n", "<leader>gd", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })
 Why `gK`:
 
   - `K` is commonly LSP hover under cursor.
-  - `gK` is close enough semantically to “keyword docs” and is usually free.
+  - :white_check_mark: `gK` is close enough semantically to “keyword docs” and is usually free.
   - `gd`, `gD`, `gr` are already established LSP/navigation motions.
-  - `<leader>gd` reads like `g`odot `d`ocs.
-  - It fits well because :GodotDocs already defaults to the symbol under cursor.
+  - :white_check_mark: `<leader>gd` reads like `g`odot `d`ocs.
+  - It fits well because `:GodotDocs` already defaults to the symbol under cursor.
 
 ## C# Installation Support
 

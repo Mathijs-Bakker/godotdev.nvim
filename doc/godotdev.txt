@@ -41,8 +41,8 @@ Example setup:
       csharp      = true,        -- enable C# support
       autostart_editor_server = true, -- optional, start server automatically
       docs = {
-        renderer = "float",      -- "float" | "browser"
-        fallback_renderer = "browser",
+        renderer = "float",      -- "float" | "browser" | "buffer"
+        fallback_renderer = "browser", -- nil | "browser" | "buffer"
         missing_symbol_feedback = "message", -- "message" | "notify"
         version = "stable",
         language = "en",
@@ -57,6 +57,10 @@ Example setup:
           width = 0.8,
           height = 0.8,
           border = "rounded",
+        },
+        buffer = {
+          position = "right",    -- "right" | "bottom" | "current"
+          size = 0.4,
         },
       },
   })
@@ -127,14 +131,17 @@ Open the official Godot class reference from inside Neovim:
 Default behavior:
 - `:GodotDocs [ClassName]` opens docs using the configured renderer
 - `:GodotDocsFloat [ClassName]` forces a floating window
+- `:GodotDocsBuffer [ClassName]` opens docs in a reusable buffer
 - `:GodotDocsBrowser [ClassName]` opens in the system browser
 - `:GodotDocsCursor` opens docs for the symbol under the cursor
 
 If `:GodotDocs` is called without an argument, it uses the symbol under cursor.
 The default renderer is configured through `require("godotdev").setup({ docs = { renderer = "float" } })`.
-Floating-window rendering fetches the class `.rst` source from `godotengine/godot-docs`, converts it to markdown, and requires `curl`.
+Float and buffer rendering fetch the class `.rst` source from `godotengine/godot-docs`, convert it to markdown, and require `curl`.
+The buffer renderer reuses a scratch markdown buffer so the docs stay available after opening.
+Configure buffer placement with `docs.buffer.position = "right" | "bottom" | "current"` and `docs.buffer.size = 0.4`.
 Docs fetches and rendered markdown are cached in memory by default. Configure this with `docs.cache.enabled` and `docs.cache.max_entries`.
-The floating docs buffer uses the `markdown` filetype, so markdown rendering plugins can enhance its presentation.
+The float and buffer renderers use the `markdown` filetype, so markdown rendering plugins can enhance presentation.
 When a symbol does not resolve to a Godot class page, the plugin shows a regular message by default.
 Set `docs.missing_symbol_feedback = "notify"` to use notifications instead.
 
