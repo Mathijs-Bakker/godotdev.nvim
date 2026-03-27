@@ -181,6 +181,16 @@ Additional references:
 - [DAP documentation](https://github.com/mfussenegger/nvim-dap/blob/master/doc/dap.txt)
 - [DAP README / usage](https://github.com/mfussenegger/nvim-dap/tree/master?tab=readme-ov-file#usage)
 
+## Testing
+
+Run the headless test suite:
+
+```bash
+nvim --headless -u NONE -i NONE -c "lua dofile('tests/run.lua')" -c qa
+```
+
+For integration testing, also run the plugin inside Neovim against a real Godot project and verify editor server, docs, formatting, and debugging flows on your target platform.
+
 ### Optimize Godot editor for Neovim
 
 Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.

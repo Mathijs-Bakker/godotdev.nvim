@@ -44,6 +44,19 @@ Before contributing, make sure you have:
   - Neovim version
   - OS + Terminal
 
+### Manual integration checklist
+
+- macOS/Linux:
+  - start Neovim with your documented `--listen` or `godotdev` wrapper flow
+  - open a Godot project and confirm LSP attaches for `.gd` / `.gdshader`
+  - verify `:GodotStartEditorServer`, docs rendering, formatting, and DAP startup
+  - if you use the external editor workflow, click a script in Godot and confirm it opens in the running Neovim instance
+- Windows:
+  - start Neovim with `--listen 127.0.0.1:<port>`
+  - confirm `ncat` is available and `:checkhealth godotdev` reports the expected dependencies
+  - verify LSP, docs commands, formatting, and DAP startup in a Godot project
+  - if you use an external editor/plugin bridge, confirm Godot connects to the same host:port as Neovim
+
 ## 📖 Submitting a Pull Request
 1. Ensure your code follows the style of the project.
 1. Update documentation if needed.
