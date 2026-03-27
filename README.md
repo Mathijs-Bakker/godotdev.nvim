@@ -129,6 +129,10 @@ require("godotdev").setup({
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
   },
+  treesitter = {
+    auto_setup = true,
+    ensure_installed = { "gdscript" },
+  },
   docs = {
     renderer = "float",      -- default: open docs in a floating window
     fallback_renderer = "browser", -- nil | "browser" | "buffer"
@@ -159,6 +163,14 @@ For formatter commands with flags, prefer an argv list:
 
 ```lua
 formatter_cmd = { "gdscript-format", "--check" }
+```
+
+If you already manage `nvim-treesitter` yourself, you can disable plugin-managed setup:
+
+```lua
+treesitter = {
+  auto_setup = false,
+}
 ```
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
