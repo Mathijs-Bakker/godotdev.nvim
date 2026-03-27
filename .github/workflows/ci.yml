@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: v0.11.4
+
+      - name: Verify Neovim version
+        run: nvim --version
+
+      - name: Run headless test suite
+        run: nvim --headless -u NONE -i NONE -c "lua dofile('tests/run.lua')" -c qa
