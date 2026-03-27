@@ -76,6 +76,19 @@ local function formatter_command_argv(opts)
   return vim.split(cmd, "%s+", { trimempty = true })
 end
 
+local function godot_project_root()
+  local match = vim.fs.find("project.godot", {
+    upward = true,
+    path = vim.fn.getcwd(),
+  })[1]
+
+  if not match or match == "" then
+    return nil
+  end
+
+  return vim.fs.dirname(match)
+end
+
 local function editor_server_target()
   if type(M.opts.editor_server_address) == "string" and M.opts.editor_server_address ~= "" then
     return M.opts.editor_server_address
@@ -257,17 +270,31 @@ end
 local function check_indent()
   health.start("Indentation")
 
-  local result = {}
+  local root = godot_project_root()
+  if not root then
+    health.info("Indentation check skipped (not in a Godot project).")
+    return
+  end
+
+  local result
   if vim.fn.executable("rg") == 1 then
-    result = vim.fn.systemlist({ "rg", "-n", "-m", "1", "\t", "-g", "*.gd", "-g", "*.cs", "." })
+    result = run_command({ "rg", "--no-config", "-n", "-m", "1", "\t", "-g", "*.gd", "-g", "*.cs", root })
+    if not result then
+      health.info("Indentation check skipped (failed to run rg).")
+      return
+    end
   elseif vim.fn.executable("grep") == 1 then
-    result = vim.fn.systemlist({ "grep", "-R", "-n", "-m", "1", "\t", "--include=*.gd", "--include=*.cs", "." })
+    result = run_command({ "grep", "-R", "-n", "-m", "1", "\t", "--include=*.gd", "--include=*.cs", root })
+    if not result then
+      health.info("Indentation check skipped (failed to run grep).")
+      return
+    end
   else
     health.info("Indentation check skipped (rg or grep not found).")
     return
   end
 
-  if result and #result > 0 then
+  if result.code == 0 and result.stdout and result.stdout ~= "" then
     health.warn(
       "Mixed indentation detected (tabs found in .gd or .cs files). Godot expects spaces, 4 per indent. See :help godotdev-indent"
     )
