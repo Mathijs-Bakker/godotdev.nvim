@@ -196,4 +196,63 @@ return {
       h.assert_truthy(joined_info:match("Rendered docs dependency checks skipped") ~= nil)
     end,
   },
+  {
+    name = "health assumes TCP ports are OK on non-Windows when nc is missing",
+    run = function()
+      local recorder = make_health_recorder()
+
+      h.with_temp("health", recorder.api, function()
+        h.with_package("godotdev", {
+          opts = {
+            csharp = false,
+            docs = { renderer = "browser", source_ref = "master" },
+            formatter = "gdformat",
+          },
+        }, function()
+          h.with_package("nvim-treesitter.configs", {}, function()
+            h.with_package("dapui", {}, function()
+              h.clear_module("godotdev.health")
+              local health = require("godotdev.health")
+              health.setup({ editor_port = 6005, debug_port = 6006 })
+
+              h.with_field(vim.fn, "exists", function(cmd)
+                if cmd == ":LspInfo" or cmd == ":DapContinue" then
+                  return 2
+                end
+                return 0
+              end, function()
+                h.with_field(vim.fn, "executable", function(name)
+                  if name == "nc" then
+                    return 0
+                  end
+                  return 1
+                end, function()
+                  h.with_field(vim.fn, "systemlist", function()
+                    return {}
+                  end, function()
+                    h.with_field(vim, "system", function(argv, _opts)
+                      return {
+                        wait = function()
+                          if argv[1] == "godot" then
+                            return { code = 0, stdout = "4.3.stable\n", stderr = "" }
+                          end
+                          return { code = 0, stdout = "", stderr = "" }
+                        end,
+                      }
+                    end, function()
+                      health.check()
+                    end)
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      local joined_ok = table.concat(recorder.calls.ok, "\n")
+      h.assert_truthy(joined_ok:match("Godot editor LSP detected on port 6005") ~= nil)
+      h.assert_truthy(joined_ok:match("Godot editor debug server detected on port 6006") ~= nil)
+    end,
+  },
 }
