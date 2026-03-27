@@ -103,7 +103,10 @@ return {
       end)
 
       h.assert_truthy(#notifications > 0)
-      h.assert_truthy(notifications[1].message:match("failed to configure DAP integration") ~= nil)
+      h.assert_truthy(
+        notifications[1].message:match("nvim%-dap is not available") ~= nil
+          or notifications[1].message:match("failed to configure DAP integration") ~= nil
+      )
       h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
       h.assert_equal(vim.fn.exists(":GodotStartEditorServer"), 2)
     end,

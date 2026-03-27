@@ -40,10 +40,14 @@ M.opts = {
   },
 }
 
+local function warn_missing_dependency(message)
+  vim.notify("godotdev.nvim: " .. message, vim.log.levels.WARN)
+end
+
 local function setup_dap()
   local ok, dap_module = pcall(require, "godotdev.dap")
   if not ok then
-    vim.notify("godotdev.nvim: failed to load DAP integration: " .. tostring(dap_module), vim.log.levels.WARN)
+    warn_missing_dependency("nvim-dap is not available; debugging integration is disabled")
     return false
   end
 
@@ -53,7 +57,11 @@ local function setup_dap()
     port = M.opts.debug_port,
   })
   if not ok_setup then
-    vim.notify("godotdev.nvim: failed to configure DAP integration: " .. tostring(err), vim.log.levels.WARN)
+    if tostring(err):match("module 'dap' not found") then
+      warn_missing_dependency("nvim-dap is not available; debugging integration is disabled")
+    else
+      vim.notify("godotdev.nvim: failed to configure DAP integration: " .. tostring(err), vim.log.levels.WARN)
+    end
     return false
   end
 
@@ -67,7 +75,7 @@ local function setup_csharp_dap()
 
   local ok, dap = pcall(require, "dap")
   if not ok then
-    vim.notify("godotdev.nvim: C# support requires nvim-dap to be installed", vim.log.levels.WARN)
+    warn_missing_dependency("C# debugging requires nvim-dap to be installed")
     return
   end
 
