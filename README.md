@@ -61,7 +61,6 @@ Below is a quick overview of what you get out of the box:
   - Floating Godot docs support (`curl` and active docs source configuration)
   - Optional C# tooling: `dotnet`, `csharp-ls`/OmniSharp, `netcoredbg`
   - Formatter: `gdformat` (with installation instructions)
-- Detects common issues like mixed indentation in GDScript/C# files
 
 ### Editor Integration
 - Commands to start or reconnect to Godot’s editor LSP:
