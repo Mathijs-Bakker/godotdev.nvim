@@ -1,5 +1,6 @@
 local health = vim.health
 local godotdev = require("godotdev")
+local uv = vim.uv or vim.loop
 
 local M = {}
 
@@ -14,23 +15,34 @@ function M.setup(opts)
   M.opts = vim.tbl_extend("force", M.opts, opts or {})
 end
 
-local is_windows = vim.loop.os_uname().sysname == "Windows_NT"
+local is_windows = uv.os_uname().sysname == "Windows_NT"
+
+local function run_command(argv, opts)
+  local ok, job = pcall(vim.system, argv, vim.tbl_extend("keep", opts or {}, { text = true }))
+  if not ok then
+    return nil, job
+  end
+
+  local result = job:wait()
+  return result, nil
+end
 
 local function port_open(host, port)
-  local cmd
   if is_windows then
     if vim.fn.executable("ncat") ~= 1 then
       return false
     end
-    cmd = string.format("ncat -z -w 1 %s %d 2>NUL", host, port)
-  else
-    if vim.fn.executable("nc") ~= 1 then
-      return true -- assume port ok if nc is missing
-    end
-    cmd = string.format("nc -z -w 1 %s %d >/dev/null 2>&1", host, port)
+
+    local result = run_command({ "ncat", "-z", "-w", "1", host, tostring(port) })
+    return result ~= nil and result.code == 0
   end
-  vim.fn.system(cmd)
-  return vim.v.shell_error == 0
+
+  if vim.fn.executable("nc") ~= 1 then
+    return true -- assume port ok if nc is missing
+  end
+
+  local result = run_command({ "nc", "-z", "-w", "1", host, tostring(port) })
+  return result ~= nil and result.code == 0
 end
 
 local function plugin_installed(name)
@@ -98,9 +110,9 @@ function M.check()
 
   -- Godot version
   health.start("Godot version")
-  local ok, godot_version = pcall(vim.fn.system, "godot --version")
-  if ok and godot_version and godot_version ~= "" then
-    local ver = vim.trim(godot_version)
+  local godot_result = run_command({ "godot", "--version" })
+  if godot_result and godot_result.code == 0 and godot_result.stdout and godot_result.stdout ~= "" then
+    local ver = vim.trim(godot_result.stdout)
     health.ok("Godot detected: " .. ver)
     local major, minor = ver:match("(%d+)%.(%d+)")
     if major and minor and (tonumber(major) < 4 or (tonumber(major) == 4 and tonumber(minor) < 3)) then
