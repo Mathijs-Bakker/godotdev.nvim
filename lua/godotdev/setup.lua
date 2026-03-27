@@ -44,16 +44,15 @@ function M.setup(opts)
     editor_port = M.opts.editor_port,
   })
 
-  require("godotdev.start_editor_server")
-
   local editor_server = require("godotdev.start_editor_server")
+  editor_server.setup()
   -- autostart editor server if enabled
   if M.opts.autostart_editor_server then
     editor_server.start_editor_server(M.opts.editor_server and M.opts.editor_server.address or nil)
   end
 
-  require("godotdev.reconnect_lsp")
-  require("godotdev.formatting")
+  require("godotdev.reconnect_lsp").setup()
+  require("godotdev.formatting").setup()
   require("godotdev.docs").setup()
 
   require("godotdev.dap").setup({
