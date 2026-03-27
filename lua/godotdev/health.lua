@@ -50,6 +50,8 @@ local function plugin_installed(name)
     return vim.fn.exists(":LspInfo") == 2
   elseif name == "nvim-dap" then
     return vim.fn.exists(":DapContinue") == 2
+  elseif name == "nvim-dap-ui" then
+    return pcall(require, "dapui")
   elseif name == "nvim-treesitter" then
     return pcall(require, "nvim-treesitter.configs")
   end
@@ -211,14 +213,14 @@ Make sure the Godot editor is running with LSP server enabled.
   health.info("Docs renderer: " .. docs_renderer)
   health.info("Docs source: " .. docs_source)
 
-  if docs_renderer == "float" then
+  if docs_renderer == "float" or docs_renderer == "buffer" then
     if has_exe("curl") then
-      health.ok("✅ OK 'curl' found for floating Godot docs")
+      health.ok("✅ OK 'curl' found for rendered Godot docs")
     else
-      health.warn("⚠️ WARNING 'curl' not found. Floating Godot docs rendering requires 'curl'.")
+      health.warn("⚠️ WARNING 'curl' not found. Float and buffer Godot docs rendering require 'curl'.")
     end
   else
-    health.info("ℹ️ Floating docs dependency checks skipped (docs.renderer ~= 'float').")
+    health.info("ℹ️ Rendered docs dependency checks skipped (docs.renderer is browser-only).")
   end
 
   -- Code Formatting:
