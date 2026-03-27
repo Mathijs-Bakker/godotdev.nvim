@@ -29,6 +29,17 @@ function M.with_temp(key, value, fn)
   return result
 end
 
+function M.with_field(tbl, key, value, fn)
+  local original = tbl[key]
+  tbl[key] = value
+  local ok, result = pcall(fn)
+  tbl[key] = original
+  if not ok then
+    error(result, 2)
+  end
+  return result
+end
+
 function M.with_package(name, value, fn)
   local original = package.loaded[name]
   package.loaded[name] = value

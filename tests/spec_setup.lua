@@ -61,4 +61,24 @@ return {
       h.assert_equal(autocmds[1].pattern, "*.gd")
     end,
   },
+  {
+    name = "docs setup registers commands once",
+    run = function()
+      for _, name in ipairs({ "GodotDocs", "GodotDocsFloat", "GodotDocsBrowser", "GodotDocsBuffer", "GodotDocsCursor" }) do
+        delete_command(name)
+      end
+      vim.g._godot_docs_commands_defined = nil
+
+      h.clear_module("godotdev.docs")
+      local mod = require("godotdev.docs")
+      mod.setup()
+      mod.setup()
+
+      h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
+      h.assert_equal(vim.fn.exists(":GodotDocsFloat"), 2)
+      h.assert_equal(vim.fn.exists(":GodotDocsBrowser"), 2)
+      h.assert_equal(vim.fn.exists(":GodotDocsBuffer"), 2)
+      h.assert_equal(vim.fn.exists(":GodotDocsCursor"), 2)
+    end,
+  },
 }
