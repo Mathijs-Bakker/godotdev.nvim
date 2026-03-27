@@ -93,7 +93,11 @@ return {
               called_argv = argv
               local result = { code = 1, stdout = "", stderr = "formatter failed" }
               on_exit(result)
-              return { wait = function() return result end }
+              return {
+                wait = function()
+                  return result
+                end,
+              }
             end, function()
               with_temp_gd_buffer(function(buf, path)
                 simulate_save(buf, path)
@@ -109,6 +113,60 @@ return {
       h.assert_equal(called_argv[1], "gdscript-format")
       h.assert_equal(called_argv[2], "--check")
       h.assert_truthy(notifications[1].message:match("formatter failed") ~= nil)
+    end,
+  },
+  {
+    name = "formatting runs checktime after successful formatter completion",
+    run = function()
+      local called_argv
+      local checktime_calls = 0
+
+      clear_augroup("godotdev_formatting")
+      h.with_package("godotdev", {
+        opts = {
+          formatter = "gdformat",
+          formatter_cmd = { "gdformat" },
+        },
+      }, function()
+        h.clear_module("godotdev.formatting")
+        local formatting = require("godotdev.formatting")
+        formatting.setup()
+
+        h.with_field(vim.fn, "executable", function()
+          return 1
+        end, function()
+          h.with_field(vim, "system", function(argv, _opts, on_exit)
+            called_argv = argv
+            local result = { code = 0, stdout = "", stderr = "" }
+            on_exit(result)
+            return {
+              wait = function()
+                return result
+              end,
+            }
+          end, function()
+            h.with_field(vim.api, "nvim_buf_call", function(_buf, cb)
+              return cb()
+            end, function()
+              h.with_temp("cmd", function(command)
+                if command == "checktime" then
+                  checktime_calls = checktime_calls + 1
+                end
+              end, function()
+                with_temp_gd_buffer(function(buf, path)
+                  simulate_save(buf, path)
+                  vim.wait(50, function()
+                    return checktime_calls > 0
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(called_argv[1], "gdformat")
+      h.assert_equal(checktime_calls, 1)
     end,
   },
 }
