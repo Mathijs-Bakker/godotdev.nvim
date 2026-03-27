@@ -132,7 +132,7 @@ macOS/Linux:
    Optionally add alias:
    alias gdvim='~/.local/bin/godotdev'
 
-   This wrapper can remove a stale `/tmp/godot.pipe` socket after crashes before starting `nvim --listen /tmp/godot.pipe`.
+   This wrapper can remove a stale `/tmp/godot.pipe` socket after crashes before starting `nvim --listen /tmp/godot.pipe`. If it still reports that Neovim is already running after you quit, update the probe to use `nvr --nostart --servername "$SOCKET" --remote-expr '1'`.
 
 Windows:
 

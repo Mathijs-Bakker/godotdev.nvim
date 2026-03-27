@@ -219,7 +219,7 @@ A [workaround](doc/neovim-external-editor-setup.md) is to to create a small scri
 #### >> macOS/Linux
 Complete instructions [here](doc/neovim-external-editor-setup.md)
 
-If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev` wrapper instead of raw `nvim --listen ...` so stale socket files are cleaned up automatically after crashes.
+If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev` wrapper instead of raw `nvim --listen ...` so stale socket files are cleaned up automatically after crashes. If your wrapper still reports `Neovim server already running at /tmp/godot.pipe` after you already quit, update its probe to use `nvr --nostart --servername ... --remote-expr '1'`.
 
 #### >> Windows
 
