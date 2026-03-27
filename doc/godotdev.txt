@@ -46,6 +46,10 @@ Example setup:
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
       },
+      treesitter = {
+        auto_setup = true,
+        ensure_installed = { "gdscript" },
+      },
       docs = {
         renderer = "float",      -- "float" | "browser" | "buffer"
         fallback_renderer = "browser", -- nil | "browser" | "buffer"
@@ -74,6 +78,12 @@ Example setup:
 For formatter commands with flags, prefer an argv list:
 
   formatter_cmd = { "gdscript-format", "--check" }
+
+If you already manage `nvim-treesitter` yourself, you can disable plugin-managed setup:
+
+  treesitter = {
+    auto_setup = false,
+  }
 
 Recommended Godot editor settings for external Neovim integration:
 

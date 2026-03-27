@@ -9,6 +9,10 @@ M.opts = {
     address = nil, -- nil uses the current server or the platform default
     remove_stale_socket = true,
   },
+  treesitter = {
+    auto_setup = true,
+    ensure_installed = { "gdscript" },
+  },
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
   formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-format", "--check" }
   docs = {
@@ -61,7 +65,7 @@ function M.setup(opts)
     port = M.opts.debug_port,
   })
 
-  require("godotdev.tree-sitter")
+  require("godotdev.tree-sitter").setup()
 
   require("godotdev.health").setup({
     editor_port = M.opts.editor_port,
