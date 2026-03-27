@@ -4,20 +4,20 @@ M.opts = {
   editor_host = "127.0.0.1",
   editor_port = 6005,
   debug_port = 6006,
-  autostart_editor_server = false,
+  autostart_editor_server = false, -- opt-in: avoid starting a server unless the user wants it
   editor_server = {
     address = nil, -- nil uses the current server or the platform default
     remove_stale_socket = true,
   },
   treesitter = {
-    auto_setup = true,
+    auto_setup = true, -- convenience default; disable if you manage nvim-treesitter yourself
     ensure_installed = { "gdscript" },
   },
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
   formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-format", "--check" }
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
-    fallback_renderer = "browser", -- nil | "browser" | "buffer"
+    fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",
     language = "en",

@@ -121,7 +121,7 @@ require("godotdev").setup({
   editor_port = 6005,        -- Godot LSP port
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
-  autostart_editor_server = true,  -- Enable auto start Nvim server
+  autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
   formatter = "gdformat",    -- "gdformat" | "gdscript-format"
   formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
   editor_server = {
@@ -129,12 +129,12 @@ require("godotdev").setup({
     remove_stale_socket = true,
   },
   treesitter = {
-    auto_setup = true,
+    auto_setup = true,       -- convenience default; disable if you manage nvim-treesitter yourself
     ensure_installed = { "gdscript" },
   },
   docs = {
     renderer = "float",      -- default: open docs in a floating window
-    fallback_renderer = "browser", -- nil | "browser" | "buffer"
+    fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback
     missing_symbol_feedback = "message", -- "message" | "notify"
     version = "stable",      -- e.g. "stable", "latest", "4.5"
     language = "en",
@@ -171,6 +171,11 @@ treesitter = {
   auto_setup = false,
 }
 ```
+
+Default notes:
+- `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
+- `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
+- `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
 
