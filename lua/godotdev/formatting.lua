@@ -1,24 +1,87 @@
-local config = require("godotdev").opts
+local M = {}
 
-vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = "*.gd",
-  callback = function()
-    local cmd = config.formatter_cmd or config.formatter
-    local bin = cmd
-    if cmd:find("%s") then
-      bin = vim.split(cmd, "%s+")[1]
-    end
-    if vim.fn.executable(bin) ~= 1 then
-      vim.notify(bin .. " not found in PATH. Run `:checkhealth godotdev` for more info.", vim.log.levels.WARN)
-      return
-    end
+local AUGROUP = "godotdev_formatting"
 
-    if config.formatter == "gdformat" then
-      vim.cmd("silent !" .. cmd .. " %")
-    elseif config.formatter == "gdscript-format" then
-      vim.cmd("silent !" .. cmd .. " %")
-    end
+local function get_config()
+  local ok, godotdev = pcall(require, "godotdev")
+  if not ok then
+    return {}
+  end
 
-    vim.cmd("checktime")
-  end,
-})
+  return godotdev.opts or {}
+end
+
+local function command_argv()
+  local config = get_config()
+  local cmd = config.formatter_cmd or config.formatter or "gdformat"
+
+  if type(cmd) == "table" then
+    return vim.deepcopy(cmd)
+  end
+
+  if type(cmd) ~= "string" or cmd == "" then
+    return { "gdformat" }
+  end
+
+  return vim.split(cmd, "%s+", { trimempty = true })
+end
+
+local function executable_name(argv)
+  return argv[1]
+end
+
+local function format_buffer(bufnr)
+  local config = get_config()
+  local argv = command_argv()
+  local bin = executable_name(argv)
+  local file = vim.api.nvim_buf_get_name(bufnr)
+
+  if file == "" or bin == nil or bin == "" then
+    return
+  end
+
+  if vim.fn.executable(bin) ~= 1 then
+    vim.notify(bin .. " not found in PATH. Run `:checkhealth godotdev` for more info.", vim.log.levels.WARN)
+    return
+  end
+
+  table.insert(argv, file)
+
+  vim.system(argv, { text = true }, function(result)
+    vim.schedule(function()
+      if not vim.api.nvim_buf_is_valid(bufnr) then
+        return
+      end
+
+      if result.code ~= 0 then
+        local stderr = vim.trim(result.stderr or "")
+        local stdout = vim.trim(result.stdout or "")
+        local message = stderr ~= "" and stderr or stdout
+        if message == "" then
+          message = ("Formatter `%s` failed for %s"):format(bin, vim.fn.fnamemodify(file, ":t"))
+        end
+        vim.notify(message, vim.log.levels.ERROR)
+        return
+      end
+
+      vim.api.nvim_buf_call(bufnr, function()
+        vim.cmd("checktime")
+      end)
+    end)
+  end)
+end
+
+function M.setup()
+  local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    group = group,
+    pattern = "*.gd",
+    callback = function(args)
+      format_buffer(args.buf)
+    end,
+    desc = "Format GDScript files after save",
+  })
+end
+
+return M

@@ -3,6 +3,7 @@ local M = {}
 local uv = vim.uv or vim.loop
 local is_windows = uv.os_uname().sysname == "Windows_NT"
 local default_pipe = is_windows and [[\\.\pipe\godot.nvim]] or "/tmp/godot.nvim"
+local AUGROUP = "godotdev_start_editor_server"
 
 local function get_config()
   local ok, godotdev = pcall(require, "godotdev")
@@ -119,21 +120,28 @@ end
 M.start_editor_server = start_editor_server
 M.default_pipe = default_pipe
 
-vim.api.nvim_create_user_command("GodotStartEditorServer", function(opts)
-  start_editor_server(opts.args ~= "" and opts.args or nil)
-end, {
-  nargs = "?",
-  complete = "file",
-})
+function M.setup()
+  if vim.fn.exists(":GodotStartEditorServer") ~= 2 then
+    vim.api.nvim_create_user_command("GodotStartEditorServer", function(opts)
+      start_editor_server(opts.args ~= "" and opts.args or nil)
+    end, {
+      nargs = "?",
+      complete = "file",
+    })
+  end
 
-vim.api.nvim_create_autocmd("BufReadPost", {
-  pattern = { "*.gd", "*.cs" },
-  callback = function()
-    local config = require("godotdev")
-    if config.opts and config.opts.autostart_editor_server then
-      start_editor_server(config.opts.editor_server and config.opts.editor_server.address or nil)
-    end
-  end,
-})
+  local group = vim.api.nvim_create_augroup(AUGROUP, { clear = true })
+  vim.api.nvim_create_autocmd("BufReadPost", {
+    group = group,
+    pattern = { "*.gd", "*.cs" },
+    callback = function()
+      local config = require("godotdev")
+      if config.opts and config.opts.autostart_editor_server then
+        start_editor_server(config.opts.editor_server and config.opts.editor_server.address or nil)
+      end
+    end,
+    desc = "Autostart the Neovim editor server for Godot buffers",
+  })
+end
 
 return M
