@@ -10,6 +10,7 @@ local specs = {
   "tests.spec_utils",
   "tests.spec_tree_sitter",
   "tests.spec_setup",
+  "tests.spec_start_editor_server",
 }
 
 local total = 0
