@@ -25,8 +25,8 @@ M.setup = function(config)
     filetypes = { "gd", "gdscript", "gdshader", "gdscript3" },
     root_markers = { "project.godot", ".git" },
     capabilities = capabilities,
-    on_attach = function(client, bufnr)
-      utils.suppress_unsupported_lsp_messages(client, { "Method not found: godot/reloadScript" })
+    on_attach = function(client, _)
+      utils.suppress_client_messages(client, { "Method not found: godot/reloadScript" })
     end,
   }
 
