@@ -38,6 +38,7 @@ Before contributing, make sure you have:
   ```bash
   nvim --headless -u NONE -i NONE -c "lua dofile('tests/run.lua')" -c qa
   ```
+- GitHub Actions runs the same headless suite on pull requests and pushes to `master`.
 - Run the plugin inside Neovim and test against Godot.
 - Make sure you test with the versions you’ll list in your PR:
   - Godot version

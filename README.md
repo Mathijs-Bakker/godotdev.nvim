@@ -188,6 +188,8 @@ Run the headless test suite:
 nvim --headless -u NONE -i NONE -c "lua dofile('tests/run.lua')" -c qa
 ```
 
+The same command runs in GitHub Actions on pushes to `master` and on pull requests.
+
 For integration testing, also run the plugin inside Neovim against a real Godot project and verify editor server, docs, formatting, and debugging flows on your target platform.
 
 ### Optimize Godot editor for Neovim
