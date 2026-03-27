@@ -12,6 +12,7 @@
 ![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
 ![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
 ![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
+[![CI](https://github.com/Mathijs-Bakker/godotdev.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/Mathijs-Bakker/godotdev.nvim/actions/workflows/ci.yml)
 
 </div>
 
