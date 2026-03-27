@@ -45,6 +45,18 @@ Before contributing, make sure you have:
   - Neovim version
   - OS + Terminal
 
+### Docs module layout
+
+The Godot docs implementation is split into focused modules:
+
+- `lua/godotdev/docs/common.lua` for shared config, symbol extraction, and URL helpers
+- `lua/godotdev/docs/fetch.lua` for cache, page/index lookup, and docs source fetching
+- `lua/godotdev/docs/rst.lua` for RST to Markdown conversion
+- `lua/godotdev/docs/render.lua` for float, buffer, and browser rendering
+- `lua/godotdev/docs.lua` as the thin coordinator and command entrypoint
+
+If you change docs behavior, try to keep fetch/parsing/rendering concerns separated and add or update headless tests under `tests/spec_docs*.lua`.
+
 ### Manual integration checklist
 
 - macOS/Linux:
