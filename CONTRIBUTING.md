@@ -34,6 +34,10 @@ Before contributing, make sure you have:
    ```
 ## 🧪 Testing your changes
 
+- Run the headless test suite:
+  ```bash
+  nvim --headless -u NONE -i NONE -c "lua dofile('tests/run.lua')" -c qa
+  ```
 - Run the plugin inside Neovim and test against Godot.
 - Make sure you test with the versions you’ll list in your PR:
   - Godot version
