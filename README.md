@@ -123,6 +123,8 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = true,  -- Enable auto start Nvim server
+  formatter = "gdformat",    -- "gdformat" | "gdscript-format"
+  formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -151,6 +153,12 @@ require("godotdev").setup({
     },
   },
 })
+```
+
+For formatter commands with flags, prefer an argv list:
+
+```lua
+formatter_cmd = { "gdscript-format", "--check" }
 ```
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.

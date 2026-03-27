@@ -10,7 +10,7 @@ M.opts = {
     remove_stale_socket = true,
   },
   formatter = "gdformat", -- "gdformat" | "gdscript-format"
-  formatter_cmd = nil, -- allow override, e.g. "gdscript-format --check"
+  formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-format", "--check" }
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
     fallback_renderer = "browser", -- nil | "browser" | "buffer"
