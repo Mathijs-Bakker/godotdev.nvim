@@ -113,7 +113,9 @@ end
 local function report_dependencies()
   health.start("Dependencies")
 
-  for _, plugin in ipairs({ "nvim-lspconfig", "nvim-treesitter", "nvim-dap", "nvim-dap-ui" }) do
+  health.ok("✅ OK Built-in Neovim LSP APIs available")
+
+  for _, plugin in ipairs({ "nvim-treesitter", "nvim-dap", "nvim-dap-ui" }) do
     if plugin_installed(plugin) then
       health.ok("✅ OK Dependency '" .. plugin .. "' is installed")
     else

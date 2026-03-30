@@ -26,6 +26,62 @@ end
 
 return {
   {
+    name = "health treats built-in Neovim LSP as the LSP dependency",
+    run = function()
+      local recorder = make_health_recorder()
+
+      h.with_temp("health", recorder.api, function()
+        h.with_package("godotdev", {
+          opts = {
+            csharp = false,
+            docs = { renderer = "browser", source_ref = "master" },
+            formatter = false,
+            formatter_cmd = nil,
+          },
+        }, function()
+          h.with_package("nvim-treesitter.configs", {}, function()
+            h.with_package("dapui", {}, function()
+              h.clear_module("godotdev.health")
+              local health = require("godotdev.health")
+
+              h.with_field(vim.fn, "exists", function(cmd)
+                if cmd == ":DapContinue" then
+                  return 2
+                end
+                return 0
+              end, function()
+                h.with_field(vim.fn, "executable", function(name)
+                  if name == "nc" then
+                    return 0
+                  end
+                  return 1
+                end, function()
+                  h.with_field(vim, "system", function(argv, _opts)
+                    return {
+                      wait = function()
+                        if argv[1] == "godot" then
+                          return { code = 0, stdout = "4.3.stable\n", stderr = "" }
+                        end
+                        return { code = 0, stdout = "", stderr = "" }
+                      end,
+                    }
+                  end, function()
+                    health.check()
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      local joined_ok = table.concat(recorder.calls.ok, "\n")
+      local joined_warns = table.concat(recorder.calls.warn, "\n")
+      h.assert_truthy(joined_ok:match("Built%-in Neovim LSP APIs available") ~= nil)
+      h.assert_falsy(joined_warns:match("nvim%-lspconfig"))
+    end,
+  },
+  {
     name = "health reports when formatter is disabled",
     run = function()
       local recorder = make_health_recorder()
