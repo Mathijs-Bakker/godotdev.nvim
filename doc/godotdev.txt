@@ -29,6 +29,9 @@ Quickstart                                         *godotdev-quickstart*
    - `require("godotdev").setup({ autostart_editor_server = true })`
 8. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
 
+Built-in LSP mappings such as `K`, `grr`, `grn`, and `gri` are available in recent Neovim versions.
+This plugin does not define its own LSP keymaps.
+
 ==============================================================================
 Configuration                                     *godotdev-configuration*
 
@@ -94,6 +97,7 @@ Default notes:
 - `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
 - `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
+- The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is optional and not required for Godot LSP support.
 
 Recommended Godot editor settings for external Neovim integration:
 
@@ -206,7 +210,7 @@ Health checks                                     *godotdev-checkhealth*
 Use `:checkhealth godotdev` to verify and troubleshoot:
 
 Dependencies:
-- nvim-lspconfig
+- Built-in Neovim LSP support
 - nvim-treesitter
 - nvim-dap
 - nvim-dap-ui

@@ -57,7 +57,7 @@ Below is a quick overview of what you get out of the box:
 
 ### Health Checks
 - `:checkhealth godotdev` validates:
-  - Required dependencies: `nvim-lspconfig`, `nvim-dap`, `nvim-dap-ui`, `nvim-treesitter`
+  - Built-in Neovim LSP support plus plugin dependencies: `nvim-dap`, `nvim-dap-ui`, `nvim-treesitter`
   - Godot editor LSP and debug servers
   - Floating Godot docs support (`curl` and active docs source configuration)
   - Optional C# tooling: `dotnet`, `csharp-ls`/OmniSharp, `netcoredbg`
@@ -85,7 +85,6 @@ Below is a quick overview of what you get out of the box:
 
 - Neovim 0.11+
 - Godot 4.x+ with TCP LSP enabled
-- `nvim-lspconfig`
 - `nvim-dap` and `nvim-dap-ui` for debugging
 - `nvim-treesitter`
 - Windows users must have [`ncat`](https://nmap.org/ncat/) in PATH
@@ -99,8 +98,19 @@ Below is a quick overview of what you get out of the box:
 ```lua
 {
   'Mathijs-Bakker/godotdev.nvim',
-  dependencies = { 'nvim-lspconfig', 'nvim-dap', 'nvim-dap-ui', 'nvim-treesitter' },
+  dependencies = { 'nvim-dap', 'nvim-dap-ui', 'nvim-treesitter' },
 }
+```
+
+## Installation (`vim.pack`, Neovim 0.12+)
+
+```lua
+vim.pack.add({
+  "https://github.com/Mathijs-Bakker/godotdev.nvim",
+  "https://github.com/mfussenegger/nvim-dap",
+  "https://github.com/rcarriga/nvim-dap-ui",
+  "https://github.com/nvim-treesitter/nvim-treesitter",
+})
 ```
 ## Quickstart
 
@@ -108,7 +118,7 @@ Below is a quick overview of what you get out of the box:
 1. Start Godot editor with TCP LSP enabled (Editor Settings → Network → Enable TCP LSP server)
 1. Open a `.gd` or `.gdshader` file
 1. LSP will automatically attach
-1. Use `<leader>rn` to rename, `gd` to go to definition, `gr` for references, etc.
+1. Use Neovim's built-in LSP mappings such as `K`, `grr`, `grn`, and `gri`, or your own custom mappings
 1. Start debugging with DAP (Launch scene configuration)
 1. Optional: Enable C# support by setting `csharp = true` in the plugin setup
 1. Run `:checkhealth godotdev` at any time to verify plugin, LSP, debug server, and C# dependencies
@@ -183,6 +193,7 @@ Default notes:
 - `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
 - `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
+- The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is not required unless you want it for other servers in your own config.
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
 
