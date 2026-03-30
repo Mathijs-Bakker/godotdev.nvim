@@ -40,7 +40,7 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-      formatter = "gdformat",    -- "gdformat" | "gdscript-format"
+      formatter = "gdformat",    -- "gdformat" | "gdscript-format" | false
       formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
@@ -78,6 +78,10 @@ Example setup:
 For formatter commands with flags, prefer an argv list:
 
   formatter_cmd = { "gdscript-format", "--check" }
+
+To disable autoformat-on-save entirely:
+
+  formatter = false
 
 If you already manage `nvim-treesitter` yourself, you can disable plugin-managed setup:
 
@@ -227,7 +231,7 @@ Autoformat / Indentation                           *godotdev-indent*
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 The plugin automatically sets buffer options on `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save using `gdformat` (if installed).
+Additionally, `.gd` files are autoformatted on save using `gdformat` (if installed), unless `formatter = false`.
 Check notifications for warnings if `gdformat` is missing.
 
 For more info on indentation: `:help godotdev-indent`

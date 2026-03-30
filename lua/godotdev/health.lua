@@ -62,7 +62,15 @@ local function has_exe(name)
   return vim.fn.executable(name) == 1
 end
 
+local function formatter_disabled(opts)
+  return opts.formatter_cmd == nil and opts.formatter == false
+end
+
 local function formatter_command_argv(opts)
+  if formatter_disabled(opts) then
+    return nil
+  end
+
   local cmd = opts.formatter_cmd or opts.formatter or "gdformat"
 
   if type(cmd) == "table" then
@@ -219,6 +227,11 @@ end
 
 local function report_formatter()
   health.start("GDScript Formatter")
+
+  if formatter_disabled(godotdev.opts) then
+    health.info("ℹ️ Formatter disabled (`formatter = false`)")
+    return
+  end
 
   local formatter = godotdev.opts.formatter or "gdformat"
   local formatter_argv = formatter_command_argv(godotdev.opts)

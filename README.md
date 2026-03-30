@@ -122,7 +122,7 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-  formatter = "gdformat",    -- "gdformat" | "gdscript-format"
+  formatter = "gdformat",    -- "gdformat" | "gdscript-format" | false
   formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
@@ -162,6 +162,12 @@ For formatter commands with flags, prefer an argv list:
 
 ```lua
 formatter_cmd = { "gdscript-format", "--check" }
+```
+
+To disable autoformat-on-save entirely:
+
+```lua
+formatter = false
 ```
 
 If you already manage `nvim-treesitter` yourself, you can disable plugin-managed setup:
@@ -332,7 +338,7 @@ Why `gK`:
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 This plugin automatically sets buffer options for `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit):
+Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit) unless you set `formatter = false`:
 
 ```vim
 :w

@@ -31,6 +31,41 @@ end
 
 return {
   {
+    name = "formatting does nothing when formatter is disabled",
+    run = function()
+      local notifications = {}
+      local system_called = false
+
+      clear_augroup("godotdev_formatting")
+      h.with_package("godotdev", {
+        opts = {
+          formatter = false,
+          formatter_cmd = nil,
+        },
+      }, function()
+        h.clear_module("godotdev.formatting")
+        local formatting = require("godotdev.formatting")
+        formatting.setup()
+
+        h.with_temp("notify", function(message, level)
+          table.insert(notifications, { message = message, level = level })
+        end, function()
+          h.with_field(vim, "system", function()
+            system_called = true
+            error("vim.system should not be called when formatter is disabled")
+          end, function()
+            with_temp_gd_buffer(function(buf, path)
+              simulate_save(buf, path)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_falsy(system_called)
+      h.assert_equal(#notifications, 0)
+    end,
+  },
+  {
     name = "formatting warns when formatter executable is missing",
     run = function()
       local notifications = {}
