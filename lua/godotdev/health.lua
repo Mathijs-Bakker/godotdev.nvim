@@ -148,6 +148,8 @@ Make sure the Godot editor is running with LSP server enabled.
     else
       health.warn("Godot editor debug server not detected on port " .. debug_port)
     end
+
+    health.info("nvim-dap is installed. Run :checkhealth dap for adapter-specific diagnostics.")
   end
 end
 
