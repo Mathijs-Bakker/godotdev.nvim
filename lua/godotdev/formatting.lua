@@ -11,8 +11,16 @@ local function get_config()
   return godotdev.opts or {}
 end
 
+local function formatter_disabled(config)
+  return config.formatter_cmd == nil and config.formatter == false
+end
+
 local function command_argv()
   local config = get_config()
+  if formatter_disabled(config) then
+    return nil
+  end
+
   local cmd = config.formatter_cmd or config.formatter or "gdformat"
 
   if type(cmd) == "table" then
@@ -32,6 +40,10 @@ end
 
 local function format_buffer(bufnr)
   local config = get_config()
+  if formatter_disabled(config) then
+    return
+  end
+
   local argv = command_argv()
   local bin = executable_name(argv)
   local file = vim.api.nvim_buf_get_name(bufnr)

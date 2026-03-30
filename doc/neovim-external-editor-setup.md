@@ -70,7 +70,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    NVR="${NVR:-nvr}"
 
    if [[ -S "$SOCKET" ]]; then
-     if command -v "$NVR" >/dev/null 2>&1 && "$NVR" --servername "$SOCKET" --remote-expr '1' >/dev/null 2>&1; then
+     if command -v "$NVR" >/dev/null 2>&1 && "$NVR" --nostart --servername "$SOCKET" --remote-expr '1' >/dev/null 2>&1; then
        echo "Neovim server already running at $SOCKET"
        exit 0
      fi
@@ -249,6 +249,20 @@ This usually means the old Unix socket file still exists even though the old Neo
   ```bash
   rm -f /tmp/godot.pipe
   nvim --listen /tmp/godot.pipe
+  ```
+
+### `godotdev` says "Neovim server already running" after you already quit
+
+This is usually caused by an older wrapper that probes with `nvr --remote-expr` but does not pass `--nostart`.
+
+- Update the wrapper so the probe line is exactly:
+  ```bash
+  if command -v "$NVR" >/dev/null 2>&1 && "$NVR" --nostart --servername "$SOCKET" --remote-expr '1' >/dev/null 2>&1; then
+  ```
+- Without `--nostart`, `nvr` can report success without proving that the target socket is your live Neovim server, so the wrapper may print `Neovim server already running at /tmp/godot.pipe` even after exit.
+- If you are already stuck with a stale socket, remove it once with:
+  ```bash
+  rm -f /tmp/godot.pipe
   ```
 
 ### `command not found: nvr`

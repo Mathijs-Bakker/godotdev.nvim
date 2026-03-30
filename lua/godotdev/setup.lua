@@ -13,7 +13,7 @@ M.opts = {
     auto_setup = true, -- convenience default; disable if you manage nvim-treesitter yourself
     ensure_installed = { "gdscript" },
   },
-  formatter = "gdformat", -- "gdformat" | "gdscript-format"
+  formatter = "gdformat", -- "gdformat" | "gdscript-format" | false
   formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-format", "--check" }
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
