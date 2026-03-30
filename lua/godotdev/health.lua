@@ -46,14 +46,14 @@ local function port_open(host, port)
 end
 
 local function plugin_installed(name)
-  if name == "nvim-lspconfig" then
-    return vim.fn.exists(":LspInfo") == 2
+  if name == "nvim-treesitter" then
+    return pcall(require, "nvim-treesitter.configs")
+      or pcall(require, "nvim-treesitter.config")
+      or pcall(require, "nvim-treesitter")
   elseif name == "nvim-dap" then
     return vim.fn.exists(":DapContinue") == 2
   elseif name == "nvim-dap-ui" then
     return pcall(require, "dapui")
-  elseif name == "nvim-treesitter" then
-    return pcall(require, "nvim-treesitter.configs")
   end
   return false
 end
@@ -113,13 +113,13 @@ end
 local function report_dependencies()
   health.start("Dependencies")
 
-  health.ok("✅ OK Built-in Neovim LSP APIs available")
+  health.ok("Built-in Neovim LSP APIs available")
 
   for _, plugin in ipairs({ "nvim-treesitter", "nvim-dap", "nvim-dap-ui" }) do
     if plugin_installed(plugin) then
-      health.ok("✅ OK Dependency '" .. plugin .. "' is installed")
+      health.ok("Dependency '" .. plugin .. "' is installed")
     else
-      health.warn("⚠️ WARNING Dependency '" .. plugin .. "' not found. Some features may not work.")
+      health.warn("Dependency '" .. plugin .. "' not found. Some features may not work.")
     end
   end
 end
@@ -129,10 +129,10 @@ local function report_godot_detection()
 
   local editor_port = M.opts.editor_port
   if port_open("127.0.0.1", editor_port) then
-    health.ok("✅ OK Godot editor LSP detected on port " .. editor_port)
+    health.ok("Godot editor LSP detected on port " .. editor_port)
   else
     health.warn(string.format(
-      [[⚠️ WARNING Godot editor LSP not detected on port %d.
+      [[Godot editor LSP not detected on port %d.
 Make sure the Godot editor is running with LSP server enabled.
 - Enable TCP LSP server in Editor Settings → Network
 - Confirm port matches %d]],
@@ -144,9 +144,9 @@ Make sure the Godot editor is running with LSP server enabled.
   local debug_port = M.opts.debug_port
   if plugin_installed("nvim-dap") then
     if port_open("127.0.0.1", debug_port) then
-      health.ok("✅ OK Godot editor debug server detected on port " .. debug_port)
+      health.ok("Godot editor debug server detected on port " .. debug_port)
     else
-      health.warn("⚠️ WARNING Godot editor debug server not detected on port " .. debug_port)
+      health.warn("Godot editor debug server not detected on port " .. debug_port)
     end
   end
 end
@@ -157,9 +157,9 @@ local function report_editor_server()
   health.info("Editor server target: " .. editor_server_target())
 
   if vim.v.servername ~= "" then
-    health.ok("✅ OK Neovim server listening on " .. vim.v.servername)
+    health.ok("Neovim server listening on " .. vim.v.servername)
   else
-    health.info("ℹ️ No active Neovim server address in this session.")
+    health.info("No active Neovim server address in this session.")
   end
 end
 
@@ -169,10 +169,10 @@ local function report_windows_dependencies()
   end
 
   if has_exe("ncat") then
-    health.ok("✅ OK 'ncat' is installed")
+    health.ok("'ncat' is installed")
   else
     health.error([[
-❌ ERROR Windows: 'ncat' not found. Install via Scoop or Chocolatey:
+Windows: 'ncat' not found. Install via Scoop or Chocolatey:
   scoop install nmap
   choco install nmap]])
   end
@@ -180,28 +180,28 @@ end
 
 local function report_csharp()
   if not godotdev.opts.csharp then
-    health.info("ℹ️ C# checks skipped (csharp=false)")
+    health.info("C# checks skipped (csharp=false)")
     return
   end
 
   health.start("C# support")
 
   if has_exe("dotnet") then
-    health.ok("✅ OK 'dotnet' found")
+    health.ok("'dotnet' found")
   else
-    health.error("❌ ERROR 'dotnet' not found. Install the .NET SDK: https://dotnet.microsoft.com/download")
+    health.error("'dotnet' not found. Install the .NET SDK: https://dotnet.microsoft.com/download")
   end
 
   if has_exe("csharp-ls") or has_exe("omnisharp") then
-    health.ok("✅ OK C# LSP server found (csharp-ls or omnisharp)")
+    health.ok("C# LSP server found (csharp-ls or omnisharp)")
   else
-    health.error("❌ ERROR No C# LSP server found. Install 'csharp-ls' (recommended) or 'omnisharp'.")
+    health.error("No C# LSP server found. Install 'csharp-ls' (recommended) or 'omnisharp'.")
   end
 
   if has_exe("netcoredbg") then
-    health.ok("✅ OK 'netcoredbg' found")
+    health.ok("'netcoredbg' found")
   else
-    health.error("❌ ERROR 'netcoredbg' not found. Install from: https://github.com/Samsung/netcoredbg")
+    health.error("'netcoredbg' not found. Install from: https://github.com/Samsung/netcoredbg")
   end
 end
 
@@ -218,12 +218,12 @@ local function report_docs()
 
   if docs_renderer == "float" or docs_renderer == "buffer" then
     if has_exe("curl") then
-      health.ok("✅ OK 'curl' found for rendered Godot docs")
+      health.ok("'curl' found for rendered Godot docs")
     else
-      health.warn("⚠️ WARNING 'curl' not found. Float and buffer Godot docs rendering require 'curl'.")
+      health.warn("'curl' not found. Float and buffer Godot docs rendering require 'curl'.")
     end
   else
-    health.info("ℹ️ Rendered docs dependency checks skipped (docs.renderer is browser-only).")
+    health.info("Rendered docs dependency checks skipped (docs.renderer is browser-only).")
   end
 end
 
@@ -231,7 +231,7 @@ local function report_formatter()
   health.start("GDScript Formatter")
 
   if formatter_disabled(godotdev.opts) then
-    health.info("ℹ️ Formatter disabled (`formatter = false`)")
+    health.info("Formatter disabled (`formatter = false`)")
     return
   end
 
@@ -244,13 +244,13 @@ local function report_formatter()
   end
 
   if has_exe(exe) then
-    health.ok("✅ OK '" .. exe .. "' found")
+    health.ok("'" .. exe .. "' found")
     return
   end
 
   if formatter == "gdformat" then
     health.warn([[
-❌ ERROR 'gdformat' not found.
+'gdformat' not found.
 Install with Python pip or Homebrew:
 
 Linux / macOS:
@@ -263,7 +263,7 @@ Windows:
   pip install gdtoolkit]])
   elseif formatter == "gdscript-format" then
     health.warn([[
-❌ ERROR 'gdscript-format' not found.
+'gdscript-format' not found.
 Install from the repo: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
 Follow instructions in README.md]])
   end
