@@ -49,6 +49,25 @@ local function current_scene_arg()
   return normalize_scene_arg(file)
 end
 
+local function telescope_modules()
+  local ok, pickers = pcall(require, "telescope.pickers")
+  local ok_finders, finders = pcall(require, "telescope.finders")
+  local ok_config, telescope_config = pcall(require, "telescope.config")
+  local ok_actions, actions = pcall(require, "telescope.actions")
+  local ok_state, action_state = pcall(require, "telescope.actions.state")
+  if not (ok and ok_finders and ok_config and ok_actions and ok_state) then
+    return nil
+  end
+
+  return {
+    pickers = pickers,
+    finders = finders,
+    config = telescope_config,
+    actions = actions,
+    action_state = action_state,
+  }
+end
+
 local function project_scene_args()
   local root = find_project_root()
   if not root then
@@ -67,6 +86,63 @@ local function project_scene_args()
 
   table.sort(scenes)
   return scenes
+end
+
+local function scenes_for_script()
+  local file = vim.api.nvim_buf_get_name(0)
+  if file == "" or not (file:match("%.gd$") or file:match("%.cs$")) then
+    return nil
+  end
+
+  local script = normalize_scene_arg(file)
+  local root = find_project_root()
+  if not script or not root then
+    return nil
+  end
+
+  local matches = vim.fn.globpath(root, "**/*.tscn", false, true)
+  local scenes = {}
+
+  for _, path in ipairs(matches) do
+    local lines = vim.fn.readfile(path)
+    if table.concat(lines, "\n"):find(script, 1, true) then
+      local normalized = normalize_scene_arg(path)
+      if normalized then
+        table.insert(scenes, normalized)
+      end
+    end
+  end
+
+  table.sort(scenes)
+  return scenes
+end
+
+local function pick_scene_list(scenes, title)
+  local telescope = telescope_modules()
+  if not telescope then
+    vim.notify("Telescope is required for scene selection", vim.log.levels.ERROR)
+    return false
+  end
+
+  telescope.pickers.new({}, {
+    prompt_title = title,
+    finder = telescope.finders.new_table({
+      results = scenes,
+    }),
+    sorter = telescope.config.values.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr)
+      telescope.actions.select_default:replace(function()
+        local selection = telescope.action_state.get_selected_entry()
+        telescope.actions.close(prompt_bufnr)
+        if selection and selection[1] then
+          M.run_scene(selection[1])
+        end
+      end)
+      return true
+    end,
+  }):find()
+
+  return true
 end
 
 local function run_godot(args)
@@ -104,12 +180,24 @@ end
 
 function M.run_current_scene()
   local scene = current_scene_arg()
-  if not scene then
-    vim.notify("Current buffer is not a .tscn scene inside this Godot project", vim.log.levels.ERROR)
-    return false
+  if scene then
+    return run_godot({ scene })
   end
 
-  return run_godot({ scene })
+  local scenes = scenes_for_script()
+  if scenes and #scenes == 1 then
+    return run_godot({ scenes[1] })
+  end
+
+  if scenes and #scenes > 1 then
+    return pick_scene_list(scenes, "Scenes using current script")
+  end
+
+  vim.notify(
+    "Current buffer is not a .tscn scene or a .gd/.cs script attached to a scene in this Godot project",
+    vim.log.levels.ERROR
+  )
+  return false
 end
 
 function M.run_scene(scene)
@@ -129,41 +217,13 @@ function M.pick_scene()
     return false
   end
 
-  local ok, pickers = pcall(require, "telescope.pickers")
-  local ok_finders, finders = pcall(require, "telescope.finders")
-  local ok_config, telescope_config = pcall(require, "telescope.config")
-  local ok_actions, actions = pcall(require, "telescope.actions")
-  local ok_state, action_state = pcall(require, "telescope.actions.state")
-  if not (ok and ok_finders and ok_config and ok_actions and ok_state) then
-    vim.notify("Telescope is required for :GodotRunScenePicker", vim.log.levels.ERROR)
-    return false
-  end
-
   local scenes = project_scene_args()
   if not scenes or #scenes == 0 then
     vim.notify("No .tscn scenes found in the current Godot project", vim.log.levels.WARN)
     return false
   end
 
-  pickers.new({}, {
-    prompt_title = "Godot Scenes",
-    finder = finders.new_table({
-      results = scenes,
-    }),
-    sorter = telescope_config.values.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr)
-      actions.select_default:replace(function()
-        local selection = action_state.get_selected_entry()
-        actions.close(prompt_bufnr)
-        if selection and selection[1] then
-          M.run_scene(selection[1])
-        end
-      end)
-      return true
-    end,
-  }):find()
-
-  return true
+  return pick_scene_list(scenes, "Godot Scenes")
 end
 
 function M.setup()

@@ -309,7 +309,8 @@ You can run the current Godot project or scene from Neovim without using DAP:
 
 Notes:
 - `:GodotRunProject` launches Godot for the current project root.
-- `:GodotRunCurrentScene` requires the current buffer to be a `.tscn` inside the current Godot project.
+- `:GodotRunCurrentScene` works from a `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene in the current project.
+- If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
 - `:GodotRunScene {path}` accepts `res://...`, a project-relative path, or an absolute path inside the current project.
 - `:GodotRunScenePicker` uses Telescope to browse `.tscn` files in the current project and run the selected scene.
 - These commands shell out to `godot` on your `PATH`.
