@@ -49,6 +49,26 @@ local function current_scene_arg()
   return normalize_scene_arg(file)
 end
 
+local function project_scene_args()
+  local root = find_project_root()
+  if not root then
+    return nil
+  end
+
+  local matches = vim.fn.globpath(root, "**/*.tscn", false, true)
+  local scenes = {}
+
+  for _, path in ipairs(matches) do
+    local normalized = normalize_scene_arg(path)
+    if normalized then
+      table.insert(scenes, normalized)
+    end
+  end
+
+  table.sort(scenes)
+  return scenes
+end
+
 local function run_godot(args)
   local root = find_project_root()
   if not root then
@@ -102,6 +122,50 @@ function M.run_scene(scene)
   return run_godot({ normalized })
 end
 
+function M.pick_scene()
+  local root = find_project_root()
+  if not root then
+    vim.notify("project.godot not found", vim.log.levels.ERROR)
+    return false
+  end
+
+  local ok, pickers = pcall(require, "telescope.pickers")
+  local ok_finders, finders = pcall(require, "telescope.finders")
+  local ok_config, telescope_config = pcall(require, "telescope.config")
+  local ok_actions, actions = pcall(require, "telescope.actions")
+  local ok_state, action_state = pcall(require, "telescope.actions.state")
+  if not (ok and ok_finders and ok_config and ok_actions and ok_state) then
+    vim.notify("Telescope is required for :GodotRunScenePicker", vim.log.levels.ERROR)
+    return false
+  end
+
+  local scenes = project_scene_args()
+  if not scenes or #scenes == 0 then
+    vim.notify("No .tscn scenes found in the current Godot project", vim.log.levels.WARN)
+    return false
+  end
+
+  pickers.new({}, {
+    prompt_title = "Godot Scenes",
+    finder = finders.new_table({
+      results = scenes,
+    }),
+    sorter = telescope_config.values.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr)
+      actions.select_default:replace(function()
+        local selection = action_state.get_selected_entry()
+        actions.close(prompt_bufnr)
+        if selection and selection[1] then
+          M.run_scene(selection[1])
+        end
+      end)
+      return true
+    end,
+  }):find()
+
+  return true
+end
+
 function M.setup()
   if vim.fn.exists(":GodotRunProject") ~= 2 then
     vim.api.nvim_create_user_command("GodotRunProject", function()
@@ -122,6 +186,14 @@ function M.setup()
       nargs = 1,
       complete = "file",
       desc = "Run a specific Godot scene",
+    })
+  end
+
+  if vim.fn.exists(":GodotRunScenePicker") ~= 2 then
+    vim.api.nvim_create_user_command("GodotRunScenePicker", function()
+      M.pick_scene()
+    end, {
+      desc = "Pick and run a Godot scene using Telescope",
     })
   end
 end

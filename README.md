@@ -71,6 +71,7 @@ Below is a quick overview of what you get out of the box:
   - `:GodotRunProject`
   - `:GodotRunCurrentScene`
   - `:GodotRunScene {path}`
+  - `:GodotRunScenePicker` (optional Telescope integration)
 - Commands to open Godot class reference docs:
   - `:GodotDocs [ClassName]`
   - `:GodotDocsFloat [ClassName]`
@@ -303,13 +304,16 @@ You can run the current Godot project or scene from Neovim without using DAP:
 :GodotRunProject
 :GodotRunCurrentScene
 :GodotRunScene scenes/Main.tscn
+:GodotRunScenePicker
 ```
 
 Notes:
 - `:GodotRunProject` launches Godot for the current project root.
 - `:GodotRunCurrentScene` requires the current buffer to be a `.tscn` inside the current Godot project.
 - `:GodotRunScene {path}` accepts `res://...`, a project-relative path, or an absolute path inside the current project.
+- `:GodotRunScenePicker` uses Telescope to browse `.tscn` files in the current project and run the selected scene.
 - These commands shell out to `godot` on your `PATH`.
+- `:GodotRunScenePicker` requires Telescope to be installed; the rest do not.
 
 ## Godot class docs
 

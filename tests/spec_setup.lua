@@ -64,7 +64,7 @@ return {
   {
     name = "run setup registers commands",
     run = function()
-      for _, name in ipairs({ "GodotRunProject", "GodotRunCurrentScene", "GodotRunScene" }) do
+      for _, name in ipairs({ "GodotRunProject", "GodotRunCurrentScene", "GodotRunScene", "GodotRunScenePicker" }) do
         delete_command(name)
       end
 
@@ -76,6 +76,7 @@ return {
       h.assert_equal(vim.fn.exists(":GodotRunProject"), 2)
       h.assert_equal(vim.fn.exists(":GodotRunCurrentScene"), 2)
       h.assert_equal(vim.fn.exists(":GodotRunScene"), 2)
+      h.assert_equal(vim.fn.exists(":GodotRunScenePicker"), 2)
     end,
   },
   {
