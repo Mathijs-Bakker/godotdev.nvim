@@ -105,6 +105,17 @@ Recommended Godot editor settings for external Neovim integration:
 - Editor Settings > Interface > Editor > Save on Focus Loss
 - Editor Settings > Interface > Editor > Import Resources When Unfocused
 
+Recommended companion addon:
+
+- `godotdev.nvim-node-copy`
+  https://github.com/MateoPanadero/godotdev.nvim-node-copy
+
+Why it helps:
+
+- Godot's external editor integration does not provide drag-and-drop of nodes into Neovim.
+- The addon adds copy actions in the Scene Tree and 2D editor so you can paste useful node references directly into your script.
+- It supports copying node paths, `$Node` references, `get_node(...)`, and typed `@onready var` snippets.
+
 Recommended docs mapping:
 
   vim.keymap.set("n", "gK", "<cmd>GodotDocs<cr>", { desc = "Godot docs" })

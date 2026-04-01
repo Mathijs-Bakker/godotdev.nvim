@@ -234,6 +234,23 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 
   <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-focus.png"></details>
 
+### Recommended Godot addon
+
+If you use `godotdev.nvim` as your main external-editor workflow, the companion addon
+[`godotdev.nvim-node-copy`](https://github.com/MateoPanadero/godotdev.nvim-node-copy)
+is recommended.
+
+Why it helps:
+- Godot's built-in external editor integration does not provide drag-and-drop of nodes into Neovim.
+- The addon adds copy actions for selected nodes in the Scene Tree and 2D editor, so you can paste useful references directly into your script.
+- It keeps the workflow explicit and safe: select a node in Godot, copy the reference you want, then paste it at the cursor in Neovim.
+
+It currently supports copying:
+- node paths
+- `$Node` references
+- `get_node(...)` expressions
+- typed `@onready var` snippets
+
 ### Open .gdscript/.gdshader from Godot in Neovim
 
 When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.

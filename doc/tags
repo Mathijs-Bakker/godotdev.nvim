@@ -2,9 +2,13 @@ godotdev	godotdev.txt	/*godotdev*
 godotdev-checkhealth	godotdev.txt	/*godotdev-checkhealth*
 godotdev-configuration	godotdev.txt	/*godotdev-configuration*
 godotdev-docs	godotdev.txt	/*godotdev-docs*
+godotdev-editor-server	godotdev.txt	/*godotdev-editor-server*
 godotdev-external	godotdev.txt	/*godotdev-external*
+godotdev-hidefiles	godotdev.txt	/*godotdev-hidefiles*
 godotdev-indent	godotdev.txt	/*godotdev-indent*
 godotdev-intro	godotdev.txt	/*godotdev-intro*
 godotdev-license	godotdev.txt	/*godotdev-license*
 godotdev-quickstart	godotdev.txt	/*godotdev-quickstart*
+godotdev-reconnect	godotdev.txt	/*godotdev-reconnect*
+godotdev-run	godotdev.txt	/*godotdev-run*
 godotdev.txt	godotdev.txt	/*godotdev.txt*
