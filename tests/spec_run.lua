@@ -24,6 +24,10 @@ return {
       local run = require("godotdev.run")
 
       with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({ "[gd_scene format=3]" }, scene)
+
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_name(buf, root .. "/scripts/player.gd")
         vim.api.nvim_set_current_buf(buf)
@@ -39,6 +43,90 @@ return {
       end)
 
       h.assert_truthy(notifications[1].message:match("Telescope is required") ~= nil)
+    end,
+  },
+  {
+    name = "run_current_scene launches the only scene attached to the current gdscript",
+    run = function()
+      local called_cmd
+
+      h.clear_module("godotdev.run")
+      local run = require("godotdev.run")
+
+      with_temp_project(function(root)
+        local script = root .. "/scripts/player.gd"
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(script), "p")
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({ "extends Node" }, script)
+        vim.fn.writefile({
+          '[gd_scene format=3]',
+          '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
+          '[node name="Main" type="Node"]',
+          'script = ExtResource("1")',
+        }, scene)
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, script)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.with_field(vim.fn, "executable", function(name)
+          return name == "godot" and 1 or 0
+        end, function()
+          h.with_field(vim, "system", function(cmd, _opts, _on_exit)
+            called_cmd = cmd
+            return {}
+          end, function()
+            run.run_current_scene()
+          end)
+        end)
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
+
+      h.assert_equal(called_cmd[4], "res://scenes/Main.tscn")
+    end,
+  },
+  {
+    name = "run_current_scene launches the only scene attached to the current csharp script",
+    run = function()
+      local called_cmd
+
+      h.clear_module("godotdev.run")
+      local run = require("godotdev.run")
+
+      with_temp_project(function(root)
+        local script = root .. "/scripts/Player.cs"
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(script), "p")
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({ "using Godot;" }, script)
+        vim.fn.writefile({
+          '[gd_scene format=3]',
+          '[ext_resource type="Script" path="res://scripts/Player.cs" id="1"]',
+          '[node name="Main" type="Node"]',
+          'script = ExtResource("1")',
+        }, scene)
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, script)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.with_field(vim.fn, "executable", function(name)
+          return name == "godot" and 1 or 0
+        end, function()
+          h.with_field(vim, "system", function(cmd, _opts, _on_exit)
+            called_cmd = cmd
+            return {}
+          end, function()
+            run.run_current_scene()
+          end)
+        end)
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
+
+      h.assert_equal(called_cmd[4], "res://scenes/Main.tscn")
     end,
   },
   {
@@ -118,6 +206,90 @@ return {
       h.assert_truthy(picker_found)
       h.assert_truthy(replaced)
       h.assert_equal(called_scene, "res://scenes/Main.tscn")
+    end,
+  },
+  {
+    name = "run_current_scene picks between multiple scenes attached to the current script",
+    run = function()
+      local called_scene
+
+      h.clear_module("godotdev.run")
+      local run = require("godotdev.run")
+
+      with_temp_project(function(root)
+        local script = root .. "/scripts/player.gd"
+        local scene_a = root .. "/scenes/A.tscn"
+        local scene_b = root .. "/scenes/B.tscn"
+        vim.fn.mkdir(vim.fs.dirname(script), "p")
+        vim.fn.mkdir(vim.fs.dirname(scene_a), "p")
+        vim.fn.writefile({ "extends Node" }, script)
+        for _, scene in ipairs({ scene_a, scene_b }) do
+          vim.fn.writefile({
+            '[gd_scene format=3]',
+            '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
+            '[node name="Main" type="Node"]',
+            'script = ExtResource("1")',
+          }, scene)
+        end
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, script)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.with_package("telescope.finders", {
+          new_table = function(opts)
+            return opts
+          end,
+        }, function()
+          h.with_package("telescope.config", {
+            values = {
+              generic_sorter = function()
+                return function()
+                  return true
+                end
+              end,
+            },
+          }, function()
+            h.with_package("telescope.actions", {
+              select_default = {
+                replace = function(_self, fn)
+                  fn()
+                end,
+              },
+              close = function()
+              end,
+            }, function()
+              h.with_package("telescope.actions.state", {
+                get_selected_entry = function()
+                  return { "res://scenes/B.tscn" }
+                end,
+              }, function()
+                h.with_package("telescope.pickers", {
+                  new = function(_opts, spec)
+                    return {
+                      find = function()
+                        spec.attach_mappings(1)
+                      end,
+                    }
+                  end,
+                }, function()
+                  h.with_field(run, "run_scene", function(scene_arg)
+                    called_scene = scene_arg
+                    return true
+                  end, function()
+                    local ok = run.run_current_scene()
+                    h.assert_truthy(ok)
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
+
+      h.assert_equal(called_scene, "res://scenes/B.tscn")
     end,
   },
   {
