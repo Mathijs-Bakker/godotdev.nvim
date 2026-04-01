@@ -13,6 +13,7 @@ local specs = {
   "tests.spec_docs",
   "tests.spec_docs_render",
   "tests.spec_formatting",
+  "tests.spec_run",
   "tests.spec_start_editor_server",
   "tests.spec_health",
 }

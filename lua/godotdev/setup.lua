@@ -112,6 +112,7 @@ function M.setup(opts)
   end
 
   require("godotdev.reconnect_lsp").setup()
+  require("godotdev.run").setup()
   require("godotdev.formatting").setup()
   require("godotdev.docs").setup()
   setup_dap()
