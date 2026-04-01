@@ -158,6 +158,21 @@ If the LSP disconnects or you opened a script before Neovim, run:
 Reconnects **all buffers** for GDScript, GDShader, and GDResource files.
 
 ==============================================================================
+Run Godot                                         *godotdev-run*
+
+You can run the current Godot project or scene from Neovim without using DAP:
+
+  :GodotRunProject
+  :GodotRunCurrentScene
+  :GodotRunScene scenes/Main.tscn
+
+Notes:
+- `:GodotRunProject` launches Godot for the current project root.
+- `:GodotRunCurrentScene` requires the current buffer to be a `.tscn` inside the current Godot project.
+- `:GodotRunScene {path}` accepts `res://...`, a project-relative path, or an absolute path inside the current project.
+- These commands shell out to `godot` on your `PATH`.
+
+==============================================================================
 Godot docs                                       *godotdev-docs*
 
 Open the official Godot class reference from inside Neovim:

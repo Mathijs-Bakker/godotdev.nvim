@@ -67,6 +67,10 @@ Below is a quick overview of what you get out of the box:
 - Commands to start or reconnect to Godot’s editor LSP:
   - `:GodotStartEditorServer`
   - `:GodotReconnectLSP`
+- Commands to run Godot from Neovim without DAP:
+  - `:GodotRunProject`
+  - `:GodotRunCurrentScene`
+  - `:GodotRunScene {path}`
 - Commands to open Godot class reference docs:
   - `:GodotDocs [ClassName]`
   - `:GodotDocsFloat [ClassName]`
@@ -290,6 +294,22 @@ If the LSP disconnects or you opened a script before Neovim, run:
 ```
 
 Reconnects **all Godot buffers** to the LSP.
+
+## Run Godot
+
+You can run the current Godot project or scene from Neovim without using DAP:
+
+```vim
+:GodotRunProject
+:GodotRunCurrentScene
+:GodotRunScene scenes/Main.tscn
+```
+
+Notes:
+- `:GodotRunProject` launches Godot for the current project root.
+- `:GodotRunCurrentScene` requires the current buffer to be a `.tscn` inside the current Godot project.
+- `:GodotRunScene {path}` accepts `res://...`, a project-relative path, or an absolute path inside the current project.
+- These commands shell out to `godot` on your `PATH`.
 
 ## Godot class docs
 

@@ -62,6 +62,23 @@ return {
     end,
   },
   {
+    name = "run setup registers commands",
+    run = function()
+      for _, name in ipairs({ "GodotRunProject", "GodotRunCurrentScene", "GodotRunScene" }) do
+        delete_command(name)
+      end
+
+      h.clear_module("godotdev.run")
+      local mod = require("godotdev.run")
+      mod.setup()
+      mod.setup()
+
+      h.assert_equal(vim.fn.exists(":GodotRunProject"), 2)
+      h.assert_equal(vim.fn.exists(":GodotRunCurrentScene"), 2)
+      h.assert_equal(vim.fn.exists(":GodotRunScene"), 2)
+    end,
+  },
+  {
     name = "docs setup registers commands once",
     run = function()
       for _, name in ipairs({ "GodotDocs", "GodotDocsFloat", "GodotDocsBrowser", "GodotDocsBuffer", "GodotDocsCursor" }) do
@@ -109,6 +126,7 @@ return {
       )
       h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
       h.assert_equal(vim.fn.exists(":GodotStartEditorServer"), 2)
+      h.assert_equal(vim.fn.exists(":GodotRunProject"), 2)
     end,
   },
 }
