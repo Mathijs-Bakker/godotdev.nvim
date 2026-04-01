@@ -237,7 +237,7 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 ### Recommended Godot addon
 
 If you use `godotdev.nvim` as your main external-editor workflow, the companion addon
-[`godotdev.nvim-node-copy`](https://github.com/MateoPanadero/godotdev.nvim-node-copy)
+[`godotdev.nvim-node-copy`](https://github.com/Mathijs-Bakker/godotdev.nvim-node-copy)
 is recommended.
 
 Why it helps:
