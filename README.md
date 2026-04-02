@@ -247,16 +247,12 @@ Why it helps:
 
 <div align="left"><img src="assets/godotdev_nvim_node_copy.png" width="500"></div>
 
-<div align="center">
-
-[![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-donate-yellow.svg)](https://buymeacoffee.com/mathijs.bakker)
-![Godot](https://img.shields.io/badge/Godot-4.0%2B-blue?logo=godot-engine)
-![Neovim](https://img.shields.io/badge/Neovim-0.11%2B-green?logo=neovim)
-![License](https://img.shields.io/github/license/Mathijs-Bakker/godotdev.nvim)
-![Release](https://img.shields.io/github/v/release/Mathijs-Bakker/godotdev.nvim)
-[![CI](https://github.com/Mathijs-Bakker/godotdev.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/Mathijs-Bakker/godotdev.nvim/actions/workflows/ci.yml)
-
-</div>
+It currently supports copying:
+- node paths
+- `$Node` references
+- `get_node(...)` expressions
+- typed `@onready var` snippets
+- C# property snippets
 
 # godotdev.nvim
 
