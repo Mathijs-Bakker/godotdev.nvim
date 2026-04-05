@@ -43,7 +43,6 @@ While it is possible to configure Neovim manually for Godot development, this pl
 - [Configuration](#configuration)
 - [Testing](#testing)
 - [Optimize Godot editor for Neovim](#optimize-godot-editor-for-neovim)
-- [Recommended Godot addon (Node Copy)](#recommended-godot-addon-node-copy)
 - [Open scripts from Godot Editor in Neovim (running in a terminal)](#open-scripts-from-godot-editor-in-neovim-running-in-a-terminal)
 - [Godot editor server](#godot-editor-server)
 - [Reconnect to Godot's LSP server](#reconnect-to-godots-lsp-server)
@@ -51,6 +50,7 @@ While it is possible to configure Neovim manually for Godot development, this pl
 - [Godot class docs](#godot-class-docs)
 - [C# Installation Support](#c-installation-support)
 - [Autoformatting / Indentation](#autoformatting--indentation)
+- [Recommended Godot addon (Node Copy)](#recommended-godot-addon-node-copy)
 - [Hiding Godot Project Files in oil.nvim and mini.files](#hiding-godot-project-files-in-oilnvim-and-minifiles)
 
 ## Why godotdev.nvim?
@@ -255,26 +255,6 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 
   <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-focus.png"></details>
 
-## Recommended Godot addon (Node Copy)
-
-If you use `godotdev.nvim` as your main external-editor workflow, the companion addon
-[`godotdev.nvim-node-copy`](https://github.com/Mathijs-Bakker/godotdev.nvim-node-copy)
-is recommended.
-
-Why it helps:
-- Godot's built-in external editor integration does not provide drag-and-drop of nodes into Neovim.
-- The addon adds copy actions for selected nodes in the Scene Tree and 2D editor, so you can paste useful references directly into your script.
-- It keeps the workflow explicit and safe: select a node in Godot, copy the reference you want, then paste it at the cursor in Neovim.
-
-<div align="left"><img src="assets/godotdev_nvim_node_copy.png" width="500"></div>
-
-It currently supports copying:
-- node paths
-- `$Node` references
-- `get_node(...)` expressions
-- typed `@onready var` snippets
-- C# property snippets
-
 ## Open scripts from Godot Editor in Neovim (running in a terminal)
 
 When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.
@@ -421,6 +401,26 @@ Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://g
 Make sure `gdformat` is installed and in your PATH. If not, you will see a warning notification.
 
 For more info on indentation: `:help godotdev-indent`
+
+## Recommended Godot addon (Node Copy)
+
+If you use `godotdev.nvim` as your main external-editor workflow, the companion addon
+[`godotdev.nvim-node-copy`](https://github.com/Mathijs-Bakker/godotdev.nvim-node-copy)
+is recommended.
+
+Why it helps:
+- Godot's built-in external editor integration does not provide drag-and-drop of nodes into Neovim.
+- The addon adds copy actions for selected nodes in the Scene Tree and 2D editor, so you can paste useful references directly into your script.
+- It keeps the workflow explicit and safe: select a node in Godot, copy the reference you want, then paste it at the cursor in Neovim.
+
+<div align="left"><img src="assets/godotdev_nvim_node_copy.png" width="500"></div>
+
+It currently supports copying:
+- node paths
+- `$Node` references
+- `get_node(...)` expressions
+- typed `@onready var` snippets
+- C# property snippets
 
 ## Hiding Godot Project Files in oil.nvim and mini.files
 Godot generates files and folders like `.uid`, `.import`, or `.godot/` that can clutter your file explorer.
