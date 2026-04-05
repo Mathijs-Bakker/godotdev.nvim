@@ -220,7 +220,7 @@ The same command runs in GitHub Actions on pushes to `master` and on pull reques
 
 For integration testing, also run the plugin inside Neovim against a real Godot project and verify editor server, docs, formatting, and debugging flows on your target platform.
 
-### Optimize Godot editor for Neovim
+## Optimize Godot editor for Neovim
 
 Below are the recommended settings for configuring the Godot editor for optimal integration with Neovim as your external editor. To access these settings, make sure that the **Advanced Settings switch is enabled** at the top of the **Editor Settings dialog**.
 
@@ -234,7 +234,7 @@ Below are the recommended settings for configuring the Godot editor for optimal 
 
   <details><summary>Show Screenshot -> Godot Editor Settings</summary><img src="assets/godot-editor-focus.png"></details>
 
-### Recommended Godot addon
+## Recommended Godot addon (Node Copy)
 
 If you use `godotdev.nvim` as your main external-editor workflow, the companion addon
 [`godotdev.nvim-node-copy`](https://github.com/Mathijs-Bakker/godotdev.nvim-node-copy)
@@ -254,7 +254,7 @@ It currently supports copying:
 - typed `@onready var` snippets
 - C# property snippets
 
-### Open .gdscript/.gdshader from Godot in Neovim
+## Open scripts from Godot Editor in Neovim (running in a terminal)
 
 When you click on a gdscript in Godot's FileSystem dock it doesn't open automatically in Neovim.
 A [workaround](doc/neovim-external-editor-setup.md) is to to create a small script which launches the file in Neovim.
