@@ -32,6 +32,27 @@ This plugin helps you to set up:
 
 While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
 
+## Table of Contents
+
+- [Why godotdev.nvim?](#why-godotdevnvim)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation (Lazy.nvim)](#installation-lazynvim)
+- [Installation (`vim.pack`, Neovim 0.12+)](#installation-vimpack-neovim-012)
+- [Quickstart](#quickstart)
+- [Configuration](#configuration)
+- [Testing](#testing)
+- [Optimize Godot editor for Neovim](#optimize-godot-editor-for-neovim)
+- [Recommended Godot addon (Node Copy)](#recommended-godot-addon-node-copy)
+- [Open scripts from Godot Editor in Neovim (running in a terminal)](#open-scripts-from-godot-editor-in-neovim-running-in-a-terminal)
+- [Godot editor server](#godot-editor-server)
+- [Reconnect to Godot's LSP server](#reconnect-to-godots-lsp-server)
+- [Run Godot](#run-godot)
+- [Godot class docs](#godot-class-docs)
+- [C# Installation Support](#c-installation-support)
+- [Autoformatting / Indentation](#autoformatting--indentation)
+- [Hiding Godot Project Files in oil.nvim and mini.files](#hiding-godot-project-files-in-oilnvim-and-minifiles)
+
 ## Why godotdev.nvim?
 - Turn Neovim into a first‑class external editor for Godot 4 projects.
 - Get LSP features for GDScript/GDShader without manual wiring.
