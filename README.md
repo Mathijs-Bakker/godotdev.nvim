@@ -418,10 +418,6 @@ This plugin automatically sets buffer options for `.gd` files.
 
 Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit) unless you set `formatter = false`:
 
-```vim
-:w
-```
-
 Make sure `gdformat` is installed and in your PATH. If not, you will see a warning notification.
 
 For more info on indentation: `:help godotdev-indent`
