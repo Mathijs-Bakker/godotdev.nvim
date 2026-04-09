@@ -276,6 +276,9 @@ If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev
    In Godot, configure your external editor or plugin to connect to `127.0.0.1:6666`.
    Make sure the TCP port you choose is free and consistent between Neovim and Godot.
 
+> 🤌🫶🏻🥹❤️‍🩹 REQUEST:  
+> I am not using Windows, so I did not test any of this. It would be great if anyone could help me to validate this and report your findings [here](https://github.com/Mathijs-Bakker/godotdev.nvim/issues/21). :pray:
+
 ## Godot editor server
 
 You can manually start the Neovim editor server used by Godot:
