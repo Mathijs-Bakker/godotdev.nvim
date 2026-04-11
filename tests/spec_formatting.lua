@@ -31,6 +31,53 @@ end
 
 return {
   {
+    name = "formatting uses gdscript-formatter with reorder-code when configured",
+    run = function()
+      local called_argv
+
+      clear_augroup("godotdev_formatting")
+      h.with_package("godotdev", {
+        opts = {
+          formatter = "gdscript-formatter",
+          formatter_args = { "--reorder-code" },
+          formatter_cmd = nil,
+        },
+      }, function()
+        h.clear_module("godotdev.formatting")
+        local formatting = require("godotdev.formatting")
+        formatting.setup()
+
+        h.with_field(vim.fn, "executable", function()
+          return 1
+        end, function()
+          h.with_field(vim, "system", function(argv, _opts, on_exit)
+            called_argv = argv
+            local result = { code = 0, stdout = "", stderr = "" }
+            on_exit(result)
+            return {
+              wait = function()
+                return result
+              end,
+            }
+          end, function()
+            h.with_field(vim.api, "nvim_buf_call", function(_buf, cb)
+              return cb()
+            end, function()
+              h.with_temp("cmd", function() end, function()
+                with_temp_gd_buffer(function(buf, path)
+                  simulate_save(buf, path)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(called_argv[1], "gdscript-formatter")
+      h.assert_equal(called_argv[2], "--reorder-code")
+    end,
+  },
+  {
     name = "formatting does nothing when formatter is disabled",
     run = function()
       local notifications = {}
@@ -40,6 +87,7 @@ return {
       h.with_package("godotdev", {
         opts = {
           formatter = false,
+          formatter_args = nil,
           formatter_cmd = nil,
         },
       }, function()
@@ -74,6 +122,7 @@ return {
       h.with_package("godotdev", {
         opts = {
           formatter = "gdformat",
+          formatter_args = nil,
           formatter_cmd = nil,
         },
       }, function()
@@ -111,6 +160,7 @@ return {
       h.with_package("godotdev", {
         opts = {
           formatter = "gdscript-formatter",
+          formatter_args = nil,
           formatter_cmd = { "gdscript-formatter", "--check" },
         },
       }, function()
@@ -160,6 +210,7 @@ return {
       h.with_package("godotdev", {
         opts = {
           formatter = "gdformat",
+          formatter_args = nil,
           formatter_cmd = { "gdformat" },
         },
       }, function()

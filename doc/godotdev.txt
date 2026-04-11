@@ -43,8 +43,9 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-      formatter = "gdformat",    -- "gdformat" | "gdscript-formatter" | false
-      formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-formatter", "--check" }
+      formatter = "gdscript-formatter", -- "gdscript-formatter" | "gdformat" | false
+      formatter_args = { "--reorder-code" }, -- nil | string | argv list, e.g. { "--safe" }
+      formatter_cmd = nil,       -- full string or argv override, e.g. { "gdscript-formatter", "--check" }
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
@@ -78,7 +79,22 @@ Example setup:
       },
   })
 
-For formatter commands with flags, prefer an argv list:
+By default, the plugin uses GDQuest's formatter with code reordering enabled:
+
+  formatter = "gdscript-formatter"
+  formatter_args = { "--reorder-code" }
+
+To keep `gdscript-formatter` but disable reordering or use `--safe` instead:
+
+  formatter_args = nil
+  formatter_args = { "--safe" }
+
+To switch back to `gdformat`:
+
+  formatter = "gdformat"
+  formatter_args = nil
+
+For full command overrides with exact flags, use `formatter_cmd`:
 
   formatter_cmd = { "gdscript-formatter", "--check" }
 
@@ -257,7 +273,8 @@ Optional C# support (user-managed LSP):
 - netcoredbg debugger
 
 Optional formatter:
-- gdformat (for autoformatting `.gd` files)
+- gdscript-formatter (default, with `--reorder-code`)
+- gdformat
 
 ==============================================================================
 Autoformat / Indentation                           *godotdev-indent*
@@ -265,8 +282,9 @@ Autoformat / Indentation                           *godotdev-indent*
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 The plugin automatically sets buffer options on `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save using `gdformat` (if installed), unless `formatter = false`.
-Check notifications for warnings if `gdformat` is missing.
+Additionally, `.gd` files are autoformatted on save using `gdscript-formatter --reorder-code` by default, unless `formatter = false`.
+You can switch to `gdformat`, remove `--reorder-code`, use `--safe`, or override the full formatter command in the config.
+Check notifications for warnings if the configured formatter is missing.
 
 For more info on indentation: `:help godotdev-indent`
 

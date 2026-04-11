@@ -66,22 +66,49 @@ local function formatter_disabled(opts)
   return opts.formatter_cmd == nil and opts.formatter == false
 end
 
+local function argv_from_value(value)
+  if value == nil then
+    return {}
+  end
+
+  if type(value) == "table" then
+    return vim.deepcopy(value)
+  end
+
+  if type(value) ~= "string" or value == "" then
+    return {}
+  end
+
+  return vim.split(value, "%s+", { trimempty = true })
+end
+
 local function formatter_command_argv(opts)
   if formatter_disabled(opts) then
     return nil
   end
 
-  local cmd = opts.formatter_cmd or opts.formatter or "gdformat"
+  if opts.formatter_cmd ~= nil then
+    local cmd = opts.formatter_cmd
 
-  if type(cmd) == "table" then
-    return vim.deepcopy(cmd)
+    if type(cmd) == "table" then
+      return vim.deepcopy(cmd)
+    end
+
+    if type(cmd) ~= "string" or cmd == "" then
+      return { "gdscript-formatter" }
+    end
+
+    return vim.split(cmd, "%s+", { trimempty = true })
   end
 
-  if type(cmd) ~= "string" or cmd == "" then
-    return { "gdformat" }
+  local formatter = opts.formatter or "gdscript-formatter"
+  if type(formatter) ~= "string" or formatter == "" then
+    formatter = "gdscript-formatter"
   end
 
-  return vim.split(cmd, "%s+", { trimempty = true })
+  local argv = { formatter }
+  vim.list_extend(argv, argv_from_value(opts.formatter_args))
+  return argv
 end
 
 local function editor_server_target()
@@ -237,11 +264,11 @@ local function report_formatter()
     return
   end
 
-  local formatter = godotdev.opts.formatter or "gdformat"
+  local formatter = godotdev.opts.formatter or "gdscript-formatter"
   local formatter_argv = formatter_command_argv(godotdev.opts)
   local exe = formatter_argv[1] or formatter
 
-  if type(godotdev.opts.formatter_cmd) == "table" then
+  if godotdev.opts.formatter_cmd ~= nil or godotdev.opts.formatter_args ~= nil then
     health.info("Formatter command: " .. table.concat(formatter_argv, " "))
   end
 

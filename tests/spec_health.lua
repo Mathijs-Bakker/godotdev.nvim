@@ -36,6 +36,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = false,
+            formatter_args = nil,
             formatter_cmd = nil,
           },
         }, function()
@@ -90,6 +91,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = false,
+            formatter_args = nil,
             formatter_cmd = nil,
           },
         }, function()
@@ -146,6 +148,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = false,
+            formatter_args = nil,
             formatter_cmd = nil,
           },
         }, function()
@@ -204,6 +207,7 @@ return {
             csharp = false,
             docs = { renderer = "buffer", source_ref = "master" },
             formatter = "gdformat",
+            formatter_args = nil,
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()
@@ -251,6 +255,62 @@ return {
     end,
   },
   {
+    name = "health reports default gdscript-formatter command with reorder-code",
+    run = function()
+      local recorder = make_health_recorder()
+
+      h.with_temp("health", recorder.api, function()
+        h.with_package("godotdev", {
+          opts = {
+            csharp = false,
+            docs = { renderer = "browser", source_ref = "master" },
+            formatter = "gdscript-formatter",
+            formatter_args = { "--reorder-code" },
+            formatter_cmd = nil,
+          },
+        }, function()
+          h.with_package("nvim-treesitter.configs", {}, function()
+            h.with_package("dapui", {}, function()
+              h.clear_module("godotdev.health")
+              local health = require("godotdev.health")
+
+              h.with_field(vim.fn, "exists", function(cmd)
+                if cmd == ":LspInfo" or cmd == ":DapContinue" then
+                  return 2
+                end
+                return 0
+              end, function()
+                h.with_field(vim.fn, "executable", function()
+                  return 1
+                end, function()
+                  h.with_field(vim.fn, "systemlist", function()
+                    return {}
+                  end, function()
+                    h.with_field(vim, "system", function(argv, _opts)
+                      return {
+                        wait = function()
+                          if argv[1] == "godot" then
+                            return { code = 0, stdout = "4.3.stable\n", stderr = "" }
+                          end
+                          return { code = 0, stdout = "", stderr = "" }
+                        end,
+                      }
+                    end, function()
+                      health.check()
+                    end)
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      local joined_info = table.concat(recorder.calls.info, "\n")
+      h.assert_truthy(joined_info:match("Formatter command: gdscript%-formatter %-%-reorder%-code") ~= nil)
+    end,
+  },
+  {
     name = "health reports formatter command when formatter_cmd is an argv list",
     run = function()
       local recorder = make_health_recorder()
@@ -261,6 +321,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = "gdscript-formatter",
+            formatter_args = nil,
             formatter_cmd = { "gdscript-formatter", "--check" },
           },
         }, function()
@@ -316,6 +377,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = "gdformat",
+            formatter_args = nil,
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()
@@ -375,6 +437,7 @@ return {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
             formatter = "gdformat",
+            formatter_args = nil,
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()

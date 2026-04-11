@@ -15,23 +15,50 @@ local function formatter_disabled(config)
   return config.formatter_cmd == nil and config.formatter == false
 end
 
+local function argv_from_value(value)
+  if value == nil then
+    return {}
+  end
+
+  if type(value) == "table" then
+    return vim.deepcopy(value)
+  end
+
+  if type(value) ~= "string" or value == "" then
+    return {}
+  end
+
+  return vim.split(value, "%s+", { trimempty = true })
+end
+
 local function command_argv()
   local config = get_config()
   if formatter_disabled(config) then
     return nil
   end
 
-  local cmd = config.formatter_cmd or config.formatter or "gdformat"
+  if config.formatter_cmd ~= nil then
+    local cmd = config.formatter_cmd
 
-  if type(cmd) == "table" then
-    return vim.deepcopy(cmd)
+    if type(cmd) == "table" then
+      return vim.deepcopy(cmd)
+    end
+
+    if type(cmd) ~= "string" or cmd == "" then
+      return { "gdscript-formatter" }
+    end
+
+    return vim.split(cmd, "%s+", { trimempty = true })
   end
 
-  if type(cmd) ~= "string" or cmd == "" then
-    return { "gdformat" }
+  local formatter = config.formatter or "gdscript-formatter"
+  if type(formatter) ~= "string" or formatter == "" then
+    formatter = "gdscript-formatter"
   end
 
-  return vim.split(cmd, "%s+", { trimempty = true })
+  local argv = { formatter }
+  vim.list_extend(argv, argv_from_value(config.formatter_args))
+  return argv
 end
 
 local function executable_name(argv)

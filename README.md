@@ -26,7 +26,7 @@ This plugin helps you to set up:
 - **Godot class docs** in Neovim, rendered from the official docs source as Markdown
 - **Debugging** via `nvim-dap` for GDScript
 - **Treesitter syntax highlighting** for Godot shader files
-- **Automatic formatting** of `.gd` files using `gdformat`
+- **Automatic formatting** of `.gd` files using `gdscript-formatter` by default
 - **Optional C# support** (user-managed LSP, plus debugging and tooling checks)
 - **Built-in health checks** to verify environment, dependencies, and editor integration
 
@@ -72,7 +72,9 @@ Below is a quick overview of what you get out of the box:
 - Optional C# debugging via `netcoredbg`
 
 ### Formatting
-- Automatic `.gd` file formatting using [`gdtoolkit`](https://pypi.org/project/gdtoolkit/)
+- Automatic `.gd` file formatting using [`gdscript-formatter`](https://github.com/GDQuest/GDScript-formatter) by default
+- Default formatter args enable `--reorder-code`
+- `gdformat`, custom flags, full command overrides, and disabling formatting are all supported
 - Reloads buffer after formatting for immediate feedback
 - Recommended `.editorconfig` included for consistent indentation (4 spaces per indent)
 
@@ -82,7 +84,7 @@ Below is a quick overview of what you get out of the box:
   - Godot editor LSP and debug servers
   - Floating Godot docs support (`curl` and active docs source configuration)
   - Optional C# tooling: `dotnet`, `csharp-ls`/OmniSharp, `netcoredbg`
-  - Formatter: `gdformat` (with installation instructions)
+  - Formatter: `gdscript-formatter` or `gdformat` (with installation instructions)
 
 ### Editor Integration
 - Commands to start or reconnect to Godot’s editor LSP:
@@ -159,8 +161,9 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-  formatter = "gdformat",    -- "gdformat" | "gdscript-formatter" | false
-  formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-formatter", "--check" }
+  formatter = "gdscript-formatter", -- "gdscript-formatter" | "gdformat" | false
+  formatter_args = { "--reorder-code" }, -- nil | string | argv list, e.g. { "--safe" }
+  formatter_cmd = nil,       -- full string or argv override, e.g. { "gdscript-formatter", "--check" }
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -195,7 +198,29 @@ require("godotdev").setup({
 })
 ```
 
-For formatter commands with flags, prefer an argv list:
+By default, the plugin uses GDQuest's formatter with code reordering enabled:
+
+```lua
+formatter = "gdscript-formatter"
+formatter_args = { "--reorder-code" }
+```
+
+To keep `gdscript-formatter` but disable reordering or use `--safe` instead:
+
+```lua
+formatter_args = nil
+-- or
+formatter_args = { "--safe" }
+```
+
+To switch back to `gdformat`:
+
+```lua
+formatter = "gdformat"
+formatter_args = nil
+```
+
+For full command overrides with exact flags, use `formatter_cmd`:
 
 ```lua
 formatter_cmd = { "gdscript-formatter", "--check" }
@@ -401,7 +426,7 @@ This plugin automatically sets buffer options for `.gd` files.
 
 Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit) unless you set `formatter = false`:
 
-Make sure `gdformat` is installed and in your PATH. If not, you will see a warning notification.
+Make sure your configured formatter is installed and in your PATH. By default this is `gdscript-formatter`. If not, you will see a warning notification.
 
 For more info on indentation: `:help godotdev-indent`
 
