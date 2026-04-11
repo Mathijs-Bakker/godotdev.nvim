@@ -263,10 +263,10 @@ macOS (Homebrew):
 
 Windows:
   pip install gdtoolkit]])
-  elseif formatter == "gdscript-format" then
+  elseif formatter == "gdscript-formatter" then
     health.warn([[
-'gdscript-format' not found.
-Install from the repo: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+'gdscript-formatter' not found.
+Install from the repo: https://github.com/GDQuest/GDScript-formatter
 Follow instructions in README.md]])
   end
 end

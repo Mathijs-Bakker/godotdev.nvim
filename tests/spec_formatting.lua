@@ -110,8 +110,8 @@ return {
       clear_augroup("godotdev_formatting")
       h.with_package("godotdev", {
         opts = {
-          formatter = "gdscript-format",
-          formatter_cmd = { "gdscript-format", "--check" },
+          formatter = "gdscript-formatter",
+          formatter_cmd = { "gdscript-formatter", "--check" },
         },
       }, function()
         h.clear_module("godotdev.formatting")
@@ -145,7 +145,7 @@ return {
         end)
       end)
 
-      h.assert_equal(called_argv[1], "gdscript-format")
+      h.assert_equal(called_argv[1], "gdscript-formatter")
       h.assert_equal(called_argv[2], "--check")
       h.assert_truthy(notifications[1].message:match("formatter failed") ~= nil)
     end,
