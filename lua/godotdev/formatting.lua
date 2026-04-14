@@ -21,14 +21,32 @@ local function command_argv()
     return nil
   end
 
-  local cmd = config.formatter_cmd or config.formatter or "gdscript-formatter"
+  if config.formatter_cmd ~= nil then
+    local cmd = config.formatter_cmd
+
+    if type(cmd) == "table" then
+      return vim.deepcopy(cmd)
+    end
+
+    if type(cmd) ~= "string" or cmd == "" then
+      return { "gdscript-formatter", "--reorder-code" }
+    end
+
+    return vim.split(cmd, "%s+", { trimempty = true })
+  end
+
+  local cmd = config.formatter or "gdscript-formatter"
 
   if type(cmd) == "table" then
     return vim.deepcopy(cmd)
   end
 
   if type(cmd) ~= "string" or cmd == "" then
-    return { "gdscript-formatter" }
+    return { "gdscript-formatter", "--reorder-code" }
+  end
+
+  if cmd == "gdscript-formatter" then
+    return { "gdscript-formatter", "--reorder-code" }
   end
 
   return vim.split(cmd, "%s+", { trimempty = true })

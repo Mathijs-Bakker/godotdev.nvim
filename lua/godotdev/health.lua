@@ -71,14 +71,32 @@ local function formatter_command_argv(opts)
     return nil
   end
 
-  local cmd = opts.formatter_cmd or opts.formatter or "gdscript-formatter"
+  if opts.formatter_cmd ~= nil then
+    local cmd = opts.formatter_cmd
+
+    if type(cmd) == "table" then
+      return vim.deepcopy(cmd)
+    end
+
+    if type(cmd) ~= "string" or cmd == "" then
+      return { "gdscript-formatter", "--reorder-code" }
+    end
+
+    return vim.split(cmd, "%s+", { trimempty = true })
+  end
+
+  local cmd = opts.formatter or "gdscript-formatter"
 
   if type(cmd) == "table" then
     return vim.deepcopy(cmd)
   end
 
   if type(cmd) ~= "string" or cmd == "" then
-    return { "gdscript-formatter" }
+    return { "gdscript-formatter", "--reorder-code" }
+  end
+
+  if cmd == "gdscript-formatter" then
+    return { "gdscript-formatter", "--reorder-code" }
   end
 
   return vim.split(cmd, "%s+", { trimempty = true })

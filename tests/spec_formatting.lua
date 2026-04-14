@@ -102,6 +102,55 @@ return {
     end,
   },
   {
+    name = "formatting defaults gdscript-formatter to --reorder-code",
+    run = function()
+      local called_argv
+
+      clear_augroup("godotdev_formatting")
+      h.with_package("godotdev", {
+        opts = {
+          formatter = "gdscript-formatter",
+          formatter_cmd = nil,
+        },
+      }, function()
+        h.clear_module("godotdev.formatting")
+        local formatting = require("godotdev.formatting")
+        formatting.setup()
+
+        h.with_field(vim.fn, "executable", function()
+          return 1
+        end, function()
+          h.with_field(vim, "system", function(argv, _opts, on_exit)
+            called_argv = argv
+            local result = { code = 0, stdout = "", stderr = "" }
+            on_exit(result)
+            return {
+              wait = function()
+                return result
+              end,
+            }
+          end, function()
+            h.with_field(vim.api, "nvim_buf_call", function(_buf, cb)
+              return cb()
+            end, function()
+              h.with_temp("cmd", function() end, function()
+                with_temp_gd_buffer(function(buf, path)
+                  simulate_save(buf, path)
+                  vim.wait(50, function()
+                    return called_argv ~= nil
+                  end)
+                end)
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(called_argv[1], "gdscript-formatter")
+      h.assert_equal(called_argv[2], "--reorder-code")
+    end,
+  },
+  {
     name = "formatting reports formatter failures from vim.system",
     run = function()
       local notifications = {}

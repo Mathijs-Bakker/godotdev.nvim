@@ -14,7 +14,7 @@ M.opts = {
     ensure_installed = { "gdscript" },
   },
   formatter = "gdscript-formatter", -- "gdscript-formatter" | "gdformat" | false
-  formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-formatter", "--check" }
+  formatter_cmd = nil, -- string or argv list; default gdscript-formatter adds --reorder-code automatically
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
     fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback

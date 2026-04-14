@@ -160,7 +160,7 @@ require("godotdev").setup({
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
   formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
-  formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-formatter", "--check" }
+  formatter_cmd = nil,       -- string or argv list; default gdscript-formatter adds "--reorder-code"
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -199,6 +199,12 @@ For formatter commands with flags, prefer an argv list:
 
 ```lua
 formatter_cmd = { "gdscript-formatter", "--check" }
+```
+
+By default, `gdscript-formatter` runs with:
+
+```lua
+formatter_cmd = { "gdscript-formatter", "--reorder-code" }
 ```
 
 To disable autoformat-on-save entirely:
