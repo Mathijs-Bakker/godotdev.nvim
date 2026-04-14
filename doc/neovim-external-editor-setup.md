@@ -66,7 +66,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
    #!/usr/bin/env bash
    set -euo pipefail
 
-   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.pipe}"
+   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.nvim}"
    NVR="${NVR:-nvr}"
 
    if [[ -S "$SOCKET" ]]; then
@@ -113,7 +113,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
      GODOT_TERMINAL="$DEFAULT_TERMINAL"
    fi
 
-   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.pipe}" # Neovim socket path
+   SOCKET="${GODOT_NVIM_SOCKET:-/tmp/godot.nvim}" # Neovim socket path
    NVR="${NVR:-nvr}"
 
    if ! command -v "$NVR" >/dev/null 2>&1; then
@@ -216,7 +216,7 @@ This setup allows you to click on a script in Godot and open it directly in Neov
 ## Notes
 
 - tmux pane switching is not supported reliably from Godot
-- Ensure the Neovim socket path (`/tmp/godot.pipe` by default) matches your setup
+- Ensure the Neovim socket path (`/tmp/godot.nvim` by default) matches your setup
 - Tested with Ghostty, should work with other GUI terminals
 - This README now provides clear instructions and a visual workflow so other users can reproduce your Godot → Neovim + Ghostty setup easily.
 
@@ -230,13 +230,13 @@ Before testing inside Godot, confirm the script works standalone:
 ~/.local/bin/godot-nvr.sh /path/to/file.gd:10
 ```
 Expected:
-- Neovim starts and listens on `/tmp/godot.pipe`.
+- Neovim starts and listens on `/tmp/godot.nvim`.
 - The file opens in your running Neovim instance.
 - The buffer is focused.
 - Your terminal (e.g. Ghostty) comes to the front.
 If this fails, fix the setup before trying again in Godot.
 
-### `nvim --listen /tmp/godot.pipe` fails after a crash
+### `nvim --listen /tmp/godot.nvim` fails after a crash
 
 This usually means the old Unix socket file still exists even though the old Neovim process is gone.
 
@@ -244,11 +244,11 @@ This usually means the old Unix socket file still exists even though the old Neo
   ```bash
   ~/.local/bin/godotdev
   ```
-- The wrapper probes the socket with `nvr`, removes it if it is stale, and then starts `nvim --listen /tmp/godot.pipe`.
+- The wrapper probes the socket with `nvr`, removes it if it is stale, and then starts `nvim --listen /tmp/godot.nvim`.
 - If you still prefer the raw command, remove the stale socket manually:
   ```bash
-  rm -f /tmp/godot.pipe
-  nvim --listen /tmp/godot.pipe
+  rm -f /tmp/godot.nvim
+  nvim --listen /tmp/godot.nvim
   ```
 
 ### `godotdev` says "Neovim server already running" after you already quit
@@ -259,10 +259,10 @@ This is usually caused by an older wrapper that probes with `nvr --remote-expr` 
   ```bash
   if command -v "$NVR" >/dev/null 2>&1 && "$NVR" --nostart --servername "$SOCKET" --remote-expr '1' >/dev/null 2>&1; then
   ```
-- Without `--nostart`, `nvr` can report success without proving that the target socket is your live Neovim server, so the wrapper may print `Neovim server already running at /tmp/godot.pipe` even after exit.
+- Without `--nostart`, `nvr` can report success without proving that the target socket is your live Neovim server, so the wrapper may print `Neovim server already running at /tmp/godot.nvim` even after exit.
 - If you are already stuck with a stale socket, remove it once with:
   ```bash
-  rm -f /tmp/godot.pipe
+  rm -f /tmp/godot.nvim
   ```
 
 ### `command not found: nvr`

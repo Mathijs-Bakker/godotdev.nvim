@@ -263,7 +263,7 @@ A [workaround](doc/neovim-external-editor-setup.md) is to to create a small scri
 #### >> macOS/Linux
 Complete instructions [here](doc/neovim-external-editor-setup.md)
 
-If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev` wrapper instead of raw `nvim --listen ...` so stale socket files are cleaned up automatically after crashes. If your wrapper still reports `Neovim server already running at /tmp/godot.pipe` after you already quit, update its probe to use `nvr --nostart --servername ... --remote-expr '1'`.
+If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev` wrapper instead of raw `nvim --listen ...` so stale socket files are cleaned up automatically after crashes. If your wrapper still reports `Neovim server already running at /tmp/godot.nvim` after you already quit, update its probe to use `nvr --nostart --servername ... --remote-expr '1'`.
 
 #### >> Windows
 
@@ -303,12 +303,12 @@ You can also pin a specific address:
 require("godotdev").setup({
   autostart_editor_server = true,
   editor_server = {
-    address = "/tmp/godot.pipe",
+    address = "/tmp/godot.nvim",
   },
 })
 ```
 
-On macOS/Linux, plugin-managed startup removes stale Unix socket files before retrying. This hardens `:GodotStartEditorServer`, but it does not affect a raw shell launch like `nvim --listen /tmp/godot.pipe`, because that failure happens before the plugin loads.
+On macOS/Linux, plugin-managed startup removes stale Unix socket files before retrying. This hardens `:GodotStartEditorServer`, but it does not affect a raw shell launch like `nvim --listen /tmp/godot.nvim`, because that failure happens before the plugin loads.
 
 ## Reconnect to Godot's LSP server
 
