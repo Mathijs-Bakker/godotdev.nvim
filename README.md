@@ -26,7 +26,7 @@ This plugin helps you to set up:
 - **Godot class docs** in Neovim, rendered from the official docs source as Markdown
 - **Debugging** via `nvim-dap` for GDScript
 - **Treesitter syntax highlighting** for Godot shader files
-- **Automatic formatting** of `.gd` files using `gdformat`
+- **Automatic formatting** of `.gd` files using `gdscript-formatter`
 - **Optional C# support** (user-managed LSP, plus debugging and tooling checks)
 - **Built-in health checks** to verify environment, dependencies, and editor integration
 
@@ -72,7 +72,7 @@ Below is a quick overview of what you get out of the box:
 - Optional C# debugging via `netcoredbg`
 
 ### Formatting
-- Automatic `.gd` file formatting using [`gdtoolkit`](https://pypi.org/project/gdtoolkit/)
+- Automatic `.gd` file formatting using `gdscript-formatter`
 - Reloads buffer after formatting for immediate feedback
 - Recommended `.editorconfig` included for consistent indentation (4 spaces per indent)
 
@@ -82,7 +82,7 @@ Below is a quick overview of what you get out of the box:
   - Godot editor LSP and debug servers
   - Floating Godot docs support (`curl` and active docs source configuration)
   - Optional C# tooling: `dotnet`, `csharp-ls`/OmniSharp, `netcoredbg`
-  - Formatter: `gdformat` (with installation instructions)
+  - Formatter: `gdscript-formatter` by default, with `gdformat` as an alternative
 
 ### Editor Integration
 - Commands to start or reconnect to Godot’s editor LSP:
@@ -159,8 +159,8 @@ require("godotdev").setup({
   debug_port = 6006,         -- Godot debugger port
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-  formatter = "gdformat",    -- "gdformat" | "gdscript-format" | false
-  formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
+  formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
+  formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-formatter", "--check" }
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -198,7 +198,7 @@ require("godotdev").setup({
 For formatter commands with flags, prefer an argv list:
 
 ```lua
-formatter_cmd = { "gdscript-format", "--check" }
+formatter_cmd = { "gdscript-formatter", "--check" }
 ```
 
 To disable autoformat-on-save entirely:
@@ -399,9 +399,30 @@ Why `gK`:
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 This plugin automatically sets buffer options for `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save with [`gdtoolkit`](https://github.com/godotengine/gdtoolkit) unless you set `formatter = false`:
+Additionally, `.gd` files are autoformatted on save with `gdscript-formatter` unless you set `formatter = false`:
 
-Make sure `gdformat` is installed and in your PATH. If not, you will see a warning notification.
+`gdscript-formatter` is the default because the companion addon
+[`godotdev.nvim-node-copy`](https://github.com/Mathijs-Bakker/godotdev.nvim-node-copy)
+relies on it, and it is also a fast formatter for the external-editor workflow.
+
+Make sure `gdscript-formatter` is installed and in your PATH. If not, you will see a warning notification.
+
+The plugin expects an executable literally named `gdscript-formatter`.
+Install or build it from:
+
+- https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+
+After installation, verify it with:
+
+```bash
+gdscript-formatter --help
+```
+
+If you prefer `gdformat` from [`gdtoolkit`](https://github.com/godotengine/gdtoolkit), set:
+
+```lua
+formatter = "gdformat"
+```
 
 For more info on indentation: `:help godotdev-indent`
 
@@ -414,6 +435,7 @@ is recommended.
 Why it helps:
 - Godot's built-in external editor integration does not provide drag-and-drop of nodes into Neovim.
 - The addon adds copy actions for selected nodes in the Scene Tree and 2D editor, so you can paste useful references directly into your script.
+- The addon relies on `gdscript-formatter`, which is why `godotdev.nvim` uses it as the default formatter.
 - It keeps the workflow explicit and safe: select a node in Godot, copy the reference you want, then paste it at the cursor in Neovim.
 
 <div align="left"><img src="assets/godotdev_nvim_node_copy.png" width="500"></div>

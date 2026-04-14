@@ -203,7 +203,7 @@ return {
           opts = {
             csharp = false,
             docs = { renderer = "buffer", source_ref = "master" },
-            formatter = "gdformat",
+            formatter = "gdscript-formatter",
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()
@@ -260,8 +260,8 @@ return {
           opts = {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
-            formatter = "gdscript-format",
-            formatter_cmd = { "gdscript-format", "--check" },
+            formatter = "gdscript-formatter",
+            formatter_cmd = { "gdscript-formatter", "--check" },
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()
@@ -302,7 +302,7 @@ return {
       end)
 
       local joined_info = table.concat(recorder.calls.info, "\n")
-      h.assert_truthy(joined_info:match("Formatter command: gdscript%-format %-%-check") ~= nil)
+      h.assert_truthy(joined_info:match("Formatter command: gdscript%-formatter %-%-check") ~= nil)
     end,
   },
   {
@@ -315,7 +315,7 @@ return {
           opts = {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
-            formatter = "gdformat",
+            formatter = "gdscript-formatter",
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()
@@ -374,7 +374,7 @@ return {
           opts = {
             csharp = false,
             docs = { renderer = "browser", source_ref = "master" },
-            formatter = "gdformat",
+            formatter = "gdscript-formatter",
           },
         }, function()
           h.with_package("nvim-treesitter.configs", {}, function()

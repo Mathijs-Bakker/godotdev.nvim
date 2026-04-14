@@ -73,7 +73,7 @@ return {
       clear_augroup("godotdev_formatting")
       h.with_package("godotdev", {
         opts = {
-          formatter = "gdformat",
+          formatter = "gdscript-formatter",
           formatter_cmd = nil,
         },
       }, function()
@@ -82,7 +82,7 @@ return {
         formatting.setup()
 
         h.with_field(vim.fn, "executable", function(name)
-          if name == "gdformat" then
+          if name == "gdscript-formatter" then
             return 0
           end
           return vim.fn.executable(name)
@@ -98,7 +98,7 @@ return {
       end)
 
       h.assert_equal(#notifications, 1)
-      h.assert_truthy(notifications[1].message:match("gdformat not found in PATH") ~= nil)
+      h.assert_truthy(notifications[1].message:match("gdscript%-formatter not found in PATH") ~= nil)
     end,
   },
   {
@@ -110,8 +110,8 @@ return {
       clear_augroup("godotdev_formatting")
       h.with_package("godotdev", {
         opts = {
-          formatter = "gdscript-format",
-          formatter_cmd = { "gdscript-format", "--check" },
+          formatter = "gdscript-formatter",
+          formatter_cmd = { "gdscript-formatter", "--check" },
         },
       }, function()
         h.clear_module("godotdev.formatting")
@@ -145,7 +145,7 @@ return {
         end)
       end)
 
-      h.assert_equal(called_argv[1], "gdscript-format")
+      h.assert_equal(called_argv[1], "gdscript-formatter")
       h.assert_equal(called_argv[2], "--check")
       h.assert_truthy(notifications[1].message:match("formatter failed") ~= nil)
     end,
@@ -159,8 +159,8 @@ return {
       clear_augroup("godotdev_formatting")
       h.with_package("godotdev", {
         opts = {
-          formatter = "gdformat",
-          formatter_cmd = { "gdformat" },
+          formatter = "gdscript-formatter",
+          formatter_cmd = { "gdscript-formatter" },
         },
       }, function()
         h.clear_module("godotdev.formatting")
@@ -200,7 +200,7 @@ return {
         end)
       end)
 
-      h.assert_equal(called_argv[1], "gdformat")
+      h.assert_equal(called_argv[1], "gdscript-formatter")
       h.assert_equal(checktime_calls, 1)
     end,
   },

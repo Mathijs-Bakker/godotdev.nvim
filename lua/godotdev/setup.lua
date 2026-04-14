@@ -13,8 +13,8 @@ M.opts = {
     auto_setup = true, -- convenience default; disable if you manage nvim-treesitter yourself
     ensure_installed = { "gdscript" },
   },
-  formatter = "gdformat", -- "gdformat" | "gdscript-format" | false
-  formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-format", "--check" }
+  formatter = "gdscript-formatter", -- "gdscript-formatter" | "gdformat" | false
+  formatter_cmd = nil, -- string or argv list, e.g. { "gdscript-formatter", "--check" }
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
     fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback

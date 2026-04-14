@@ -71,14 +71,14 @@ local function formatter_command_argv(opts)
     return nil
   end
 
-  local cmd = opts.formatter_cmd or opts.formatter or "gdformat"
+  local cmd = opts.formatter_cmd or opts.formatter or "gdscript-formatter"
 
   if type(cmd) == "table" then
     return vim.deepcopy(cmd)
   end
 
   if type(cmd) ~= "string" or cmd == "" then
-    return { "gdformat" }
+    return { "gdscript-formatter" }
   end
 
   return vim.split(cmd, "%s+", { trimempty = true })
@@ -237,7 +237,7 @@ local function report_formatter()
     return
   end
 
-  local formatter = godotdev.opts.formatter or "gdformat"
+  local formatter = godotdev.opts.formatter or "gdscript-formatter"
   local formatter_argv = formatter_command_argv(godotdev.opts)
   local exe = formatter_argv[1] or formatter
 
@@ -250,7 +250,14 @@ local function report_formatter()
     return
   end
 
-  if formatter == "gdformat" then
+  if formatter == "gdscript-formatter" then
+    health.warn([[
+'gdscript-formatter' not found.
+This plugin expects an executable with that exact name in your PATH.
+Install or build it from: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+Then verify:
+  gdscript-formatter --help]])
+  elseif formatter == "gdformat" then
     health.warn([[
 'gdformat' not found.
 Install with Python pip or Homebrew:
@@ -263,11 +270,6 @@ macOS (Homebrew):
 
 Windows:
   pip install gdtoolkit]])
-  elseif formatter == "gdscript-format" then
-    health.warn([[
-'gdscript-format' not found.
-Install from the repo: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
-Follow instructions in README.md]])
   end
 end
 

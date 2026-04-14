@@ -10,7 +10,7 @@ game development using Neovim as an external editor. It provides:
 - Debugging via nvim-dap
 - Treesitter syntax highlighting
 - Optional C# support (user-managed LSP) with dotnet, csharp-ls/OmniSharp, and netcoredbg
-- Autoformatting `.gd` files with `gdformat`
+- Autoformatting `.gd` files with `gdscript-formatter`
 
 See |godotdev-quickstart| for a quick start guide.
 
@@ -43,8 +43,8 @@ Example setup:
       debug_port  = 6006,        -- DAP port
       csharp      = true,        -- enable C# support
       autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
-      formatter = "gdformat",    -- "gdformat" | "gdscript-format" | false
-      formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-format", "--check" }
+      formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
+      formatter_cmd = nil,       -- string or argv list, e.g. { "gdscript-formatter", "--check" }
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
@@ -80,7 +80,7 @@ Example setup:
 
 For formatter commands with flags, prefer an argv list:
 
-  formatter_cmd = { "gdscript-format", "--check" }
+  formatter_cmd = { "gdscript-formatter", "--check" }
 
 To disable autoformat-on-save entirely:
 
@@ -257,7 +257,8 @@ Optional C# support (user-managed LSP):
 - netcoredbg debugger
 
 Optional formatter:
-- gdformat (for autoformatting `.gd` files)
+- gdscript-formatter (default, for autoformatting `.gd` files)
+- gdformat (alternative formatter for `.gd` files)
 
 ==============================================================================
 Autoformat / Indentation                           *godotdev-indent*
@@ -265,8 +266,20 @@ Autoformat / Indentation                           *godotdev-indent*
 Godot expects **spaces, 4 per indent** (for both GDScript and C#).
 The plugin automatically sets buffer options on `.gd` files.
 
-Additionally, `.gd` files are autoformatted on save using `gdformat` (if installed), unless `formatter = false`.
-Check notifications for warnings if `gdformat` is missing.
+Additionally, `.gd` files are autoformatted on save using `gdscript-formatter` (if installed), unless `formatter = false`.
+Check notifications for warnings if `gdscript-formatter` is missing.
+
+`gdscript-formatter` is the default because the companion addon
+`godotdev.nvim-node-copy` relies on it, and it is also a fast formatter.
+
+The plugin expects an executable literally named `gdscript-formatter`.
+Install or build it from:
+
+  https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+
+After installation, verify:
+
+  gdscript-formatter --help
 
 For more info on indentation: `:help godotdev-indent`
 
