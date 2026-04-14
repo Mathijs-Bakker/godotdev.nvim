@@ -75,6 +75,9 @@ Below is a quick overview of what you get out of the box:
 - Automatic `.gd` file formatting using `gdscript-formatter`
 - Reloads buffer after formatting for immediate feedback
 - Recommended `.editorconfig` included for consistent indentation (4 spaces per indent)
+- Supported formatters:
+  - [`gdscript-formatter`](https://github.com/GDQuest/GDScript-formatter) (default)
+  - [`gdformat`](https://github.com/Scony/godot-gdscript-toolkit) (alternative)
 
 ### Health Checks
 - `:checkhealth godotdev` validates:
@@ -416,7 +419,7 @@ Make sure `gdscript-formatter` is installed and in your PATH. If not, you will s
 The plugin expects an executable literally named `gdscript-formatter`.
 Install or build it from:
 
-- https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+- https://github.com/GDQuest/GDScript-formatter
 
 After installation, verify it with:
 
@@ -424,11 +427,15 @@ After installation, verify it with:
 gdscript-formatter --help
 ```
 
-If you prefer `gdformat` from [`gdtoolkit`](https://github.com/godotengine/gdtoolkit), set:
+If you prefer [`gdformat`](https://github.com/Scony/godot-gdscript-toolkit), set:
 
 ```lua
 formatter = "gdformat"
 ```
+
+Supported formatter repositories:
+- `gdscript-formatter`: https://github.com/GDQuest/GDScript-formatter
+- `gdformat`: https://github.com/Scony/godot-gdscript-toolkit
 
 For more info on indentation: `:help godotdev-indent`
 

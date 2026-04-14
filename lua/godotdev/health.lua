@@ -272,22 +272,13 @@ local function report_formatter()
     health.warn([[
 'gdscript-formatter' not found.
 This plugin expects an executable with that exact name in your PATH.
-Install or build it from: https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+Install or build it from: https://github.com/GDQuest/GDScript-formatter
 Then verify:
   gdscript-formatter --help]])
   elseif formatter == "gdformat" then
     health.warn([[
 'gdformat' not found.
-Install with Python pip or Homebrew:
-
-Linux / macOS:
-  pip install gdtoolkit
-
-macOS (Homebrew):
-  brew install gdtoolkit
-
-Windows:
-  pip install gdtoolkit]])
+See: https://github.com/Scony/godot-gdscript-toolkit]])
   end
 end
 

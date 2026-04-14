@@ -264,6 +264,10 @@ Optional formatter:
 - gdscript-formatter (default, for autoformatting `.gd` files)
 - gdformat (alternative formatter for `.gd` files)
 
+Formatter repositories:
+- gdscript-formatter: https://github.com/GDQuest/GDScript-formatter
+- gdformat: https://github.com/Scony/godot-gdscript-toolkit
+
 ==============================================================================
 Autoformat / Indentation                           *godotdev-indent*
 
@@ -279,11 +283,15 @@ Check notifications for warnings if `gdscript-formatter` is missing.
 The plugin expects an executable literally named `gdscript-formatter`.
 Install or build it from:
 
-  https://github.com/Scony/godot-gdscript-formatter-tree-sitter
+  https://github.com/GDQuest/GDScript-formatter
 
 After installation, verify:
 
   gdscript-formatter --help
+
+Alternative formatter repo:
+
+  gdformat: https://github.com/Scony/godot-gdscript-toolkit
 
 For more info on indentation: `:help godotdev-indent`
 
