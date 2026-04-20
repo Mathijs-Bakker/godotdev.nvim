@@ -18,6 +18,21 @@ M.opts = {
   inline_hints = {
     enabled = false, -- uses Neovim's built-in inlay hints when the attached Godot LSP supports them
   },
+  run = {
+    console = {
+      enabled = false, -- capture :GodotRun* output in Neovim; when enabled these runs are no longer detached
+      renderer = "buffer", -- "buffer" | "float"
+      buffer = {
+        position = "bottom", -- "right" | "bottom" | "current"
+        size = 0.3,
+      },
+      float = {
+        width = 0.8,
+        height = 0.25,
+        border = "rounded",
+      },
+    },
+  },
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
     fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback
@@ -103,6 +118,7 @@ function M.setup(opts)
   M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
 
   require("godotdev.inline_hints").setup(M.opts.inline_hints)
+  require("godotdev.run_console").setup(M.opts.run and M.opts.run.console or {})
   require("godotdev.lsp").setup({
     editor_host = M.opts.editor_host,
     editor_port = M.opts.editor_port,
