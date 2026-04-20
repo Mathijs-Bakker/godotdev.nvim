@@ -108,8 +108,9 @@ Default notes:
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
 - The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is optional and not required for Godot LSP support.
 
-If enabled, inline hints are only turned on for buffers whose attached Godot LSP client reports support for `textDocument/inlayHint`.
+If enabled, inline hints are only turned on automatically for buffers attached through this plugin's Godot GDScript LSP setup, and only when that client reports support for `textDocument/inlayHint`.
 If the current Godot GDScript LSP build does not advertise that method, no hints will appear even when `inline_hints.enabled = true`.
+C# LSP is user-managed in this plugin, so inline hints are not auto-enabled for C# buffers here.
 Use `:GodotToggleInlineHints` to toggle the current buffer manually.
 
 Recommended Godot editor settings for external Neovim integration:
