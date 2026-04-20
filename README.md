@@ -39,6 +39,7 @@ While it is possible to configure Neovim manually for Godot development, this pl
   <tr>
     <td>DAP debugging within Nvim</td>
     <td>Insert a node path directly from <a href="https://godotengine.org/asset-library/asset/4989" target="_blank" alt="Godot Asset Store, link to the godotdev.nvim-node-copy asset. To load into your project.">Godot</a> in Nvim</td>
+    <td>Access Godot's documentation in/from Nvim</td>
   </tr>
   <tr>
     <td> 
