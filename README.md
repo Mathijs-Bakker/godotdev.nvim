@@ -20,9 +20,9 @@
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
-<div align="center"><img src="assets/neovim_godot_console.png" width="800"></div>
+<div align="center"><img src="assets/neovim_godot_console.png" width="800" alt="Screenshot of Neovim connected to Godot's LSP server, Godot's console output and documentation server."></div>
 
-This plugin helps you to set up:
+**This plugin helps you to set up:**
 
 - **LSP support** for GDScript and Godot shaders (`.gdshader` files)
 - **Godot class docs** in Neovim, rendered from the official docs source as Markdown
@@ -34,6 +34,24 @@ This plugin helps you to set up:
 - **Built-in health checks** to verify environment, dependencies, and editor integration
 
 While it is possible to configure Neovim manually for Godot development, this plugin **simplifies setup** and ensures a consistent, cross-platform workflow. It automatically configures LSP, debugging, formatting, and environment checks, so you can focus on writing game code rather than troubleshooting editor setup.
+
+<table style="border: none; text-align: center;">
+  <tr>
+    <td>DAP debugging within Nvim</td>
+    <td>Insert a node path directly from <a href="https://godotengine.org/asset-library/asset/4989" target="_blank" alt="Godot Asset Store, link to the godotdev.nvim-node-copy asset. To load into your project.">Godot</a> in Nvim</td>
+  </tr>
+  <tr>
+    <td> 
+      <img src="assets/neovim_godot_dap_debugger.png" width="300" alt="Screenshot: Neovim with Godot's debugger">
+    </td>
+   <td>
+     <img align="top" src="assets/godotdev_nvim_node_copy.png" alt="godotdev.nvim node copy. Copy a node path from Godot into nvim" width="300">
+   </td>
+   <td>
+     <img src="assets/godot_neovim_godot_docs.png" alt="Example/screenshot of Neovim showing Godot documentation in a floating window." width="300">
+   </td>
+  </tr>
+</table>
 
 ## Table of Contents
 
