@@ -25,6 +25,7 @@ This plugin helps you to set up:
 - **LSP support** for GDScript and Godot shaders (`.gdshader` files)
 - **Godot class docs** in Neovim, rendered from the official docs source as Markdown
 - **Debugging** via `nvim-dap` for GDScript
+- **Optional live run output** for `:GodotRun*` commands in a Neovim buffer or float
 - **Treesitter syntax highlighting** for Godot shader files
 - **Automatic formatting** of `.gd` files using `gdscript-formatter`
 - **Optional C# support** (user-managed LSP, plus debugging and tooling checks)
@@ -169,6 +170,21 @@ require("godotdev").setup({
   inline_hints = {
     enabled = false,         -- enable Neovim inlay hints when the attached server supports them
   },
+  run = {
+    console = {
+      enabled = false,       -- capture :GodotRun* output in Neovim; these runs are no longer detached
+      renderer = "buffer",   -- "buffer" | "float"
+      buffer = {
+        position = "bottom", -- "right" | "bottom" | "current"
+        size = 0.3,
+      },
+      float = {
+        width = 0.8,
+        height = 0.25,
+        border = "rounded",
+      },
+    },
+  },
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -232,6 +248,7 @@ treesitter = {
 Default notes:
 - `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
 - `inline_hints.enabled = false` is the safer default because Godot's LSP support for inlay hints may vary by version and filetype.
+- `run.console.enabled = false` is the safer default because live console capture changes `:GodotRun*` from detached launches to attached subprocesses managed by Neovim.
 - `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
 - The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is not required unless you want it for other servers in your own config.
@@ -356,6 +373,13 @@ Notes:
 - `:GodotRunScenePicker` uses Telescope to browse `.tscn` files in the current project and run the selected scene.
 - These commands shell out to `godot` on your `PATH`.
 - `:GodotRunScenePicker` requires Telescope to be installed; the rest do not.
+
+Optional console capture:
+- Set `run.console.enabled = true` to capture stdout/stderr from `:GodotRun*` inside Neovim.
+- Choose `run.console.renderer = "buffer"` for a split buffer or `"float"` for a floating window.
+- Use `:GodotShowConsole` to reopen the most recent captured console window.
+- While console capture is enabled, the launched Godot process is managed by Neovim instead of using the plugin's detached launch path.
+- This first implementation captures one active Godot run at a time; starting another captured run while one is still active shows a warning.
 
 ## Godot class docs
 

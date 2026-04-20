@@ -127,6 +127,7 @@ return {
       )
       h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
       h.assert_equal(vim.fn.exists(":GodotToggleInlineHints"), 2)
+      h.assert_equal(vim.fn.exists(":GodotShowConsole"), 2)
       h.assert_equal(vim.fn.exists(":GodotStartEditorServer"), 2)
       h.assert_equal(vim.fn.exists(":GodotRunProject"), 2)
     end,

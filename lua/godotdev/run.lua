@@ -160,6 +160,11 @@ local function run_godot(args)
   local cmd = { "godot", "--path", root }
   vim.list_extend(cmd, args or {})
 
+  local run_console = require("godotdev.run_console")
+  if run_console.is_enabled() then
+    return run_console.start(cmd, root)
+  end
+
   vim.system(cmd, { detach = true, text = true }, function(result)
     if result.code == 0 then
       return
