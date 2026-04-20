@@ -10,6 +10,7 @@ local specs = {
   "tests.spec_utils",
   "tests.spec_tree_sitter",
   "tests.spec_setup",
+  "tests.spec_inline_hints",
   "tests.spec_docs",
   "tests.spec_docs_render",
   "tests.spec_formatting",

@@ -64,6 +64,7 @@ Below is a quick overview of what you get out of the box:
 
 ### LSP Support
 - Full GDScript language support (Go to definition, references, hover, rename, code actions, etc.)
+- Optional inline hints via Neovim's built-in inlay hint API when the attached Godot LSP supports `textDocument/inlayHint`
 - `.gdshader` syntax highlighting and language features via Treesitter
 - Optional C# LSP support (user-managed `csharp-ls` or OmniSharp) for Godot projects with C# scripts
 
@@ -91,6 +92,7 @@ Below is a quick overview of what you get out of the box:
 - Commands to start or reconnect to Godot’s editor LSP:
   - `:GodotStartEditorServer`
   - `:GodotReconnectLSP`
+  - `:GodotToggleInlineHints`
 - Commands to run Godot from Neovim without DAP:
   - `:GodotRunProject`
   - `:GodotRunCurrentScene`
@@ -164,6 +166,9 @@ require("godotdev").setup({
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
   formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
   formatter_cmd = nil,       -- string or argv list; default gdscript-formatter adds "--reorder-code"
+  inline_hints = {
+    enabled = false,         -- enable Neovim inlay hints when the attached server supports them
+  },
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
     remove_stale_socket = true,
@@ -226,9 +231,12 @@ treesitter = {
 
 Default notes:
 - `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
+- `inline_hints.enabled = false` is the safer default because Godot's LSP support for inlay hints may vary by version and filetype.
 - `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
 - The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is not required unless you want it for other servers in your own config.
+
+If you enable inline hints, the plugin only turns them on for buffers whose attached Godot LSP client reports support for `textDocument/inlayHint`. You can toggle the current buffer manually with `:GodotToggleInlineHints`.
 
 **Note:** This plugin does not define any keymaps by default, so it will not interfere with the standard DAP mappings. If you want custom keybindings, you can configure them yourself. For example, you could map `:GDebug` to `DapNew` to start one or more new debug sessions.
 

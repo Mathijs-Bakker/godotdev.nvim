@@ -3,6 +3,7 @@ local M = {}
 M.setup = function(config)
   config = config or {}
   local utils = require("godotdev.utils")
+  local inline_hints = require("godotdev.inline_hints")
 
   local host = config.editor_host or "127.0.0.1"
   local port = config.editor_port or 6005
@@ -25,8 +26,9 @@ M.setup = function(config)
     filetypes = { "gd", "gdscript", "gdshader", "gdscript3" },
     root_markers = { "project.godot", ".git" },
     capabilities = capabilities,
-    on_attach = function(client, _)
+    on_attach = function(client, bufnr)
       utils.suppress_client_messages(client, { "Method not found: godot/reloadScript" })
+      inline_hints.enable_for_buffer(client, bufnr)
     end,
   }
 

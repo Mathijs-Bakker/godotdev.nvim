@@ -126,6 +126,7 @@ return {
           or notifications[1].message:match("failed to configure DAP integration") ~= nil
       )
       h.assert_equal(vim.fn.exists(":GodotDocs"), 2)
+      h.assert_equal(vim.fn.exists(":GodotToggleInlineHints"), 2)
       h.assert_equal(vim.fn.exists(":GodotStartEditorServer"), 2)
       h.assert_equal(vim.fn.exists(":GodotRunProject"), 2)
     end,

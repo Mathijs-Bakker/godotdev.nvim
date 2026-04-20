@@ -7,6 +7,7 @@ godotdev.nvim is a batteries-included Neovim plugin for Godot 4.3+
 game development using Neovim as an external editor. It provides:
 
 - LSP support for GDScript and .gdshader files
+- Optional inline hints via Neovim's built-in inlay hint API when supported by the attached Godot LSP client
 - Debugging via nvim-dap
 - Treesitter syntax highlighting
 - Optional C# support (user-managed LSP) with dotnet, csharp-ls/OmniSharp, and netcoredbg
@@ -45,6 +46,9 @@ Example setup:
       autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
       formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
       formatter_cmd = nil,       -- string or argv list; default gdscript-formatter adds "--reorder-code"
+      inline_hints = {
+        enabled = false,         -- enable Neovim inlay hints when the attached server supports them
+      },
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
@@ -99,9 +103,13 @@ If you already manage `nvim-treesitter` yourself, you can disable plugin-managed
 Default notes:
 
 - `autostart_editor_server = false` is the safer default because starting a Neovim server is an external-editor concern and should be opt-in.
+- `inline_hints.enabled = false` is the safer default because Godot's LSP support for inlay hints may vary by version and filetype.
 - `treesitter.auto_setup = true` stays enabled by default for convenience, but it is safe to turn off if you already configure `nvim-treesitter` yourself.
 - `docs.fallback_renderer = "browser"` remains the default because browser fallback is the only option that can recover when rendered `.rst` docs cannot be fetched.
 - The plugin uses Neovim's built-in LSP APIs; `nvim-lspconfig` is optional and not required for Godot LSP support.
+
+If enabled, inline hints are only turned on for buffers whose attached Godot LSP client reports support for `textDocument/inlayHint`.
+Use `:GodotToggleInlineHints` to toggle the current buffer manually.
 
 Recommended Godot editor settings for external Neovim integration:
 
