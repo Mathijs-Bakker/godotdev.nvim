@@ -38,6 +38,7 @@ M.opts = {
       position = "right", -- "right" | "bottom" | "current"
       size = 0.35,
     },
+    icons = "nerdfont", -- "nerdfont" | "ascii" | false | { style = ..., generic = ..., script_suffix = ..., types = {...} }
   },
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"

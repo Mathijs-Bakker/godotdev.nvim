@@ -215,6 +215,7 @@ require("godotdev").setup({
       position = "right",    -- "right" | "bottom" | "current"
       size = 0.35,
     },
+    icons = "nerdfont",      -- "nerdfont" | "ascii" | false | { generic = "...", script_suffix = "...", types = { Node2D = "..." } }
   },
   editor_server = {
     address = nil,           -- nil uses the current server or the platform default
@@ -426,6 +427,7 @@ Notes:
 - `:GodotSceneTree` works from a `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene in the current project.
 - If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
 - Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
+- By default the pane uses Nerd Font glyphs. Set `scene_tree.icons = "ascii"` for a plain text fallback, `false` to disable icons, or provide a custom `types` table to override per-node icons.
 - Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `p` copies the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ## Godot class docs
