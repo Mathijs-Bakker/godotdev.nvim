@@ -18,49 +18,74 @@ local default_icons = {
   generic = "󰀘",
   script_suffix = " *",
   types = {
-    Node = "󰀘",
-    Node2D = "󰔷",
-    Node3D = "󰆧",
-    CanvasLayer = "󰧨",
-    Area2D = "󰯈",
-    Area3D = "󰯈",
-    Camera2D = "󰹑",
-    Camera3D = "󰹑",
-    CharacterBody2D = "󰆿",
-    CharacterBody3D = "󰆿",
-    StaticBody2D = "󰜌",
-    StaticBody3D = "󰜌",
-    RigidBody2D = "󰔡",
-    RigidBody3D = "󰔡",
-    CollisionShape2D = "󰛢",
-    CollisionShape3D = "󰛢",
-    Sprite2D = "󰈟",
-    AnimatedSprite2D = "󰵉",
-    TileMap = "󰝰",
-    TileMapLayer = "󰝰",
-    Label = "󰉿",
-    RichTextLabel = "󰉿",
-    Button = "󰌌",
-    TextureButton = "󰌌",
-    Control = "󰖯",
-    Panel = "󰕫",
-    MarginContainer = "󰅩",
-    VBoxContainer = "󰉸",
-    HBoxContainer = "󰉹",
-    AudioStreamPlayer = "󰎈",
-    AudioStreamPlayer2D = "󰎈",
-    AudioStreamPlayer3D = "󰎈",
-    GPUParticles2D = "󰖐",
-    GPUParticles3D = "󰖐",
-    CPUParticles2D = "󰖐",
-    CPUParticles3D = "󰖐",
-    Light2D = "󰌵",
-    DirectionalLight2D = "󰌵",
-    DirectionalLight3D = "󰌵",
-    OmniLight3D = "󰌵",
-    SpotLight3D = "󰌵",
-    Marker2D = "󰍎",
-    Marker3D = "󰍎",
+    -- 
+    -- 󰊔
+    -- 󰩷
+    -- 󰯉
+    -- 
+    -- 
+    -- 
+    -- 󱀅
+    -- 
+    -- 
+    -- 
+    -- 
+    -- 
+    AnimatedSprite2D = "󰯉",
+    Area2D = "󱀅",
+    Area3D = "󱀅",
+    AudioListener2D = "󰟅",
+    AudioListener3D = "󰟅",
+    AudioStreamPlayer = "",
+    AudioStreamPlayer2D = "",
+    AudioStreamPlayer3D = "",
+    Button = "󰜯",
+    CPUParticles2D = "",
+    CPUParticles3D = "",
+    Camera2D = "",
+    Camera3D = "",
+    CanvasLayer = "",
+    CharacterBody2D = "󱅼",
+    CharacterBody3D = "󱅼",
+    CheckButton = "",
+    CollisionShape2D = "",
+    CollisionShape3D = "",
+    ColorPickerButton = "󰜯",
+    Container = "濾",
+    Control = "",
+    DirectionalLight2D = "󰖨",
+    DirectionalLight3D = "󰖨",
+    EditorPlugin = "󰐱",
+    GPUParticles2D = "",
+    GPUParticles3D = "",
+    GridMapEditorPlugin = "󰐱",
+    HBoxContainer = "󱪶",
+    Label = "",
+    LinkButton = "󰌷",
+    MarginContainer = "",
+    Marker2D = "",
+    Marker3D = "",
+    MenuButton = "󱐀",
+    MultiplayerSpawner = "󱛃",
+    MultiplayerSynchronizer = "󱛇",
+    Node = "",
+    Node2D = "",
+    Node3D = "",
+    OmniLight3D = "",
+    OptionButton = "",
+    Panel = "",
+    PanelContainer = "",
+    RichTextLabel = "",
+    RigidBody2D = "",
+    RigidBody3D = "",
+    SpotLight3D = "",
+    Sprite2D = "󰯉",
+    StaticBody2D = "",
+    StaticBody3D = "",
+    TextureButton = "󱝊",
+    TileMap = "",
+    TileMapLayer = "",
+    VBoxContainer = "󱪷",
   },
 }
 
@@ -227,23 +252,25 @@ local function pick_scene_list(scenes, title, on_select)
     return false
   end
 
-  telescope.pickers.new({}, {
-    prompt_title = title,
-    finder = telescope.finders.new_table({
-      results = scenes,
-    }),
-    sorter = telescope.config.values.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr)
-      telescope.actions.select_default:replace(function()
-        local selection = telescope.action_state.get_selected_entry()
-        telescope.actions.close(prompt_bufnr)
-        if selection and selection[1] then
-          on_select(selection[1])
-        end
-      end)
-      return true
-    end,
-  }):find()
+  telescope.pickers
+    .new({}, {
+      prompt_title = title,
+      finder = telescope.finders.new_table({
+        results = scenes,
+      }),
+      sorter = telescope.config.values.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr)
+        telescope.actions.select_default:replace(function()
+          local selection = telescope.action_state.get_selected_entry()
+          telescope.actions.close(prompt_bufnr)
+          if selection and selection[1] then
+            on_select(selection[1])
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
 
   return true
 end
@@ -505,7 +532,12 @@ local function highlight_for_node(node, highlights)
     return groups.Marker or plugin_highlight_groups.generic
   end
 
-  if node.type:match("Container$") or node.type:match("^Panel") or node.type:match("^Label") or node.type:match("Button$") then
+  if
+    node.type:match("Container$")
+    or node.type:match("^Panel")
+    or node.type:match("^Label")
+    or node.type:match("Button$")
+  then
     return groups.Control or plugin_highlight_groups.generic
   end
 
