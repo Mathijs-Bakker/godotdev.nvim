@@ -14,6 +14,7 @@ local specs = {
   "tests.spec_run_console",
   "tests.spec_docs",
   "tests.spec_docs_render",
+  "tests.spec_scene_tree",
   "tests.spec_formatting",
   "tests.spec_run",
   "tests.spec_start_editor_server",

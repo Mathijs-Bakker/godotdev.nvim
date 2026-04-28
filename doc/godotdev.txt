@@ -65,6 +65,12 @@ Example setup:
           },
         },
       },
+      scene_tree = {
+        buffer = {
+          position = "right",    -- "right" | "bottom" | "current"
+          size = 0.35,
+        },
+      },
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
         remove_stale_socket = true,
@@ -224,6 +230,22 @@ Optional console capture:
 - Use `:GodotShowConsole` to reopen the most recent captured console window.
 - While console capture is enabled, the launched Godot process is managed by Neovim instead of using the plugin's detached launch path.
 - This first implementation captures one active Godot run at a time; starting another captured run while one is still active shows a warning.
+
+==============================================================================
+Scene Tree                                   *godotdev-scene-tree*
+
+You can open a static scene tree pane for the current `.tscn`, or from a
+`.gd` / `.cs` buffer when that script is attached to a scene:
+
+  :GodotSceneTree
+  :GodotSceneTree scenes/Main.tscn
+  :GodotSceneTreeRefresh
+
+Notes:
+- `:GodotSceneTree` works from a `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene in the current project.
+- If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
+- Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
+- Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `p` copies the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ==============================================================================
 Godot docs                                       *godotdev-docs*
