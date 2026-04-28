@@ -69,6 +69,7 @@ While it is possible to configure Neovim manually for Godot development, this pl
 - [Godot editor server](#godot-editor-server)
 - [Reconnect to Godot's LSP server](#reconnect-to-godots-lsp-server)
 - [Run Godot](#run-godot)
+- [Scene Tree](#scene-tree)
 - [Godot class docs](#godot-class-docs)
 - [C# Installation Support](#c-installation-support)
 - [Autoformatting / Indentation](#autoformatting--indentation)
@@ -120,6 +121,9 @@ Below is a quick overview of what you get out of the box:
   - `:GodotRunCurrentScene`
   - `:GodotRunScene {path}`
   - `:GodotRunScenePicker` (optional Telescope integration)
+- Commands to inspect a static scene tree in Neovim:
+  - `:GodotSceneTree [path]`
+  - `:GodotSceneTreeRefresh`
 - Commands to open Godot class reference docs:
   - `:GodotDocs [ClassName]`
   - `:GodotDocsFloat [ClassName]`
@@ -204,6 +208,12 @@ require("godotdev").setup({
         height = 0.25,
         border = "rounded",
       },
+    },
+  },
+  scene_tree = {
+    buffer = {
+      position = "right",    -- "right" | "bottom" | "current"
+      size = 0.35,
     },
   },
   editor_server = {
@@ -401,6 +411,22 @@ Optional console capture:
 - Use `:GodotShowConsole` to reopen the most recent captured console window.
 - While console capture is enabled, the launched Godot process is managed by Neovim instead of using the plugin's detached launch path.
 - This first implementation captures one active Godot run at a time; starting another captured run while one is still active shows a warning.
+
+## Scene Tree
+
+Open a static scene tree pane for the current `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene:
+
+```vim
+:GodotSceneTree
+:GodotSceneTree scenes/Main.tscn
+:GodotSceneTreeRefresh
+```
+
+Notes:
+- `:GodotSceneTree` works from a `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene in the current project.
+- If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
+- Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
+- Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `p` copies the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ## Godot class docs
 

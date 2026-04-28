@@ -33,6 +33,12 @@ M.opts = {
       },
     },
   },
+  scene_tree = {
+    buffer = {
+      position = "right", -- "right" | "bottom" | "current"
+      size = 0.35,
+    },
+  },
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
     fallback_renderer = "browser", -- nil | "browser" | "buffer"; browser is the only fetch-recovery fallback
@@ -133,6 +139,7 @@ function M.setup(opts)
 
   require("godotdev.reconnect_lsp").setup()
   require("godotdev.run").setup()
+  require("godotdev.scene_tree").setup()
   require("godotdev.formatting").setup()
   require("godotdev.docs").setup()
   setup_dap()
