@@ -71,6 +71,15 @@ Example setup:
           size = 0.35,
         },
         icons = "nerdfont",      -- "nerdfont" | "ascii" | false | { generic = "...", script_suffix = "...", types = { Node2D = "..." } }
+        icon_colors = {
+          generic = "Directory",
+          groups = {
+            Node2D = "Function",
+            Camera = "Identifier",
+            Physics = "Conditional",
+            Visual = "String",
+          },
+        },
       },
       editor_server = {
         address = nil,           -- nil uses the current server or the platform default
@@ -247,6 +256,7 @@ Notes:
 - If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
 - Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
 - By default the pane uses Nerd Font glyphs. Set `scene_tree.icons = "ascii"` for a plain text fallback, `false` to disable icons, or provide a custom `types` table to override per-node icons.
+- Icon colors are applied to the icon glyph only. Override them with `scene_tree.icon_colors`, using highlight group names such as `Function`, `Identifier`, `String`, or your own custom groups.
 - Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `p` copies the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ==============================================================================

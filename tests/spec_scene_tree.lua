@@ -176,6 +176,56 @@ return {
     end,
   },
   {
+    name = "scene tree assigns highlight groups to icon spans",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+
+      local parsed = scene_tree._parse_scene({
+        '[gd_scene format=3]',
+        '[node name="Main" type="Node2D"]',
+        '[node name="Camera" type="Camera2D" parent="."]',
+        '[node name="Sprite" type="Sprite2D" parent="."]',
+      })
+
+      require("godotdev").opts.scene_tree = {
+        icons = "nerdfont",
+      }
+
+      local lines, spans = scene_tree._format_tree(parsed)
+      h.assert_equal(lines[1], "󰔷 Main [Node2D]")
+      h.assert_equal(spans[1].group, "Function")
+      h.assert_equal(spans[2].group, "Identifier")
+      h.assert_equal(spans[3].group, "String")
+    end,
+  },
+  {
+    name = "scene tree supports custom icon highlight overrides",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+
+      local parsed = scene_tree._parse_scene({
+        '[gd_scene format=3]',
+        '[node name="Body" type="CharacterBody2D"]',
+      })
+
+      require("godotdev").opts.scene_tree = {
+        icons = "nerdfont",
+        icon_colors = {
+          groups = {
+            Physics = "ErrorMsg",
+          },
+        },
+      }
+
+      local _, spans = scene_tree._format_tree(parsed)
+      h.assert_equal(spans[1].group, "ErrorMsg")
+    end,
+  },
+  {
     name = "scene tree jumps to attached script for the selected node",
     run = function()
       h.clear_module("godotdev.scene_tree")

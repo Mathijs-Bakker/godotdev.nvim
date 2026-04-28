@@ -39,6 +39,23 @@ M.opts = {
       size = 0.35,
     },
     icons = "nerdfont", -- "nerdfont" | "ascii" | false | { style = ..., generic = ..., script_suffix = ..., types = {...} }
+    icon_colors = {
+      generic = "Directory",
+      groups = {
+        Node = "Directory",
+        Node2D = "Function",
+        Node3D = "Type",
+        Control = "Special",
+        Camera = "Identifier",
+        Physics = "Conditional",
+        Collision = "DiagnosticWarn",
+        Visual = "String",
+        Tile = "Number",
+        Audio = "Constant",
+        Light = "DiagnosticInfo",
+        Marker = "Label",
+      },
+    },
   },
   docs = {
     renderer = "float", -- "float" | "browser" | "buffer"
