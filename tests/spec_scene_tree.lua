@@ -195,34 +195,38 @@ return {
 
       local lines, spans = scene_tree._format_tree(parsed)
       h.assert_equal(lines[1], "󰔷 Main [Node2D]")
-      h.assert_equal(spans[1].group, "Function")
-      h.assert_equal(spans[2].group, "Identifier")
-      h.assert_equal(spans[3].group, "String")
+      h.assert_equal(spans[1].group, "GodotSceneTreeIconNode2D")
+      h.assert_equal(spans[2].group, "GodotSceneTreeIconCamera")
+      h.assert_equal(spans[3].group, "GodotSceneTreeIconVisual")
     end,
   },
   {
-    name = "scene tree supports custom icon highlight overrides",
+    name = "scene tree defines plugin icon highlight links",
     run = function()
       h.clear_module("godotdev.scene_tree")
       h.clear_module("godotdev")
       local scene_tree = require("godotdev.scene_tree")
 
-      local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
-        '[node name="Body" type="CharacterBody2D"]',
-      })
-
       require("godotdev").opts.scene_tree = {
         icons = "nerdfont",
         icon_colors = {
+          generic = "Title",
           groups = {
             Physics = "ErrorMsg",
           },
         },
       }
 
-      local _, spans = scene_tree._format_tree(parsed)
-      h.assert_equal(spans[1].group, "ErrorMsg")
+      local calls = {}
+      h.with_field(vim.api, "nvim_set_hl", function(_ns, name, opts)
+        calls[name] = opts
+      end, function()
+        scene_tree._define_highlights()
+      end)
+
+      h.assert_equal(calls.GodotSceneTreeIcon.link, "Title")
+      h.assert_equal(calls.GodotSceneTreeIconPhysics.link, "ErrorMsg")
+      h.assert_equal(calls.GodotSceneTreeIconNode2D.link, "Function")
     end,
   },
   {
