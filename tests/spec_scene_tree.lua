@@ -39,10 +39,14 @@ return {
     end,
   },
   {
-    name = "scene tree opens for current scene and copies node path",
+    name = "scene tree opens with nerdfont icons for current scene and copies node path",
     run = function()
       h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
       local scene_tree = require("godotdev.scene_tree")
+      require("godotdev").opts.scene_tree = {
+        icons = "nerdfont",
+      }
 
       with_temp_project(function(root)
         local scene = root .. "/scenes/Main.tscn"
@@ -59,8 +63,8 @@ return {
 
         local ok = scene_tree.open()
         h.assert_truthy(ok)
-        h.assert_equal(scene_tree._state.lines[1], "Main [Node2D]")
-        h.assert_equal(scene_tree._state.lines[2], "  Player [CharacterBody2D]")
+        h.assert_equal(scene_tree._state.lines[1], "󰔷 Main [Node2D]")
+        h.assert_equal(scene_tree._state.lines[2], "  󰆿 Player [CharacterBody2D]")
 
         local tree_buf = scene_tree._state.buffer
         local tree_win = scene_tree._state.window
@@ -113,10 +117,73 @@ return {
     end,
   },
   {
+    name = "scene tree supports ascii icons and disabling icons",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+
+      local parsed = scene_tree._parse_scene({
+        '[gd_scene format=3]',
+        '[node name="Main" type="Node2D"]',
+        '[node name="Panel" type="Panel" parent="."]',
+      })
+
+      require("godotdev").opts.scene_tree = {
+        icons = "ascii",
+      }
+      local ascii_lines = scene_tree._format_tree(parsed)
+      h.assert_equal(ascii_lines[1], "> Main [Node2D]")
+      h.assert_equal(ascii_lines[2], "  > Panel [Panel]")
+
+      require("godotdev").opts.scene_tree = {
+        icons = false,
+      }
+      local plain_lines = scene_tree._format_tree(parsed)
+      h.assert_equal(plain_lines[1], "Main [Node2D]")
+      h.assert_equal(plain_lines[2], "  Panel [Panel]")
+    end,
+  },
+  {
+    name = "scene tree supports custom icon overrides",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+
+      local parsed = scene_tree._parse_scene({
+        '[gd_scene format=3]',
+        '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
+        '[node name="Main" type="Node"]',
+        '[node name="Camera" type="Camera2D" parent="."]',
+        'script = ExtResource("1")',
+      })
+
+      require("godotdev").opts.scene_tree = {
+        icons = {
+          generic = "#",
+          script_suffix = " [script]",
+          types = {
+            Node = "#",
+            Camera2D = "@",
+          },
+        },
+      }
+
+      local lines = scene_tree._format_tree(parsed)
+      h.assert_equal(lines[1], "# Main [Node]")
+      h.assert_equal(lines[2], "  @ Camera [Camera2D] [script]")
+    end,
+  },
+  {
     name = "scene tree jumps to attached script for the selected node",
     run = function()
       h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
       local scene_tree = require("godotdev.scene_tree")
+      require("godotdev").opts.scene_tree = {
+        icons = false,
+      }
 
       with_temp_project(function(root)
         local script = root .. "/scripts/player.gd"

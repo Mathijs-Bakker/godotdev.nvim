@@ -11,6 +11,62 @@ local state = {
   nodes_by_line = {},
 }
 
+local default_icons = {
+  generic = "󰀘",
+  script_suffix = " *",
+  types = {
+    Node = "󰀘",
+    Node2D = "󰔷",
+    Node3D = "󰆧",
+    CanvasLayer = "󰧨",
+    Area2D = "󰯈",
+    Area3D = "󰯈",
+    Camera2D = "󰹑",
+    Camera3D = "󰹑",
+    CharacterBody2D = "󰆿",
+    CharacterBody3D = "󰆿",
+    StaticBody2D = "󰜌",
+    StaticBody3D = "󰜌",
+    RigidBody2D = "󰔡",
+    RigidBody3D = "󰔡",
+    CollisionShape2D = "󰛢",
+    CollisionShape3D = "󰛢",
+    Sprite2D = "󰈟",
+    AnimatedSprite2D = "󰵉",
+    TileMap = "󰝰",
+    TileMapLayer = "󰝰",
+    Label = "󰉿",
+    RichTextLabel = "󰉿",
+    Button = "󰌌",
+    TextureButton = "󰌌",
+    Control = "󰖯",
+    Panel = "󰕫",
+    MarginContainer = "󰅩",
+    VBoxContainer = "󰉸",
+    HBoxContainer = "󰉹",
+    AudioStreamPlayer = "󰎈",
+    AudioStreamPlayer2D = "󰎈",
+    AudioStreamPlayer3D = "󰎈",
+    GPUParticles2D = "󰖐",
+    GPUParticles3D = "󰖐",
+    CPUParticles2D = "󰖐",
+    CPUParticles3D = "󰖐",
+    Light2D = "󰌵",
+    DirectionalLight2D = "󰌵",
+    DirectionalLight3D = "󰌵",
+    OmniLight3D = "󰌵",
+    SpotLight3D = "󰌵",
+    Marker2D = "󰍎",
+    Marker3D = "󰍎",
+  },
+}
+
+local ascii_icons = {
+  generic = ">",
+  script_suffix = " *",
+  types = {},
+}
+
 local function sanitize_size(size)
   if type(size) ~= "number" or size <= 0 then
     return 0.35
@@ -265,15 +321,84 @@ local function parse_scene(lines)
   }
 end
 
+local function get_config()
+  return require("godotdev").opts.scene_tree or {}
+end
+
+local function merged_icons()
+  local config = get_config()
+  local icons = config.icons
+
+  if icons == false then
+    return nil
+  end
+
+  local base = default_icons
+  if icons == "ascii" then
+    base = ascii_icons
+  elseif type(icons) == "table" and icons.style == "ascii" then
+    base = ascii_icons
+  end
+
+  if type(icons) == "table" then
+    local merged = vim.tbl_deep_extend("force", vim.deepcopy(base), icons)
+    if icons.generic ~= nil then
+      merged.generic = icons.generic
+    end
+    if icons.script_suffix ~= nil then
+      merged.script_suffix = icons.script_suffix
+    end
+    return merged
+  end
+
+  return vim.deepcopy(base)
+end
+
+local function icon_for_node(node, icons)
+  if not icons then
+    return nil
+  end
+
+  local icon = icons.types and icons.types[node.type] or nil
+  if icon then
+    return icon
+  end
+
+  if node.type:match("2D$") and icons.types and icons.types.Node2D then
+    return icons.types.Node2D
+  end
+
+  if node.type:match("3D$") and icons.types and icons.types.Node3D then
+    return icons.types.Node3D
+  end
+
+  if node.type:match("Container$") and icons.types and icons.types.Control then
+    return icons.types.Control
+  end
+
+  if node.type:match("Label$") and icons.types and icons.types.Label then
+    return icons.types.Label
+  end
+
+  if node.type:match("Button$") and icons.types and icons.types.Button then
+    return icons.types.Button
+  end
+
+  return icons.generic
+end
+
 local function format_tree(parsed)
   local lines = {}
   local nodes_by_line = {}
+  local icons = merged_icons()
 
   for _, node in ipairs(parsed.nodes) do
     local indent = string.rep("  ", node.depth)
-    local label = ("%s%s [%s]"):format(indent, node.name ~= "" and node.name or "<unnamed>", node.type)
+    local icon = icon_for_node(node, icons)
+    local prefix = icon and (icon .. " ") or ""
+    local label = ("%s%s%s [%s]"):format(indent, prefix, node.name ~= "" and node.name or "<unnamed>", node.type)
     if node.script then
-      label = label .. " *"
+      label = label .. ((icons and icons.script_suffix) or " *")
     end
     table.insert(lines, label)
     nodes_by_line[#lines] = node
@@ -520,6 +645,10 @@ function M.setup()
 end
 
 M._parse_scene = parse_scene
+M._format_tree = function(parsed)
+  local lines = format_tree(parsed)
+  return lines
+end
 M._resolve_scene = resolve_scene
 M._state = state
 
