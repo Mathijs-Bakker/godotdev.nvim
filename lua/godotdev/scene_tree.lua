@@ -88,6 +88,24 @@ local default_highlights = {
   },
 }
 
+local plugin_highlight_groups = {
+  generic = "GodotSceneTreeIcon",
+  groups = {
+    Node = "GodotSceneTreeIconNode",
+    Node2D = "GodotSceneTreeIconNode2D",
+    Node3D = "GodotSceneTreeIconNode3D",
+    Control = "GodotSceneTreeIconControl",
+    Camera = "GodotSceneTreeIconCamera",
+    Physics = "GodotSceneTreeIconPhysics",
+    Collision = "GodotSceneTreeIconCollision",
+    Visual = "GodotSceneTreeIconVisual",
+    Tile = "GodotSceneTreeIconTile",
+    Audio = "GodotSceneTreeIconAudio",
+    Light = "GodotSceneTreeIconLight",
+    Marker = "GodotSceneTreeIconMarker",
+  },
+}
+
 local function sanitize_size(size)
   if type(size) ~= "number" or size <= 0 then
     return 0.35
@@ -395,6 +413,22 @@ local function merged_highlights()
   return merged
 end
 
+local function define_highlights()
+  local links = merged_highlights()
+  if not links then
+    return
+  end
+
+  vim.api.nvim_set_hl(0, plugin_highlight_groups.generic, { default = true, link = links.generic })
+
+  for key, group_name in pairs(plugin_highlight_groups.groups) do
+    vim.api.nvim_set_hl(0, group_name, {
+      default = true,
+      link = (links.groups and links.groups[key]) or links.generic,
+    })
+  end
+end
+
 local function icon_for_node(node, icons)
   if not icons then
     return nil
@@ -433,57 +467,57 @@ local function highlight_for_node(node, highlights)
     return nil
   end
 
-  local groups = highlights.groups or {}
+  local groups = plugin_highlight_groups.groups
 
   if groups[node.type] then
     return groups[node.type]
   end
 
   if node.type:match("Camera") then
-    return groups.Camera or highlights.generic
+    return groups.Camera or plugin_highlight_groups.generic
   end
 
   if node.type:match("Body") or node.type:match("^Area") then
-    return groups.Physics or highlights.generic
+    return groups.Physics or plugin_highlight_groups.generic
   end
 
   if node.type:match("^Collision") then
-    return groups.Collision or highlights.generic
+    return groups.Collision or plugin_highlight_groups.generic
   end
 
   if node.type:match("Sprite") or node.type:match("Animated") then
-    return groups.Visual or highlights.generic
+    return groups.Visual or plugin_highlight_groups.generic
   end
 
   if node.type:match("^Tile") then
-    return groups.Tile or highlights.generic
+    return groups.Tile or plugin_highlight_groups.generic
   end
 
   if node.type:match("^Audio") then
-    return groups.Audio or highlights.generic
+    return groups.Audio or plugin_highlight_groups.generic
   end
 
   if node.type:match("Light") then
-    return groups.Light or highlights.generic
+    return groups.Light or plugin_highlight_groups.generic
   end
 
   if node.type:match("^Marker") then
-    return groups.Marker or highlights.generic
+    return groups.Marker or plugin_highlight_groups.generic
   end
 
   if node.type:match("Container$") or node.type:match("^Panel") or node.type:match("^Label") or node.type:match("Button$") then
-    return groups.Control or highlights.generic
+    return groups.Control or plugin_highlight_groups.generic
   end
 
   if node.type:match("2D$") then
-    return groups.Node2D or highlights.generic
+    return groups.Node2D or plugin_highlight_groups.generic
   end
 
   if node.type:match("3D$") then
-    return groups.Node3D or highlights.generic
+    return groups.Node3D or plugin_highlight_groups.generic
   end
 
-  return groups.Node or highlights.generic
+  return groups.Node or plugin_highlight_groups.generic
 end
 
 local function format_tree(parsed)
@@ -661,6 +695,7 @@ local function current_node()
 end
 
 function M.open(scene)
+  define_highlights()
   local resolved = resolve_scene(scene)
   if type(resolved) == "table" then
     return pick_scene_list(resolved, "Scenes using current script", function(choice)
@@ -771,6 +806,8 @@ M._format_tree = function(parsed)
   local lines, _, icon_spans = format_tree(parsed)
   return lines, icon_spans
 end
+M._define_highlights = define_highlights
+M._plugin_highlight_groups = plugin_highlight_groups
 M._resolve_scene = resolve_scene
 M._state = state
 
