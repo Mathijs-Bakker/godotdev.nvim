@@ -63,13 +63,17 @@ return {
 
         local ok = scene_tree.open()
         h.assert_truthy(ok)
-        h.assert_equal(scene_tree._state.lines[1], "󰔷 Main [Node2D]")
-        h.assert_equal(scene_tree._state.lines[2], "  󰆿 Player [CharacterBody2D]")
+        h.assert_equal(
+          scene_tree._state.lines[1],
+          "Scene: res://scenes/Main.tscn    y yank | <CR> jump | g script | r refresh | q close"
+        )
+        h.assert_equal(scene_tree._state.lines[2], " Main [Node2D]")
+        h.assert_equal(scene_tree._state.lines[3], "  󱅼 Player [CharacterBody2D]")
 
         local tree_buf = scene_tree._state.buffer
         local tree_win = scene_tree._state.window
         vim.api.nvim_set_current_win(tree_win)
-        vim.api.nvim_win_set_cursor(tree_win, { 2, 0 })
+        vim.api.nvim_win_set_cursor(tree_win, { 3, 0 })
 
         local copied
         h.with_field(vim.fn, "setreg", function(_register, value)
@@ -194,10 +198,10 @@ return {
       }
 
       local lines, spans = scene_tree._format_tree(parsed)
-      h.assert_equal(lines[1], "󰔷 Main [Node2D]")
+      h.assert_equal(lines[1], " Main [Node2D]")
       h.assert_equal(spans[1].group, "GodotSceneTreeIconNode2D")
-      h.assert_equal(spans[2].group, "GodotSceneTreeIconCamera")
-      h.assert_equal(spans[3].group, "GodotSceneTreeIconVisual")
+      h.assert_equal(spans[2].group, "GodotSceneTreeIconNode2D")
+      h.assert_equal(spans[3].group, "GodotSceneTreeIconNode2D")
     end,
   },
   {
@@ -210,9 +214,9 @@ return {
       require("godotdev").opts.scene_tree = {
         icons = "nerdfont",
         icon_colors = {
-          generic = "Title",
+          generic = { fg = "#cccccc" },
           groups = {
-            Physics = "ErrorMsg",
+            EditorPlugin = { fg = "#ffee88" },
           },
         },
       }
@@ -224,9 +228,39 @@ return {
         scene_tree._define_highlights()
       end)
 
-      h.assert_equal(calls.GodotSceneTreeIcon.link, "Title")
-      h.assert_equal(calls.GodotSceneTreeIconPhysics.link, "ErrorMsg")
-      h.assert_equal(calls.GodotSceneTreeIconNode2D.link, "Function")
+      h.assert_equal(calls.GodotSceneTreeIcon.fg, "#cccccc")
+      h.assert_equal(calls.GodotSceneTreeIconEditorPlugin.fg, "#ffee88")
+      h.assert_equal(calls.GodotSceneTreeIconNode2D.fg, "#699ce8")
+    end,
+  },
+  {
+    name = "scene tree classifies control 3d and editor plugin families",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+
+      local parsed = scene_tree._parse_scene({
+        '[gd_scene format=3]',
+        '[node name="Ui" type="PanelContainer"]',
+        '[node name="World" type="Marker3D"]',
+        '[node name="Hero" type="CharacterBody2D"]',
+        '[node name="Grid" type="TileMap"]',
+        '[node name="Plugin" type="GridMapEditorPlugin"]',
+        '[node name="Plain" type="Node"]',
+      })
+
+      require("godotdev").opts.scene_tree = {
+        icons = "nerdfont",
+      }
+
+      local _, spans = scene_tree._format_tree(parsed)
+      h.assert_equal(spans[1].group, "GodotSceneTreeIconControl")
+      h.assert_equal(spans[2].group, "GodotSceneTreeIconNode3D")
+      h.assert_equal(spans[3].group, "GodotSceneTreeIconCharacter")
+      h.assert_equal(spans[4].group, "GodotSceneTreeIconTile")
+      h.assert_equal(spans[5].group, "GodotSceneTreeIconEditorPlugin")
+      h.assert_equal(spans[6].group, "GodotSceneTreeIconNode")
     end,
   },
   {
@@ -260,7 +294,7 @@ return {
 
         local tree_win = scene_tree._state.window
         vim.api.nvim_set_current_win(tree_win)
-        vim.api.nvim_win_set_cursor(tree_win, { 2, 0 })
+        vim.api.nvim_win_set_cursor(tree_win, { 3, 0 })
 
         local opened
         h.with_temp("cmd", function(command)

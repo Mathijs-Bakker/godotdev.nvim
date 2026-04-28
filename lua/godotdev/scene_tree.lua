@@ -10,6 +10,7 @@ local state = {
   lines = {},
   nodes_by_line = {},
   icon_spans = {},
+  header_line_count = 1,
 }
 
 local namespace = vim.api.nvim_create_namespace("godotdev.scene_tree")
@@ -96,38 +97,29 @@ local ascii_icons = {
 }
 
 local default_highlights = {
-  generic = "Directory",
+  generic = { fg = "#ffffff" },
   groups = {
-    Node = "Directory",
-    Node2D = "Function",
-    Node3D = "Type",
-    Control = "Special",
-    Camera = "Identifier",
-    Physics = "Conditional",
-    Collision = "DiagnosticWarn",
-    Visual = "String",
-    Tile = "Number",
-    Audio = "Constant",
-    Light = "DiagnosticInfo",
-    Marker = "Label",
+    Node = { fg = "#ffffff" },
+    Node2D = { fg = "#699ce8" },
+    Node3D = { fg = "#fc7f7f" },
+    Control = { fg = "#a4eb7a" },
+    Tile = { fg = "#699ce8" },
+    Character = { fg = "#fc7f7f" },
+    EditorPlugin = { fg = "#e7c46a" },
   },
 }
 
 local plugin_highlight_groups = {
   generic = "GodotSceneTreeIcon",
+  header = "GodotSceneTreeHeader",
   groups = {
     Node = "GodotSceneTreeIconNode",
     Node2D = "GodotSceneTreeIconNode2D",
     Node3D = "GodotSceneTreeIconNode3D",
     Control = "GodotSceneTreeIconControl",
-    Camera = "GodotSceneTreeIconCamera",
-    Physics = "GodotSceneTreeIconPhysics",
-    Collision = "GodotSceneTreeIconCollision",
-    Visual = "GodotSceneTreeIconVisual",
     Tile = "GodotSceneTreeIconTile",
-    Audio = "GodotSceneTreeIconAudio",
-    Light = "GodotSceneTreeIconLight",
-    Marker = "GodotSceneTreeIconMarker",
+    Character = "GodotSceneTreeIconCharacter",
+    EditorPlugin = "GodotSceneTreeIconEditorPlugin",
   },
 }
 
@@ -441,18 +433,35 @@ local function merged_highlights()
 end
 
 local function define_highlights()
-  local links = merged_highlights()
-  if not links then
+  local specs = merged_highlights()
+  if not specs then
     return
   end
 
-  vim.api.nvim_set_hl(0, plugin_highlight_groups.generic, { default = true, link = links.generic })
+  local function to_hl_spec(value)
+    if type(value) == "string" then
+      return { default = true, link = value }
+    end
+
+    if type(value) == "table" then
+      local spec = vim.deepcopy(value)
+      spec.default = true
+      return spec
+    end
+
+    return { default = true }
+  end
+
+  vim.api.nvim_set_hl(0, plugin_highlight_groups.generic, to_hl_spec(specs.generic))
+  vim.api.nvim_set_hl(0, plugin_highlight_groups.header, {
+    default = true,
+    bold = true,
+    fg = "#ffffff",
+    bg = "#2b2d30",
+  })
 
   for key, group_name in pairs(plugin_highlight_groups.groups) do
-    vim.api.nvim_set_hl(0, group_name, {
-      default = true,
-      link = (links.groups and links.groups[key]) or links.generic,
-    })
+    vim.api.nvim_set_hl(0, group_name, to_hl_spec((specs.groups and specs.groups[key]) or specs.generic))
   end
 end
 
@@ -500,43 +509,29 @@ local function highlight_for_node(node, highlights)
     return groups[node.type]
   end
 
-  if node.type:match("Camera") then
-    return groups.Camera or plugin_highlight_groups.generic
+  if node.type:match("EditorPlugin$") then
+    return groups.EditorPlugin or plugin_highlight_groups.generic
   end
 
-  if node.type:match("Body") or node.type:match("^Area") then
-    return groups.Physics or plugin_highlight_groups.generic
+  if node.type == "TileMap" or node.type == "TileMapLayer" then
+    return groups.Tile or groups.Node2D or plugin_highlight_groups.generic
   end
 
-  if node.type:match("^Collision") then
-    return groups.Collision or plugin_highlight_groups.generic
+  if node.type:match("^Character") then
+    return groups.Character or groups.Node3D or plugin_highlight_groups.generic
   end
 
-  if node.type:match("Sprite") or node.type:match("Animated") then
-    return groups.Visual or plugin_highlight_groups.generic
-  end
-
-  if node.type:match("^Tile") then
-    return groups.Tile or plugin_highlight_groups.generic
-  end
-
-  if node.type:match("^Audio") then
-    return groups.Audio or plugin_highlight_groups.generic
-  end
-
-  if node.type:match("Light") then
-    return groups.Light or plugin_highlight_groups.generic
-  end
-
-  if node.type:match("^Marker") then
-    return groups.Marker or plugin_highlight_groups.generic
-  end
-
-  if
-    node.type:match("Container$")
+  if node.type == "Control"
+    or node.type:match("Container$")
     or node.type:match("^Panel")
     or node.type:match("^Label")
     or node.type:match("Button$")
+    or node.type == "RichTextLabel"
+    or node.type == "ColorPickerButton"
+    or node.type == "OptionButton"
+    or node.type == "MenuButton"
+    or node.type == "LinkButton"
+    or node.type == "CheckButton"
   then
     return groups.Control or plugin_highlight_groups.generic
   end
@@ -590,11 +585,31 @@ end
 local function apply_icon_highlights(buf, icon_spans)
   vim.api.nvim_buf_clear_namespace(buf, namespace, 0, -1)
 
+  if state.header_line_count > 0 then
+    vim.api.nvim_buf_add_highlight(buf, namespace, plugin_highlight_groups.header, 0, 0, -1)
+  end
+
   for _, span in ipairs(icon_spans or {}) do
     if span.group then
       vim.api.nvim_buf_add_highlight(buf, namespace, span.group, span.line, span.col_start, span.col_end)
     end
   end
+end
+
+local function render_header_line(scene)
+  return ("Scene: %s    y yank | <CR> jump | g script | r refresh | q close"):format(scene)
+end
+
+local function set_scene_tree_buffer_name(buf, scene)
+  local target = ("godotdev://scene-tree/%s"):format(scene:gsub("^res://", ""))
+
+  for _, existing in ipairs(vim.api.nvim_list_bufs()) do
+    if existing ~= buf and vim.api.nvim_buf_is_valid(existing) and vim.api.nvim_buf_get_name(existing) == target then
+      pcall(vim.api.nvim_buf_delete, existing, { force = true })
+    end
+  end
+
+  vim.api.nvim_buf_set_name(buf, target)
 end
 
 local function ensure_buffer()
@@ -688,6 +703,23 @@ end
 local function update_buffer(scene, absolute_path, parsed)
   local buf, win = focus_or_open_buffer()
   local lines, nodes_by_line, icon_spans = format_tree(parsed)
+  local header_lines = { render_header_line(scene) }
+  local display_lines = vim.list_extend(vim.deepcopy(header_lines), lines)
+  local display_nodes_by_line = {}
+  local display_icon_spans = {}
+
+  for line, node in pairs(nodes_by_line) do
+    display_nodes_by_line[line + #header_lines] = node
+  end
+
+  for _, span in ipairs(icon_spans) do
+    table.insert(display_icon_spans, {
+      line = span.line + #header_lines,
+      col_start = span.col_start,
+      col_end = span.col_end,
+      group = span.group,
+    })
+  end
 
   state.scene = scene
   state.source_path = absolute_path
@@ -695,23 +727,24 @@ local function update_buffer(scene, absolute_path, parsed)
     upward = true,
     path = vim.fs.dirname(absolute_path),
   })[1] or "")
-  state.lines = lines
-  state.nodes_by_line = nodes_by_line
-  state.icon_spans = icon_spans
+  state.lines = display_lines
+  state.nodes_by_line = display_nodes_by_line
+  state.icon_spans = display_icon_spans
+  state.header_line_count = #header_lines
 
   vim.bo[buf].modifiable = true
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, display_lines)
   vim.bo[buf].modifiable = false
   vim.bo[buf].modified = false
-  vim.api.nvim_buf_set_name(buf, ("godotdev://scene-tree/%s"):format(scene:gsub("^res://", "")))
-  apply_icon_highlights(buf, icon_spans)
+  set_scene_tree_buffer_name(buf, scene)
+  apply_icon_highlights(buf, display_icon_spans)
 
   vim.b[buf].godotdev_scene_tree_source = absolute_path
   vim.b[buf].godotdev_scene_tree_scene = scene
-  vim.b[buf].godotdev_scene_tree_nodes = nodes_by_line
+  vim.b[buf].godotdev_scene_tree_nodes = display_nodes_by_line
 
   if win and vim.api.nvim_win_is_valid(win) then
-    vim.api.nvim_win_set_cursor(win, { 1, 0 })
+    vim.api.nvim_win_set_cursor(win, { #header_lines + 1, 0 })
     set_window_options(win)
   end
 end

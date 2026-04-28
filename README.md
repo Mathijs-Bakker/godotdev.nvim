@@ -217,12 +217,13 @@ require("godotdev").setup({
     },
     icons = "nerdfont",      -- "nerdfont" | "ascii" | false | { generic = "...", script_suffix = "...", types = { Node2D = "..." } }
     icon_colors = {
-      generic = "Directory",
+      generic = { fg = "#ffffff" },
       groups = {
-        Node2D = "Function",
-        Camera = "Identifier",
-        Physics = "Conditional",
-        Visual = "String",
+        Node = { fg = "#ffffff" },
+        Node2D = { fg = "#699ce8" },
+        Node3D = { fg = "#fc7f7f" },
+        Control = { fg = "#a4eb7a" },
+        EditorPlugin = { fg = "#e7c46a" },
       },
     },
   },
@@ -437,8 +438,9 @@ Notes:
 - If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
 - Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
 - By default the pane uses Nerd Font glyphs. Set `scene_tree.icons = "ascii"` for a plain text fallback, `false` to disable icons, or provide a custom `types` table to override per-node icons.
-- Icon colors are applied to the icon glyph only. Override them with `scene_tree.icon_colors`, using highlight group names such as `Function`, `Identifier`, `String`, or your own custom groups.
-- The plugin defines stable highlight groups such as `GodotSceneTreeIcon`, `GodotSceneTreeIconNode2D`, `GodotSceneTreeIconCamera`, and `GodotSceneTreeIconPhysics`, linked from `scene_tree.icon_colors` by default.
+- Icon colors are applied to the icon glyph only. By default they follow Godot-style families: `Node3D` red, `Node2D` blue, `Control` green, `EditorPlugin` warm yellow, and everything else white.
+- Override colors with `scene_tree.icon_colors` using either highlight links like `"Function"` or direct highlight specs like `{ fg = "#699ce8" }`.
+- The plugin defines stable highlight groups such as `GodotSceneTreeIcon`, `GodotSceneTreeIconNode2D`, `GodotSceneTreeIconNode3D`, `GodotSceneTreeIconControl`, and `GodotSceneTreeIconEditorPlugin`.
 - Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `y` yanks the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ## Godot class docs
