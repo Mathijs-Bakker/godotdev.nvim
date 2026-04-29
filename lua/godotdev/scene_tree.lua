@@ -32,6 +32,45 @@ local default_icons = {
     -- 
     -- 
     -- 
+    Node = "",
+    -- Viewport
+    Window = "󰖯",
+    AcceptDialog = "",
+    ConfirmationDialog = "󱜺",
+    FileDialog = "",
+    PopUp = "",
+    PopUpMenu = "󰖲",
+    PopUpPanel = "󱂬",
+    SubViewPort = "󰒆",
+    ColorPicker = "",
+    -- Node3D
+    Node3D = "",
+    -- SkeletonModifier3D
+    SkeletonModifier3D = "",
+    BoneConstraint3D = "",
+    AimModifier3D = "",
+    ConvertTransformModifier3D = "",
+    CopyTransformModifier3D = "",
+    BoneTwistDisperser3D = "",
+    IKModifier3D = "",
+    ChainIK3D = "",
+    IterateIK3D = "",
+    CCDIK3D = "",
+    FABRIK3D = "",
+    JacobianIK3D = "",
+    SplineIK3D = "",
+    TwoBoneIK3D = "",
+    LimitAngularVelocityModifier3D = "",
+    LookAtModifier3D = "",
+    ModifierBoneTarget3D = "",
+    PhysicalBoneSimulator3D = "",
+    RetargetModifier3D = "",
+    SkeletonIK3D = "",
+    SpringBoneSimulator3D = "",
+    XRBodyModifier3D = "󰋦",
+    XRHandModifier3D = "󰹇",
+
+    --
     AnimatedSprite2D = "󰯉",
     Area2D = "󱀅",
     Area3D = "󱀅",
@@ -40,14 +79,14 @@ local default_icons = {
     AudioStreamPlayer = "",
     AudioStreamPlayer2D = "",
     AudioStreamPlayer3D = "",
-    Button = "󰜯",
+    Button = "󱑣",
     CPUParticles2D = "",
     CPUParticles3D = "",
     Camera2D = "",
     Camera3D = "",
     CanvasLayer = "",
-    CharacterBody2D = "󱅼",
-    CharacterBody3D = "󱅼",
+    CharacterBody2D = "",
+    CharacterBody3D = "",
     CheckButton = "",
     CollisionShape2D = "",
     CollisionShape3D = "",
@@ -69,9 +108,7 @@ local default_icons = {
     MenuButton = "󱐀",
     MultiplayerSpawner = "󱛃",
     MultiplayerSynchronizer = "󱛇",
-    Node = "",
     Node2D = "",
-    Node3D = "",
     OmniLight3D = "",
     OptionButton = "",
     Panel = "",
@@ -521,7 +558,8 @@ local function highlight_for_node(node, highlights)
     return groups.Character or groups.Node3D or plugin_highlight_groups.generic
   end
 
-  if node.type == "Control"
+  if
+    node.type == "Control"
     or node.type:match("Container$")
     or node.type:match("^Panel")
     or node.type:match("^Label")
