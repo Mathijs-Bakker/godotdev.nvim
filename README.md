@@ -212,18 +212,20 @@ require("godotdev").setup({
   },
   scene_tree = {
     buffer = {
-      position = "right",    -- "right" | "bottom" | "current"
+      position = "left",     -- "left" | "right"
       size = 0.35,
     },
     icons = "nerdfont",      -- "nerdfont" | "ascii" | false | { generic = "...", script_suffix = "...", types = { Node2D = "..." } }
     icon_colors = {
-      generic = { fg = "#ffffff" },
+      generic = { fg = "white" },
       groups = {
-        Node = { fg = "#ffffff" },
-        Node2D = { fg = "#699ce8" },
-        Node3D = { fg = "#fc7f7f" },
-        Control = { fg = "#a4eb7a" },
-        EditorPlugin = { fg = "#e7c46a" },
+        White = { fg = "white" },
+        Grey = { fg = "grey" },
+        Blue = { fg = "blue" },
+        Red = { fg = "red" },
+        Green = { fg = "green" },
+        Purple = { fg = "magenta" },
+        Yellow = { fg = "gold" },
       },
     },
   },
@@ -436,11 +438,11 @@ Open a static scene tree pane for the current `.tscn`, or from a `.gd` / `.cs` b
 Notes:
 - `:GodotSceneTree` works from a `.tscn`, or from a `.gd` / `.cs` buffer when that script is attached to a scene in the current project.
 - If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
-- Configure pane placement with `scene_tree.buffer.position = "right" | "bottom" | "current"` and `scene_tree.buffer.size = 0.35`.
+- Configure pane placement with `scene_tree.buffer.position = "left" | "right"` and `scene_tree.buffer.size = 0.35`.
 - By default the pane uses Nerd Font glyphs. Set `scene_tree.icons = "ascii"` for a plain text fallback, `false` to disable icons, or provide a custom `types` table to override per-node icons.
-- Icon colors are applied to the icon glyph only. By default they follow Godot-style families: `Node3D` red, `Node2D` blue, `Control` green, `EditorPlugin` warm yellow, and everything else white.
-- Override colors with `scene_tree.icon_colors` using either highlight links like `"Function"` or direct highlight specs like `{ fg = "#699ce8" }`.
-- The plugin defines stable highlight groups such as `GodotSceneTreeIcon`, `GodotSceneTreeIconNode2D`, `GodotSceneTreeIconNode3D`, `GodotSceneTreeIconControl`, and `GodotSceneTreeIconEditorPlugin`.
+- Icon colors are applied to the icon glyph only. By default they follow the Godot categories in this plugin: `white`, `grey`, `blue`, `red`, `green`, `purple`, and `yellow`.
+- Override colors with `scene_tree.icon_colors` using either highlight links like `"Function"` or direct highlight specs like `{ fg = "blue" }`.
+- The plugin defines stable highlight groups such as `GodotSceneTreeIconWhite`, `GodotSceneTreeIconGrey`, `GodotSceneTreeIconBlue`, `GodotSceneTreeIconRed`, `GodotSceneTreeIconGreen`, `GodotSceneTreeIconPurple`, and `GodotSceneTreeIconYellow`.
 - Inside the pane, `<CR>` jumps to the selected `[node ...]` block, `y` yanks the node path, `g` opens the attached script when present, `r` refreshes the pane, and `q` closes it.
 
 ## Godot class docs

@@ -300,16 +300,279 @@ local ascii_icons = {
   types = {},
 }
 
+local function to_set(items)
+  local set = {}
+  for _, item in ipairs(items) do
+    set[item] = true
+  end
+  return set
+end
+
+local grey_types = to_set({
+  "SpriteBase3D",
+  "CSGShape3D",
+  "CSGPrimitive3D",
+  "Light3D",
+  "GPUParticlesAttractor3D",
+  "GPUParticlesCollision3D",
+  "Joint3D",
+  "CanvasItem",
+  "PhysicsBody2D",
+  "Joint2D",
+  "OpenXRInteractionProfileEditorBase",
+  "ScrollBar",
+  "Slider",
+  "Separator",
+  "AnimationMixer",
+})
+
+local red_types = to_set({
+  "Node3D",
+  "SkeletonModifier3D",
+  "BoneConstraint3D",
+  "AimModifier3D",
+  "ConvertTransformModifier3D",
+  "CopyTransformModifier3D",
+  "BoneTwistDisperser3D",
+  "IKModifier3D",
+  "ChainIK3D",
+  "IterateIK3D",
+  "CCDIK3D",
+  "FABRIK3D",
+  "JacobianIK3D",
+  "SplineIK3D",
+  "TwoBoneIK3D",
+  "LimitAngularVelocityModifier3D",
+  "LookAtModifier3D",
+  "ModifierBoneTarget3D",
+  "PhysicalBoneSimulator3D",
+  "RetargetModifier3D",
+  "SkeletonIK3D",
+  "SpringBoneSimulator3D",
+  "XRBodyModifier3D",
+  "XRHandModifier3D",
+  "CollisionObject3D",
+  "PhysicsBody3D",
+  "StaticBody3D",
+  "AnimatableBody3D",
+  "CharacterBody3D",
+  "CharacterBody2D",
+  "PhysicalBone3D",
+  "RigidBody3D",
+  "VehicleBody3D",
+  "Area3D",
+  "VisualInstance3D",
+  "GeometryInstance3D",
+  "AnimatedSprite3D",
+  "Sprite3D",
+  "CPUParticles3D",
+  "CSGBox3D",
+  "CSGCylinder3D",
+  "CSGMesh3D",
+  "CSGPolygon3D",
+  "CSGSphere3D",
+  "CSGTorus3D",
+  "CSGCombiner3D",
+  "GPUParticles3D",
+  "Label3D",
+  "MeshInstance3D",
+  "SoftBody3D",
+  "MultiMeshInstance3D",
+  "Decal",
+  "DirectionalLight3D",
+  "OmniLight3D",
+  "SpotLight3D",
+  "FogVolume",
+  "GPUParticlesAttractorBox3D",
+  "GPUParticlesAttractorSphere3D",
+  "GPUParticlesAttractorVectorField3D",
+  "GPUParticlesCollisionBox3D",
+  "GPUParticlesCollisionHeightField3D",
+  "GPUParticlesCollisionSDF3D",
+  "GPUParticlesCollisionSphere3D",
+  "LightmapGI",
+  "OccluderInstance3D",
+  "OpenXRVisibilityMask",
+  "ReflectionProbe",
+  "RootMotionView",
+  "VisibleOnScreenNotifier3D",
+  "VisibleOnScreenEnabler3D",
+  "VoxelGI",
+  "BoneAttachment3D",
+  "Camera3D",
+  "CollisionPolygon3D",
+  "CollisionShape3D",
+  "ConeTwistJoint3D",
+  "Generic6DOFJoint3D",
+  "HingeJoint3D",
+  "PinJoint3D",
+  "SliderJoint3D",
+  "GridMap",
+  "ImporterMeshInstance3D",
+  "LightmapProbe",
+  "Marker3D",
+  "NavigationLink3D",
+  "NavigationObstacle3D",
+  "NavigationRegion3D",
+  "OpenXRCompositionLayerCylinder",
+  "OpenXRCompositionLayerEquirect",
+  "OpenXRCompositionLayerQuad",
+  "OpenXRHand",
+  "OpenXRRenderModel",
+  "OpenXRRenderModelManager",
+  "Path3D",
+  "PathFollow3D",
+  "RayCast3D",
+  "RemoteTransform3D",
+  "ShapeCast3D",
+  "Skeleton3D",
+  "SpringArm3D",
+  "SpringBoneCollision3D",
+  "SpringBoneCollisionCapsule3D",
+  "SpringBoneCollisionPlane3D",
+  "SpringBoneCollisionSphere3D",
+  "VehicleWheel3D",
+  "XRNode3D",
+  "XRAnchor3D",
+  "XRController3D",
+  "XRFaceModifier3D",
+  "XROrigin3D",
+})
+
+local blue_types = to_set({
+  "Node2D",
+  "CollisionObject2D",
+  "StaticBody2D",
+  "AnimatableBody2D",
+  "RigidBody2D",
+  "PhysicalBone2D",
+  "Area2D",
+  "AnimatedSprite2D",
+  "AudioListener2D",
+  "AudioStreamPlayer2D",
+  "BackBufferCopy",
+  "Bone2D",
+  "CPUParticles2D",
+  "Camera2D",
+  "CanvasGroup",
+  "CanvasModulate",
+  "CollisionPolygon2D",
+  "CollisionShape2D",
+  "DampedSpringJoint2D",
+  "GrooveJoint2D",
+  "PinJoint2D",
+  "DirectionalLight2D",
+  "PointLight2D",
+  "GPUParticles2D",
+  "LightOccluder2D",
+  "Line2D",
+  "Marker2D",
+  "MeshInstance2D",
+  "MultiMeshInstance2D",
+  "NavigationLink2D",
+  "NavigationObstacle2D",
+  "NavigationRegion2D",
+  "Parallax2D",
+  "ParallaxLayer",
+  "Path2D",
+  "PathFollow2D",
+  "Polygon2D",
+  "RayCast2D",
+  "RemoteTransform2D",
+  "ShapeCast2D",
+  "Skeleton2D",
+  "Sprite2D",
+  "TileMap",
+  "TileMapLayer",
+  "TouchScreenButton",
+  "VisibleOnScreenNotifier2D",
+  "VisibleOnScreenEnabler2D",
+})
+
+local green_types = to_set({
+  "Control",
+  "Container",
+  "AspectRatioContainer",
+  "BoxContainer",
+  "VBoxContainer",
+  "ColorPicker",
+  "HBoxContainer",
+  "OpenXRInteractionProfileEditor",
+  "CenterContainer",
+  "FlowContainer",
+  "HFlowContainer",
+  "VFlowContainer",
+  "FoldableContainer",
+  "GraphElement",
+  "GraphFrame",
+  "GraphNode",
+  "GridContainer",
+  "SplitContainer",
+  "HSplitContainer",
+  "VSplitContainer",
+  "MarginContainer",
+  "PanelContainer",
+  "OpenXRBindingModifierEditor",
+  "ScrollContainer",
+  "SubViewportContainer",
+  "TabContainer",
+  "BaseButton",
+  "Button",
+  "CheckBox",
+  "CheckButton",
+  "ColorPickerButton",
+  "MenuButton",
+  "OptionButton",
+  "LinkButton",
+  "TextureButton",
+  "TextEdit",
+  "CodeEdit",
+  "ColorRect",
+  "GraphEdit",
+  "Range",
+  "HScrollBar",
+  "VScrollBar",
+  "HSlider",
+  "VSlider",
+  "ProgressBar",
+  "SpinBox",
+  "TextureProgressBar",
+  "HSeparator",
+  "VSeparator",
+  "ItemList",
+  "Label",
+  "LineEdit",
+  "MenuBar",
+  "NinePatchRect",
+  "Panel",
+  "ReferenceRect",
+  "RichTextLabel",
+  "TabBar",
+  "TextureRect",
+  "Tree",
+  "VideoStreamPlayer",
+})
+
+local purple_types = to_set({
+  "AnimationPlayer",
+  "AnimationTree",
+})
+
+local yellow_types = to_set({
+  "EditorPlugin",
+  "GridMapEditorPlugin",
+})
+
 local default_highlights = {
-  generic = { fg = "#ffffff" },
+  generic = { fg = "white" },
   groups = {
-    Node = { fg = "#ffffff" },
-    Node2D = { fg = "#699ce8" },
-    Node3D = { fg = "#fc7f7f" },
-    Control = { fg = "#a4eb7a" },
-    Tile = { fg = "#699ce8" },
-    Character = { fg = "#fc7f7f" },
-    EditorPlugin = { fg = "#e7c46a" },
+    White = { fg = "white" },
+    Grey = { fg = "grey" },
+    Blue = { fg = "blue" },
+    Red = { fg = "red" },
+    Green = { fg = "green" },
+    Purple = { fg = "magenta" },
+    Yellow = { fg = "gold" },
   },
 }
 
@@ -317,13 +580,13 @@ local plugin_highlight_groups = {
   generic = "GodotSceneTreeIcon",
   header = "GodotSceneTreeHeader",
   groups = {
-    Node = "GodotSceneTreeIconNode",
-    Node2D = "GodotSceneTreeIconNode2D",
-    Node3D = "GodotSceneTreeIconNode3D",
-    Control = "GodotSceneTreeIconControl",
-    Tile = "GodotSceneTreeIconTile",
-    Character = "GodotSceneTreeIconCharacter",
-    EditorPlugin = "GodotSceneTreeIconEditorPlugin",
+    White = "GodotSceneTreeIconWhite",
+    Grey = "GodotSceneTreeIconGrey",
+    Blue = "GodotSceneTreeIconBlue",
+    Red = "GodotSceneTreeIconRed",
+    Green = "GodotSceneTreeIconGreen",
+    Purple = "GodotSceneTreeIconPurple",
+    Yellow = "GodotSceneTreeIconYellow",
   },
 }
 
@@ -660,8 +923,8 @@ local function define_highlights()
   vim.api.nvim_set_hl(0, plugin_highlight_groups.header, {
     default = true,
     bold = true,
-    fg = "#ffffff",
-    bg = "#2b2d30",
+    fg = "white",
+    bg = "black",
   })
 
   for key, group_name in pairs(plugin_highlight_groups.groups) do
@@ -709,47 +972,31 @@ local function highlight_for_node(node, highlights)
 
   local groups = plugin_highlight_groups.groups
 
-  if groups[node.type] then
-    return groups[node.type]
+  if grey_types[node.type] then
+    return groups.Grey or plugin_highlight_groups.generic
   end
 
-  if node.type:match("EditorPlugin$") then
-    return groups.EditorPlugin or plugin_highlight_groups.generic
+  if yellow_types[node.type] then
+    return groups.Yellow or plugin_highlight_groups.generic
   end
 
-  if node.type == "TileMap" or node.type == "TileMapLayer" then
-    return groups.Tile or groups.Node2D or plugin_highlight_groups.generic
+  if purple_types[node.type] then
+    return groups.Purple or plugin_highlight_groups.generic
   end
 
-  if node.type:match("^Character") then
-    return groups.Character or groups.Node3D or plugin_highlight_groups.generic
+  if green_types[node.type] then
+    return groups.Green or plugin_highlight_groups.generic
   end
 
-  if
-    node.type == "Control"
-    or node.type:match("Container$")
-    or node.type:match("^Panel")
-    or node.type:match("^Label")
-    or node.type:match("Button$")
-    or node.type == "RichTextLabel"
-    or node.type == "ColorPickerButton"
-    or node.type == "OptionButton"
-    or node.type == "MenuButton"
-    or node.type == "LinkButton"
-    or node.type == "CheckButton"
-  then
-    return groups.Control or plugin_highlight_groups.generic
+  if red_types[node.type] then
+    return groups.Red or plugin_highlight_groups.generic
   end
 
-  if node.type:match("2D$") then
-    return groups.Node2D or plugin_highlight_groups.generic
+  if blue_types[node.type] then
+    return groups.Blue or plugin_highlight_groups.generic
   end
 
-  if node.type:match("3D$") then
-    return groups.Node3D or plugin_highlight_groups.generic
-  end
-
-  return groups.Node or plugin_highlight_groups.generic
+  return groups.White or plugin_highlight_groups.generic
 end
 
 local function format_tree(parsed)
@@ -852,22 +1099,15 @@ end
 local function open_window(buf)
   local config = require("godotdev").opts.scene_tree or {}
   local buffer_config = config.buffer or {}
-  local position = buffer_config.position or "right"
+  local position = buffer_config.position or "left"
   local size = sanitize_size(buffer_config.size)
 
-  if position == "current" then
-    vim.api.nvim_set_current_buf(buf)
-    state.window = vim.api.nvim_get_current_win()
-    return state.window
-  end
-
   local width = math.max(math.floor(vim.o.columns * size), 30)
-  local height = math.max(math.floor(vim.o.lines * size), 10)
 
-  if position == "bottom" then
-    vim.cmd(("botright %dsplit"):format(height))
-  else
+  if position == "right" then
     vim.cmd(("botright %dvsplit"):format(width))
+  else
+    vim.cmd(("topleft %dvsplit"):format(width))
   end
 
   local win = vim.api.nvim_get_current_win()
