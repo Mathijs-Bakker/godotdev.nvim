@@ -20,7 +20,7 @@
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
-<div align="center"><img src="assets/neovim_godot_console_scene-tree-inspector.png" width="800" alt="Screenshot of Neovim connected to Godot's LSP server, Godot's console output and scene-tree inspector."></div>
+<div align="center"><img src="assets/godot_neovim_console_scene-tree-inspector.png" width="800" alt="Screenshot of Neovim connected to Godot's LSP server, Godot's console output and scene-tree inspector."></div>
 
 **This plugin helps you to set up:**
 
