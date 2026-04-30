@@ -20,7 +20,7 @@
 
 A Neovim plugin for Godot 4 that brings GDScript/GDShader LSP, DAP debugging, and formatting to your external‑editor workflow.
 
-<div align="center"><img src="assets/neovim_godot_console.png" width="800" alt="Screenshot of Neovim connected to Godot's LSP server, Godot's console output and documentation server."></div>
+<div align="center"><img src="assets/neovim_godot_console_scene-tree-inspector.png" width="800" alt="Screenshot of Neovim connected to Godot's LSP server, Godot's console output and scene-tree inspector."></div>
 
 **This plugin helps you to set up:**
 
@@ -42,7 +42,7 @@ While it is possible to configure Neovim manually for Godot development, this pl
     <td>Access Godot's documentation in/from Nvim</td>
   </tr>
   <tr>
-    <td> 
+    <td>
       <img src="assets/neovim_godot_dap_debugger.png" width="300" alt="Screenshot: Neovim with Godot's debugger">
     </td>
    <td>
@@ -354,7 +354,7 @@ If you start Neovim with `--listen` on macOS/Linux, use the documented `godotdev
    In Godot, configure your external editor or plugin to connect to `127.0.0.1:6666`.
    Make sure the TCP port you choose is free and consistent between Neovim and Godot.
 
-> 🤌🫶🏻🥹❤️‍🩹 REQUEST:  
+> 🤌🫶🏻🥹❤️‍🩹 REQUEST:
 > I am not using Windows, so I did not test any of this. It would be great if anyone could help me to validate this and report your findings [here](https://github.com/Mathijs-Bakker/godotdev.nvim/issues/21). :pray:
 
 ## Godot editor server
