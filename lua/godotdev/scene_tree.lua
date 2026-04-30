@@ -17,13 +17,10 @@ local namespace = vim.api.nvim_create_namespace("godotdev.scene_tree")
 
 local default_icons = {
   generic = "󰐾",
-  script_suffix = " *",
+  script_suffix = "*",
   types = {
-    --  󰊔 󰩷 󰯉           
-    --   󰆣 󰐾  󱇢 󰇛 󰌁   󰇭 󱝊 󰚠 󰝘  󰖨 󰽐 󰽑 󱗿 󱗼 󱥸 󰇘 󱗽 󱗾 󰇙 󰝿 󱊈 󰍮 󰼬 󱤩 󱤨 󰒆
-    -- 󱀅    󰔌 󰜬 󱥒 󰨾  󰒉 󰌨 󰼫    󰒓   󰔡  󰜌 󰨐 󰮃 󰮄 󰆧 󱋁 󱋂     󱣴
     Node = "",
-    -- Viewport
+    -- Viewport - Color: White
     Window = "󰖯",
     AcceptDialog = "",
     ConfirmationDialog = "󱜺",
@@ -32,8 +29,7 @@ local default_icons = {
     PopUpMenu = "󰖲",
     PopUpPanel = "󱂬",
     SubViewPort = "󰒆",
-    ColorPicker = "",
-    -- Node3D
+    -- Node3D - Color: Red
     Node3D = "",
     SkeletonModifier3D = "",
     BoneConstraint3D = "",
@@ -85,9 +81,9 @@ local default_icons = {
     GPUParticles3D = "",
     Label3D = "",
     MeshInstance3D = "",
-    SoftBody3D = "",
+    SoftBody3D = "󰏟",
     MultiMeshInstance3D = "",
-    Decal = "",
+    Decal = "󰝬",
     Light3D = "", -- grey
     DirectionalLight3D = "󰖨",
     OmniLight3D = "",
@@ -155,13 +151,14 @@ local default_icons = {
     XROrigin3D = "",
     -- CanvasItem
     CanvasItem = "󰃣", -- grey
-    -- Node2D
+    -- Node2D - Color: blue
     Node2D = "",
     CollisionObject2D = "󰒆",
-    PhysicsBody2D = "󱥧",
+    PhysicsBody2D = "󱥧", -- grey
     StaticBody2D = "",
     AnimatableBody2D = "󱣙",
     CharacterBody2D = "",
+    RigidBody2D = "",
     PhysicalBone2D = "",
     Area2D = "󱀅",
     AnimatedSprite2D = "󰯉",
@@ -205,36 +202,95 @@ local default_icons = {
     TouchScreenButton = "󰋇",
     VisibleOnScreenNotifier2D = "󰡭",
     VisibleOnScreenEnabler2D = "",
-    --  󰊔 󰩷 󰯉            󱒄  󱍼 󰍘  󱥌
-    --   󰆣 󰐾  󱇢 󰇛 󰌁   󰇭 󱝊 󰚠 󰝘  󰖨 󰽐 󰽑 󱗿 󱗼 󱥸 󰇘 󱗽 󱗾 󰇙 󰝿 󱊈 󰍮 󰼬 󱤩 󱤨 󰒆
-    -- 󱀅    󰔌 󰜬 󱥒 󰨾  󰒉 󰌨 󰼫    󰒓   󰔡  󰜌 󰨐 󰮃 󰮄 󰆧 󱋁 󱋂     󱣴 
-    -- Control
+    -- Control - Color: green
     Control = "",
-    --
-
-    --
-    AudioStreamPlayer = "",
-    Button = "󱑣",
-    CanvasLayer = "",
-    CheckButton = "󰔢",
-    ColorPickerButton = "󰜯",
     Container = "濾",
+    AspectRatioContainer = "濾",
+    BoxContainer = "󱓝",
+    VBoxContainer = "󱪶",
+    ColorPicker = "",
+    HBoxContainer = "󱪷",
+    OpenXRInteractionProfileEditorBase = "", -- grey
+    OpenXRInteractionProfileEditor = "󱪷",
+    CenterContainer = "󰼬 ",
+    FlowContainer = "󰉧",
+    HFlowContainer = "󰉩",
+    VFlowContainer = "󰉪",
+    FoldableContainer = "",
+    GraphElement = "󰐾",
+    GraphFrame = "󰱗",
+    GraphNode = "",
+    GridContainer = "",
+    SplitContainer = "󰨑",
+    HSplitContainer = "",
+    VSplitContainer = "",
+    MarginContainer = "",
+    PanelContainer = "",
+    OpenXRBindingModifierEditor = "",
+    ScrollContainer = "󰼬 ",
+    SubViewportContainer = "󱣴",
+    TabContainer = "",
+    BaseButton = "󱋂",
+    Button = "󱋂",
+    CheckBox = "",
+    CheckButton = "󰔢",
+    ColorPickerButton = "󰴱",
+    MenuButton = "󱐀",
+    OptionButton = "",
+    LinkButton = "󰌷",
+    TextureButton = "",
+    TextEdit = "󰘎",
+    CodeEdit = "󰲋",
+    ColorRect = "",
+    GraphEdit = "",
+    Range = "󰘖",
+    ScrollBar = "", -- grey
+    HScrollBar = "",
+    VScrollBar = "",
+    Slider = "", -- grey
+    HSlider = "󰡎",
+    VSlider = "󰡏",
+    ProgressBar = "",
+    SpinBox = "",
+    TextureProgressBar = "󱊢",
+    Separator = "", -- grey
+    HSeparator = "",
+    VSeparator = "",
+    ItemList = " ",
+    Label = "",
+    LineEdit = "󱂕",
+    MenuBar = "",
+    NinePatchRect = "",
+    Panel = "",
+    ReferenceRect = "",
+    RichTextLabel = "",
+    TabBar = "󰓩",
+    TextureRect = "",
+    Tree = "",
+    VideoStreamPlayer = "",
+    -- AnimationMixer - Color: purple
+    AnimationMixer = "", -- grey
+    AnimationPlayer = "󰈰",
+    AnimationTree = "󰈰",
+    -- AudioStreamPlayer - Color: white
+    AudioStreamPlayer = "",
+    -- CanvasLayer - Color: white
+    CanvasLayer = "",
+    ParallaxBackground = "󰧁",
+    -- EditorPlugin - Color: warm yellow
     EditorPlugin = "󰐱",
     GridMapEditorPlugin = "󰐱",
-    HBoxContainer = "󱪶",
-    Label = "",
-    LinkButton = "󰌷",
-    MarginContainer = "",
-    MenuButton = "󱐀",
+    -- Color: white
+    HTTPRequest = "󰥝",
     MultiplayerSpawner = "󱛃",
     MultiplayerSynchronizer = "󱛇",
-    OptionButton = "",
-    Panel = "",
-    PanelContainer = "",
-    RichTextLabel = "",
-    RigidBody2D = "",
-    TextureButton = "󱝊",
-    VBoxContainer = "󱪷",
+    NavigationAgent2D = "󰌁",
+    NavigationAgent3D = "󰌁",
+    ResourcePreloader = "",
+    ShaderGlobalsOverride = "󱩫",
+    StatusIndicator = "󰱗",
+    Timer = "󱦟",
+    WorldEnvironment = "",
   },
 }
 
