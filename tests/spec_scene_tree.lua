@@ -68,7 +68,7 @@ return {
           "Scene: res://scenes/Main.tscn    y yank | <CR> jump | g script | r refresh | q close"
         )
         h.assert_equal(scene_tree._state.lines[2], " Main [Node2D]")
-        h.assert_equal(scene_tree._state.lines[3], "  󱅼 Player [CharacterBody2D]")
+        h.assert_equal(scene_tree._state.lines[3], "   Player [CharacterBody2D]")
 
         local tree_buf = scene_tree._state.buffer
         local tree_win = scene_tree._state.window
@@ -199,9 +199,9 @@ return {
 
       local lines, spans = scene_tree._format_tree(parsed)
       h.assert_equal(lines[1], " Main [Node2D]")
-      h.assert_equal(spans[1].group, "GodotSceneTreeIconNode2D")
-      h.assert_equal(spans[2].group, "GodotSceneTreeIconNode2D")
-      h.assert_equal(spans[3].group, "GodotSceneTreeIconNode2D")
+      h.assert_equal(spans[1].group, "GodotSceneTreeIconBlue")
+      h.assert_equal(spans[2].group, "GodotSceneTreeIconBlue")
+      h.assert_equal(spans[3].group, "GodotSceneTreeIconBlue")
     end,
   },
   {
@@ -214,9 +214,9 @@ return {
       require("godotdev").opts.scene_tree = {
         icons = "nerdfont",
         icon_colors = {
-          generic = { fg = "#cccccc" },
+          generic = { fg = "white" },
           groups = {
-            EditorPlugin = { fg = "#ffee88" },
+            Yellow = { fg = "yellow" },
           },
         },
       }
@@ -228,9 +228,9 @@ return {
         scene_tree._define_highlights()
       end)
 
-      h.assert_equal(calls.GodotSceneTreeIcon.fg, "#cccccc")
-      h.assert_equal(calls.GodotSceneTreeIconEditorPlugin.fg, "#ffee88")
-      h.assert_equal(calls.GodotSceneTreeIconNode2D.fg, "#699ce8")
+      h.assert_equal(calls.GodotSceneTreeIcon.fg, "white")
+      h.assert_equal(calls.GodotSceneTreeIconYellow.fg, "yellow")
+      h.assert_equal(calls.GodotSceneTreeIconBlue.fg, "blue")
     end,
   },
   {
@@ -255,12 +255,12 @@ return {
       }
 
       local _, spans = scene_tree._format_tree(parsed)
-      h.assert_equal(spans[1].group, "GodotSceneTreeIconControl")
-      h.assert_equal(spans[2].group, "GodotSceneTreeIconNode3D")
-      h.assert_equal(spans[3].group, "GodotSceneTreeIconCharacter")
-      h.assert_equal(spans[4].group, "GodotSceneTreeIconTile")
-      h.assert_equal(spans[5].group, "GodotSceneTreeIconEditorPlugin")
-      h.assert_equal(spans[6].group, "GodotSceneTreeIconNode")
+      h.assert_equal(spans[1].group, "GodotSceneTreeIconGreen")
+      h.assert_equal(spans[2].group, "GodotSceneTreeIconRed")
+      h.assert_equal(spans[3].group, "GodotSceneTreeIconRed")
+      h.assert_equal(spans[4].group, "GodotSceneTreeIconBlue")
+      h.assert_equal(spans[5].group, "GodotSceneTreeIconYellow")
+      h.assert_equal(spans[6].group, "GodotSceneTreeIconWhite")
     end,
   },
   {

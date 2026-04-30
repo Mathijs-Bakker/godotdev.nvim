@@ -35,20 +35,20 @@ M.opts = {
   },
   scene_tree = {
     buffer = {
-      position = "right", -- "right" | "bottom" | "current"
+      position = "left", -- "left" | "right"
       size = 0.35,
     },
     icons = "nerdfont", -- "nerdfont" | "ascii" | false | { style = ..., generic = ..., script_suffix = ..., types = {...} }
     icon_colors = {
-      generic = { fg = "#ffffff" },
+      generic = { fg = "white" },
       groups = {
-        Node = { fg = "#ffffff" },
-        Node2D = { fg = "#699ce8" },
-        Node3D = { fg = "#fc7f7f" },
-        Control = { fg = "#a4eb7a" },
-        Tile = { fg = "#699ce8" },
-        Character = { fg = "#fc7f7f" },
-        EditorPlugin = { fg = "#e7c46a" },
+        White = { fg = "white" },
+        Grey = { fg = "grey" },
+        Blue = { fg = "blue" },
+        Red = { fg = "red" },
+        Green = { fg = "green" },
+        Purple = { fg = "magenta" },
+        Yellow = { fg = "gold" },
       },
     },
   },
