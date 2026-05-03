@@ -2,6 +2,8 @@
 
 This setup allows you to click on a script in Godot and open it directly in Neovim running in a GUI terminal (e.g., Ghostty), with the buffer focused and optional tab or vertical split support.
 
+If your setup is Windows Godot plus Neovim in WSL2, use the dedicated bridge doc at [doc/windows-wsl2.md](windows-wsl2.md).
+
 ## Features
 
 - Open files in Neovim from Godot with the same window (default)
