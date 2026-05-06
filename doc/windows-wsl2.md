@@ -18,6 +18,11 @@ The bridge works in two steps:
 - Neovim started in WSL with `--listen`, or through the `godotdev` wrapper from this repository
 - `wsl.exe` available from Windows, which is standard on recent Windows installations with WSL enabled
 
+For the GDScript LSP itself, the recommended option is the community bridge `godot-wsl-lsp`. It sits between Neovim in WSL and the Godot LSP server on Windows and rewrites Windows and WSL paths in both directions.
+
+- Repository: https://github.com/lucasecdb/godot-wsl-lsp
+- Package summary: https://npm.io/package/godot-wsl-lsp
+
 Microsoft documents both the WSL localhost forwarding behavior and Windows/Linux file-system interop:
 
 - Windows can reach services listening inside WSL on `localhost` when localhost forwarding is enabled.
@@ -53,6 +58,14 @@ $env:GODOT_WSL_DISTRO = "Ubuntu"
 $env:GODOT_NVIM_SOCKET = "/tmp/godot.nvim"
 ```
 
+5. For GDScript LSP, install and run `godot-wsl-lsp` inside WSL instead of connecting Neovim directly to Godot.
+
+```bash
+npm install -g godot-wsl-lsp
+```
+
+Then point your GDScript LSP setup at `godot-wsl-lsp` as described by the bridge project.
+
 ## Script
 
 The bridge script is provided in this repository at:
@@ -70,6 +83,6 @@ The current bridge uses the file and line arguments. The column is accepted for 
 ## Notes
 
 - This is only for the editor open-file workflow.
-- It does not change the plugin's LSP or DAP behavior.
+- It does not change the plugin's DAP behavior.
 - If you are editing files stored on the Windows filesystem, WSL will see them under `/mnt/<drive>/...`.
 - If you want to keep everything on the Linux side, store the project inside the WSL filesystem and open that path from Godot through the bridge.
