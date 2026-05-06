@@ -209,6 +209,8 @@ Windows:
    nvim --listen 127.0.0.1:6666
 2. Configure Godot to connect to the same host:port.
 
+If you run Neovim in WSL2 and Godot on Windows, see `doc/windows-wsl2.md` for the bridge workflow and `godot-wsl-lsp` for GDScript LSP.
+
 ==============================================================================
 Reconnect LSP                                      *godotdev-reconnect*
 
@@ -315,6 +317,8 @@ On macOS/Linux, plugin-managed startup removes stale Unix socket files before re
 Health checks                                     *godotdev-checkhealth*
 
 Use `:checkhealth godotdev` to verify and troubleshoot:
+
+If this plugin detects a WSL2 environment, the health report includes a `WSL2 bridge` section with the recommended bridge documentation and `godot-wsl-lsp` link.
 
 Dependencies:
 - Built-in Neovim LSP support

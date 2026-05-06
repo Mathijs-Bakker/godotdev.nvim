@@ -17,6 +17,12 @@ end
 
 local is_windows = uv.os_uname().sysname == "Windows_NT"
 
+local function is_wsl()
+  local uname = uv.os_uname()
+  local release = (uname and uname.release or ""):lower()
+  return release:find("microsoft", 1, true) ~= nil or vim.env.WSL_DISTRO_NAME ~= nil
+end
+
 local function run_command(argv, opts)
   local ok, job = pcall(vim.system, argv, vim.tbl_extend("keep", opts or {}, { text = true }))
   if not ok then
@@ -198,6 +204,17 @@ Windows: 'ncat' not found. Install via Scoop or Chocolatey:
   end
 end
 
+local function report_wsl_bridge()
+  if not is_wsl() then
+    return
+  end
+
+  health.start("WSL2 bridge")
+  health.info("WSL2 detected.")
+  health.info("If Godot runs on Windows and Neovim runs in WSL2, use the bridge doc: doc/windows-wsl2.md")
+  health.info("For GDScript LSP in that setup, use: https://github.com/lucasecdb/godot-wsl-lsp")
+end
+
 local function report_csharp()
   if not godotdev.opts.csharp then
     health.info("C# checks skipped (csharp=false)")
@@ -289,6 +306,7 @@ function M.check()
   report_godot_detection()
   report_editor_server()
   report_windows_dependencies()
+  report_wsl_bridge()
   report_csharp()
   report_docs()
   report_formatter()
