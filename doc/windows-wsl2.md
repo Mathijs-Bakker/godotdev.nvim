@@ -23,6 +23,8 @@ For the GDScript LSP itself, the recommended option is the community bridge `god
 - Repository: https://github.com/lucasecdb/godot-wsl-lsp
 - Package summary: https://npm.io/package/godot-wsl-lsp
 
+`checkhealth godotdev` will also mention this bridge when it detects a WSL environment.
+
 Microsoft documents both the WSL localhost forwarding behavior and Windows/Linux file-system interop:
 
 - Windows can reach services listening inside WSL on `localhost` when localhost forwarding is enabled.
