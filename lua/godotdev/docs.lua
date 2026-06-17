@@ -54,7 +54,22 @@ function M.open(symbol, renderer)
 
   fetch.resolve_doc_url(resolved_symbol, function(url, _)
     if not url then
-      common.show_feedback(("Could not find Godot docs for `%s`."):format(resolved_symbol))
+      -- Rate-limited or network error from docs.godotengine.org.
+      -- Fall back to trying RST from GitHub directly, bypassing
+      -- the HTML page verification that failed.
+      local page_url = ("%s/classes/class_%s.html"):format(
+        common.build_base_url(),
+        common.class_slug(resolved_symbol)
+      )
+      if chosen_renderer == "browser" then
+        render.open_browser(page_url)
+        return
+      end
+      if chosen_renderer == "buffer" then
+        open_from_rst(resolved_symbol, page_url, "buffer")
+        return
+      end
+      open_from_rst(resolved_symbol, page_url, "float")
       return
     end
 

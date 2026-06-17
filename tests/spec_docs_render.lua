@@ -312,4 +312,101 @@ return {
       h.assert_truthy(messages[1]:match("Could not find Godot docs for `NotARealSymbol`") ~= nil)
     end,
   },
+  {
+    name = "docs render from RST when HTML page verification is rate-limited",
+    run = function()
+      h.clear_module("godotdev.docs")
+      local docs = require("godotdev.docs")
+
+      local html_url = "https://docs.godotengine.org/en/stable/classes/class_node.html"
+      local index_url = "https://docs.godotengine.org/en/stable/classes/index.html"
+      local rst_url = "https://raw.githubusercontent.com/godotengine/godot-docs/master/classes/class_node.rst"
+
+      h.with_package("godotdev", {
+        opts = {
+          docs = {
+            renderer = "buffer",
+            version = "stable",
+            language = "en",
+            source_ref = "master",
+            buffer = { position = "current" },
+          },
+        },
+      }, function()
+        h.with_field(vim.fn, "executable", function(name)
+          if name == "curl" then
+            return 1
+          end
+          return vim.fn.executable(name)
+        end, function()
+          with_mock_system({
+            -- Page HTML and index both fail (rate-limit)
+            [html_url] = { code = 1, stdout = "", stderr = "curl: (22) The requested URL returned error: 429" },
+            [index_url] = { code = 1, stdout = "", stderr = "curl: (22) The requested URL returned error: 429" },
+            -- RST source from GitHub succeeds
+            [rst_url] = { code = 0, stdout = "Node\n====\n\nNode is the base class.\n", stderr = "" },
+          }, function()
+            docs.open("Node", "buffer")
+            vim.wait(50)
+            local buf = vim.api.nvim_get_current_buf()
+            local name = vim.api.nvim_buf_get_name(buf)
+            local lines = vim.api.nvim_buf_get_lines(buf, 0, 4, false)
+
+            h.assert_truthy(name:match("godotdev://docs/node") ~= nil)
+            h.assert_equal(lines[1], "# Node")
+          end)
+        end)
+      end)
+    end,
+  },
+  {
+    name = "docs fall back to browser when RST fetch also fails after rate-limit",
+    run = function()
+      h.clear_module("godotdev.docs")
+      local docs = require("godotdev.docs")
+
+      local opened_url
+      local html_url = "https://docs.godotengine.org/en/stable/classes/class_node.html"
+      local index_url = "https://docs.godotengine.org/en/stable/classes/index.html"
+      local rst_url = "https://raw.githubusercontent.com/godotengine/godot-docs/master/classes/class_node.rst"
+
+      h.with_package("godotdev", {
+        opts = {
+          docs = {
+            renderer = "float",
+            fallback_renderer = "browser",
+            version = "stable",
+            language = "en",
+            source_ref = "master",
+          },
+        },
+      }, function()
+        h.with_field(vim.fn, "executable", function(name)
+          if name == "curl" then
+            return 1
+          end
+          return vim.fn.executable(name)
+        end, function()
+          with_mock_system({
+            -- Page HTML, index, and RST all fail
+            [html_url] = { code = 1, stdout = "", stderr = "curl: (22) The requested URL returned error: 429" },
+            [index_url] = { code = 1, stdout = "", stderr = "curl: (22) The requested URL returned error: 429" },
+            [rst_url] = { code = 1, stdout = "", stderr = "fetch failed" },
+          }, function()
+            h.with_field(vim.ui, "open", function(url)
+              opened_url = url
+              return true
+            end, function()
+              docs.open("Node", "float")
+              vim.wait(50, function()
+                return opened_url ~= nil
+              end)
+            end)
+          end)
+        end)
+      end)
+
+      h.assert_equal(opened_url, html_url)
+    end,
+  },
 }
