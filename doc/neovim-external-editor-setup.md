@@ -85,7 +85,7 @@ If your setup is Windows Godot plus Neovim in WSL2, use the dedicated bridge doc
    ```
 1. Make the startup wrapper executable:
    ```bash
-   chmod +x ~/.local/bin/godotdev
+   chmod +x ~/.local/bin/godotdev.sh
    ```
 1. Create the launcher file:
    ```bash
@@ -208,7 +208,7 @@ If your setup is Windows Godot plus Neovim in WSL2, use the dedicated bridge doc
 
 ## Usage
 
-- Start Neovim with `godotdev`
+- Start Neovim with `godotdev.sh`
 - Click a script in Godot → opens in Neovim
 - Neovim buffer is focused
 - GUI terminal comes to front
@@ -228,8 +228,8 @@ If your setup is Windows Godot plus Neovim in WSL2, use the dedicated bridge doc
 
 Before testing inside Godot, confirm the script works standalone:
 ```bash
-~/.local/bin/godotdev
-~/.local/bin/godot-nvr.sh /path/to/file.gd:10
+~/.local/bin/godotdev.sh
+~/.local/bin/godot-nvr.sh +10 /path/to/file.gd
 ```
 Expected:
 - Neovim starts and listens on `/tmp/godot.nvim`.
@@ -244,7 +244,7 @@ This usually means the old Unix socket file still exists even though the old Neo
 
 - Start Neovim with the wrapper instead:
   ```bash
-  ~/.local/bin/godotdev
+  ~/.local/bin/godotdev.sh
   ```
 - The wrapper probes the socket with `nvr`, removes it if it is stale, and then starts `nvim --listen /tmp/godot.nvim`.
 - If you still prefer the raw command, remove the stale socket manually:
@@ -253,7 +253,7 @@ This usually means the old Unix socket file still exists even though the old Neo
   nvim --listen /tmp/godot.nvim
   ```
 
-### `godotdev` says "Neovim server already running" after you already quit
+### `godotdev.sh` says "Neovim server already running" after you already quit
 
 This is usually caused by an older wrapper that probes with `nvr --remote-expr` but does not pass `--nostart`.
 
