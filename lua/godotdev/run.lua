@@ -1,5 +1,27 @@
 local M = {}
 
+M.opts = {
+  godot_path = "godot",
+}
+
+local function godot_executable()
+  if type(M.opts.godot_path) == "string" and M.opts.godot_path ~= "" then
+    return M.opts.godot_path
+  end
+
+  return "godot"
+end
+
+local function missing_godot_message(executable)
+  return table.concat({
+    "Godot executable not found: " .. executable,
+    "You can:",
+    "- add Godot to your PATH as `godot`",
+    "- configure `godot_path` in require('godotdev').setup()",
+    "- use a version manager such as gdvm or a project-aware wrapper script",
+  }, "\n")
+end
+
 local function find_project_root()
   local file = vim.api.nvim_buf_get_name(0)
   local start_path = file ~= "" and vim.fs.dirname(file) or vim.uv.cwd()
@@ -124,23 +146,25 @@ local function pick_scene_list(scenes, title)
     return false
   end
 
-  telescope.pickers.new({}, {
-    prompt_title = title,
-    finder = telescope.finders.new_table({
-      results = scenes,
-    }),
-    sorter = telescope.config.values.generic_sorter({}),
-    attach_mappings = function(prompt_bufnr)
-      telescope.actions.select_default:replace(function()
-        local selection = telescope.action_state.get_selected_entry()
-        telescope.actions.close(prompt_bufnr)
-        if selection and selection[1] then
-          M.run_scene(selection[1])
-        end
-      end)
-      return true
-    end,
-  }):find()
+  telescope.pickers
+    .new({}, {
+      prompt_title = title,
+      finder = telescope.finders.new_table({
+        results = scenes,
+      }),
+      sorter = telescope.config.values.generic_sorter({}),
+      attach_mappings = function(prompt_bufnr)
+        telescope.actions.select_default:replace(function()
+          local selection = telescope.action_state.get_selected_entry()
+          telescope.actions.close(prompt_bufnr)
+          if selection and selection[1] then
+            M.run_scene(selection[1])
+          end
+        end)
+        return true
+      end,
+    })
+    :find()
 
   return true
 end
@@ -152,12 +176,13 @@ local function run_godot(args)
     return false
   end
 
-  if vim.fn.executable("godot") ~= 1 then
-    vim.notify("'godot' not found in PATH", vim.log.levels.ERROR)
+  local executable = godot_executable()
+  if vim.fn.executable(executable) ~= 1 then
+    vim.notify(missing_godot_message(executable), vim.log.levels.ERROR)
     return false
   end
 
-  local cmd = { "godot", "--path", root }
+  local cmd = { executable, "--path", root }
   vim.list_extend(cmd, args or {})
 
   local run_console = require("godotdev.run_console")
@@ -231,7 +256,9 @@ function M.pick_scene()
   return pick_scene_list(scenes, "Godot Scenes")
 end
 
-function M.setup()
+function M.setup(opts)
+  M.opts = vim.tbl_extend("force", M.opts, opts or {})
+
   if vim.fn.exists(":GodotRunProject") ~= 2 then
     vim.api.nvim_create_user_command("GodotRunProject", function()
       M.run_project()

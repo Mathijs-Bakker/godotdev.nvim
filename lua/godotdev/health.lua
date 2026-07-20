@@ -9,6 +9,7 @@ M.opts = {
   debug_port = 6006,
   editor_server_address = nil,
   autostart_editor_server = false,
+  godot_path = "godot",
 }
 
 function M.setup(opts)
@@ -68,6 +69,24 @@ local function has_exe(name)
   return vim.fn.executable(name) == 1
 end
 
+local function godot_executable()
+  if type(M.opts.godot_path) == "string" and M.opts.godot_path ~= "" then
+    return M.opts.godot_path
+  end
+
+  return "godot"
+end
+
+local function godot_not_found_message(executable)
+  return table.concat({
+    "Godot executable not found: " .. executable,
+    "You can:",
+    "- add Godot to your PATH as `godot`",
+    "- configure `godot_path` in require('godotdev').setup()",
+    "- use a version manager such as gdvm or a project-aware wrapper script",
+  }, "\n")
+end
+
 local function formatter_disabled(opts)
   return opts.formatter_cmd == nil and opts.formatter == false
 end
@@ -120,7 +139,8 @@ end
 local function report_godot_version()
   health.start("Godot version")
 
-  local godot_result = run_command({ "godot", "--version" })
+  local executable = godot_executable()
+  local godot_result = run_command({ executable, "--version" })
   if godot_result and godot_result.code == 0 and godot_result.stdout and godot_result.stdout ~= "" then
     local ver = vim.trim(godot_result.stdout)
     health.ok("Godot detected: " .. ver)
@@ -131,7 +151,7 @@ local function report_godot_version()
     return
   end
 
-  health.info("Godot executable not found. Make sure 'godot' is in your PATH.")
+  health.info(godot_not_found_message(executable))
 end
 
 local function report_dependencies()
