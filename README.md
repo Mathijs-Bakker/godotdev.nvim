@@ -188,6 +188,7 @@ require("godotdev").setup({
   editor_host = "127.0.0.1", -- Godot editor host
   editor_port = 6005,        -- Godot LSP port
   debug_port = 6006,         -- Godot debugger port
+  godot_path = "godot",      -- executable used by :GodotRun* and health checks
   csharp = true,             -- Enable C# Installation Support
   autostart_editor_server = false, -- opt-in: start a Neovim server automatically on setup
   formatter = "gdscript-formatter",    -- "gdscript-formatter" | "gdformat" | false
@@ -417,8 +418,30 @@ Notes:
 - If the current script is attached to multiple scenes, the command uses Telescope to let you choose one when Telescope is installed.
 - `:GodotRunScene {path}` accepts `res://...`, a project-relative path, or an absolute path inside the current project.
 - `:GodotRunScenePicker` uses Telescope to browse `.tscn` files in the current project and run the selected scene.
-- These commands shell out to `godot` on your `PATH`.
+- These commands shell out to `godot_path`, which defaults to `godot` on your `PATH`.
 - `:GodotRunScenePicker` requires Telescope to be installed; the rest do not.
+
+### Using multiple Godot versions
+
+`godotdev.nvim` expects a Godot executable to be available. By default it runs
+`godot`, so users with one engine version can usually add Godot to their
+`PATH`.
+
+If you work on projects that require different Godot versions, use one of these
+project-aware options:
+
+- Put a version manager such as `gdvm` in charge of the `godot` executable.
+- Configure `godot_path` to a specific Godot binary.
+- Configure `godot_path` to your own wrapper script that selects the right
+  engine for the current project.
+
+Example:
+
+```lua
+require("godotdev").setup({
+  godot_path = "/usr/local/bin/godot-wrapper",
+})
+```
 
 Optional console capture:
 - Set `run.console.enabled = true` to capture stdout/stderr from `:GodotRun*` inside Neovim.

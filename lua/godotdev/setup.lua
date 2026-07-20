@@ -4,6 +4,7 @@ M.opts = {
   editor_host = "127.0.0.1",
   editor_port = 6005,
   debug_port = 6006,
+  godot_path = "godot",
   autostart_editor_server = false, -- opt-in: avoid starting a server unless the user wants it
   editor_server = {
     address = nil, -- nil uses the current server or the platform default
@@ -138,6 +139,9 @@ function M.setup(opts)
 
   require("godotdev.inline_hints").setup(M.opts.inline_hints)
   require("godotdev.run_console").setup(M.opts.run and M.opts.run.console or {})
+  require("godotdev.run").setup({
+    godot_path = M.opts.godot_path,
+  })
   require("godotdev.lsp").setup({
     editor_host = M.opts.editor_host,
     editor_port = M.opts.editor_port,
@@ -151,7 +155,6 @@ function M.setup(opts)
   end
 
   require("godotdev.reconnect_lsp").setup()
-  require("godotdev.run").setup()
   require("godotdev.scene_tree").setup()
   require("godotdev.formatting").setup()
   require("godotdev.docs").setup()
@@ -164,6 +167,7 @@ function M.setup(opts)
     debug_port = M.opts.debug_port,
     editor_server_address = M.opts.editor_server and M.opts.editor_server.address or nil,
     autostart_editor_server = M.opts.autostart_editor_server,
+    godot_path = M.opts.godot_path,
   })
 
   setup_csharp_dap()

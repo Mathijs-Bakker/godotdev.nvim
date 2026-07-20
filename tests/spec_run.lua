@@ -60,7 +60,7 @@ return {
         vim.fn.mkdir(vim.fs.dirname(scene), "p")
         vim.fn.writefile({ "extends Node" }, script)
         vim.fn.writefile({
-          '[gd_scene format=3]',
+          "[gd_scene format=3]",
           '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
           '[node name="Main" type="Node"]',
           'script = ExtResource("1")',
@@ -102,7 +102,7 @@ return {
         vim.fn.mkdir(vim.fs.dirname(scene), "p")
         vim.fn.writefile({ "using Godot;" }, script)
         vim.fn.writefile({
-          '[gd_scene format=3]',
+          "[gd_scene format=3]",
           '[ext_resource type="Script" path="res://scripts/Player.cs" id="1"]',
           '[node name="Main" type="Node"]',
           'script = ExtResource("1")',
@@ -169,8 +169,7 @@ return {
                   fn()
                 end,
               },
-              close = function()
-              end,
+              close = function() end,
             }, function()
               h.with_package("telescope.actions.state", {
                 get_selected_entry = function()
@@ -225,7 +224,7 @@ return {
         vim.fn.writefile({ "extends Node" }, script)
         for _, scene in ipairs({ scene_a, scene_b }) do
           vim.fn.writefile({
-            '[gd_scene format=3]',
+            "[gd_scene format=3]",
             '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
             '[node name="Main" type="Node"]',
             'script = ExtResource("1")',
@@ -256,8 +255,7 @@ return {
                   fn()
                 end,
               },
-              close = function()
-              end,
+              close = function() end,
             }, function()
               h.with_package("telescope.actions.state", {
                 get_selected_entry = function()
@@ -326,6 +324,78 @@ return {
       h.assert_equal(called_cmd[1], "godot")
       h.assert_equal(called_cmd[2], "--path")
       h.assert_truthy(called_cmd[3]:match("project%.godot") == nil)
+    end,
+  },
+  {
+    name = "run_project uses configured godot_path",
+    run = function()
+      local called_cmd
+
+      h.clear_module("godotdev.run")
+      local run = require("godotdev.run")
+      run.setup({ godot_path = "/usr/local/bin/godot-wrapper" })
+
+      with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({ "[gd_scene format=3]" }, scene)
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, scene)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.with_field(vim.fn, "executable", function(name)
+          return name == "/usr/local/bin/godot-wrapper" and 1 or 0
+        end, function()
+          h.with_field(vim, "system", function(cmd, _opts, _on_exit)
+            called_cmd = cmd
+            return {}
+          end, function()
+            run.run_project()
+          end)
+        end)
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
+
+      h.assert_equal(called_cmd[1], "/usr/local/bin/godot-wrapper")
+    end,
+  },
+  {
+    name = "run_project explains missing godot executable options",
+    run = function()
+      local notifications = {}
+
+      h.clear_module("godotdev.run")
+      local run = require("godotdev.run")
+      run.setup({ godot_path = "godot-custom" })
+
+      with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({ "[gd_scene format=3]" }, scene)
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, scene)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.with_field(vim.fn, "executable", function()
+          return 0
+        end, function()
+          h.with_temp("notify", function(message, level)
+            table.insert(notifications, { message = message, level = level })
+          end, function()
+            local ok = run.run_project()
+            h.assert_falsy(ok)
+          end)
+        end)
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
+
+      h.assert_truthy(notifications[1].message:match("Godot executable not found: godot%-custom") ~= nil)
+      h.assert_truthy(notifications[1].message:match("godot_path") ~= nil)
+      h.assert_truthy(notifications[1].message:match("gdvm") ~= nil)
     end,
   },
   {
