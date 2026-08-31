@@ -33,4 +33,38 @@ return {
       end
     end,
   },
+  {
+    name = "is_absolute_path recognizes unix windows drive and unc paths",
+    run = function()
+      h.clear_module("godotdev.utils")
+      local utils = require("godotdev.utils")
+
+      h.assert_truthy(utils.is_absolute_path("/tmp/project"))
+      h.assert_truthy(utils.is_absolute_path("D:/project/scenes/Main.tscn"))
+      h.assert_truthy(utils.is_absolute_path([[D:\project\scenes\Main.tscn]]))
+      h.assert_truthy(utils.is_absolute_path([[\\server\share\project\scenes\Main.tscn]]))
+      h.assert_falsy(utils.is_absolute_path("scenes/Main.tscn"))
+    end,
+  },
+  {
+    name = "to_res_path handles windows absolute scene paths inside project",
+    run = function()
+      h.clear_module("godotdev.utils")
+      local utils = require("godotdev.utils")
+
+      h.assert_equal(
+        utils.to_res_path(
+          "D:/2zhuomian/Projects/GameDev/Assets/Action/common_techniques_starter_project",
+          "D:/2zhuomian/Projects/GameDev/Assets/Action/common_techniques_starter_project/scenes/player.tscn"
+        ),
+        "res://scenes/player.tscn"
+      )
+      h.assert_equal(utils.to_res_path([[D:\project]], [[D:\project\scenes\Main.tscn]]), "res://scenes/Main.tscn")
+      h.assert_equal(
+        utils.to_res_path([[\\server\share\project]], [[\\server\share\project\scenes\Main.tscn]]),
+        "res://scenes/Main.tscn"
+      )
+      h.assert_equal(utils.to_res_path("D:/project", "D:/project-other/scenes/Main.tscn"), nil)
+    end,
+  },
 }
