@@ -359,4 +359,81 @@ return {
       end)
     end,
   },
+  {
+    name = "scene tree clears tracked window when tree pane closes",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+      require("godotdev").opts.scene_tree = {
+        icons = false,
+      }
+
+      with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({
+          "[gd_scene format=3]",
+          '[node name="Main" type="Node2D"]',
+        }, scene)
+
+        local source_buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(source_buf, scene)
+        vim.api.nvim_set_current_buf(source_buf)
+
+        h.assert_truthy(scene_tree.open())
+        local tree_win = scene_tree._state.window
+        h.assert_truthy(tree_win and vim.api.nvim_win_is_valid(tree_win))
+
+        vim.api.nvim_win_close(tree_win, true)
+        h.assert_equal(scene_tree._state.window, nil)
+        h.assert_truthy(scene_tree._state.buffer and vim.api.nvim_buf_is_valid(scene_tree._state.buffer))
+
+        pcall(vim.api.nvim_buf_delete, scene_tree._state.buffer, { force = true })
+        pcall(vim.api.nvim_buf_delete, source_buf, { force = true })
+        if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+          vim.cmd("only")
+        end
+      end)
+    end,
+  },
+  {
+    name = "scene tree clears buffer-backed state when tree buffer is deleted",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+      require("godotdev").opts.scene_tree = {
+        icons = false,
+      }
+
+      with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({
+          "[gd_scene format=3]",
+          '[node name="Main" type="Node2D"]',
+        }, scene)
+
+        local source_buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(source_buf, scene)
+        vim.api.nvim_set_current_buf(source_buf)
+
+        h.assert_truthy(scene_tree.open())
+        local tree_buf = scene_tree._state.buffer
+        h.assert_truthy(tree_buf and vim.api.nvim_buf_is_valid(tree_buf))
+
+        vim.api.nvim_buf_delete(tree_buf, { force = true })
+        h.assert_equal(scene_tree._state.buffer, nil)
+        h.assert_equal(scene_tree._state.window, nil)
+        h.assert_equal(scene_tree._state.scene, nil)
+        h.assert_equal(#scene_tree._state.lines, 0)
+
+        pcall(vim.api.nvim_buf_delete, source_buf, { force = true })
+        if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+          vim.cmd("only")
+        end
+      end)
+    end,
+  },
 }
