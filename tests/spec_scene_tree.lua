@@ -22,7 +22,7 @@ return {
       local scene_tree = require("godotdev.scene_tree")
 
       local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
+        "[gd_scene format=3]",
         '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
         '[node name="Main" type="Node2D"]',
         '[node name="Player" type="CharacterBody2D" parent="."]',
@@ -52,7 +52,7 @@ return {
         local scene = root .. "/scenes/Main.tscn"
         vim.fn.mkdir(vim.fs.dirname(scene), "p")
         vim.fn.writefile({
-          '[gd_scene format=3]',
+          "[gd_scene format=3]",
           '[node name="Main" type="Node2D"]',
           '[node name="Player" type="CharacterBody2D" parent="."]',
         }, scene)
@@ -103,7 +103,7 @@ return {
         vim.fn.mkdir(vim.fs.dirname(scene), "p")
         vim.fn.writefile({ "extends Node" }, script)
         vim.fn.writefile({
-          '[gd_scene format=3]',
+          "[gd_scene format=3]",
           '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
           '[node name="Main" type="Node2D"]',
           '[node name="Player" type="CharacterBody2D" parent="."]',
@@ -128,7 +128,7 @@ return {
       local scene_tree = require("godotdev.scene_tree")
 
       local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
+        "[gd_scene format=3]",
         '[node name="Main" type="Node2D"]',
         '[node name="Panel" type="Panel" parent="."]',
       })
@@ -156,7 +156,7 @@ return {
       local scene_tree = require("godotdev.scene_tree")
 
       local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
+        "[gd_scene format=3]",
         '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
         '[node name="Main" type="Node"]',
         '[node name="Camera" type="Camera2D" parent="."]',
@@ -187,7 +187,7 @@ return {
       local scene_tree = require("godotdev.scene_tree")
 
       local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
+        "[gd_scene format=3]",
         '[node name="Main" type="Node2D"]',
         '[node name="Camera" type="Camera2D" parent="."]',
         '[node name="Sprite" type="Sprite2D" parent="."]',
@@ -241,7 +241,7 @@ return {
       local scene_tree = require("godotdev.scene_tree")
 
       local parsed = scene_tree._parse_scene({
-        '[gd_scene format=3]',
+        "[gd_scene format=3]",
         '[node name="Ui" type="PanelContainer"]',
         '[node name="World" type="Marker3D"]',
         '[node name="Hero" type="CharacterBody2D"]',
@@ -280,7 +280,7 @@ return {
         vim.fn.mkdir(vim.fs.dirname(scene), "p")
         vim.fn.writefile({ "extends Node" }, script)
         vim.fn.writefile({
-          '[gd_scene format=3]',
+          "[gd_scene format=3]",
           '[ext_resource type="Script" path="res://scripts/player.gd" id="1"]',
           '[node name="Main" type="Node2D"]',
           '[node name="Player" type="CharacterBody2D" parent="."]',
@@ -290,24 +290,71 @@ return {
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_name(buf, scene)
         vim.api.nvim_set_current_buf(buf)
+        local source_win = vim.api.nvim_get_current_win()
         scene_tree.open()
 
         local tree_win = scene_tree._state.window
+        local tree_buf = scene_tree._state.buffer
+        scene_tree._state.source_window = source_win
         vim.api.nvim_set_current_win(tree_win)
         vim.api.nvim_win_set_cursor(tree_win, { 3, 0 })
 
-        local opened
-        h.with_temp("cmd", function(command)
-          opened = command
-        end, function()
-          local ok = scene_tree.jump_to_script()
-          h.assert_truthy(ok)
-        end)
+        local ok = scene_tree.jump_to_script()
+        h.assert_truthy(ok)
+        h.assert_equal(vim.api.nvim_win_get_buf(tree_win), tree_buf)
+        h.assert_truthy(vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(source_win)):match("player%.gd") ~= nil)
+        h.assert_equal(vim.api.nvim_get_current_win(), source_win)
 
-        h.assert_truthy(opened:match("player%.gd") ~= nil)
+        local script_buf = vim.api.nvim_win_get_buf(source_win)
+        pcall(vim.api.nvim_buf_delete, scene_tree._state.buffer, { force = true })
+        pcall(vim.api.nvim_buf_delete, script_buf, { force = true })
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+        if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+          vim.cmd("only")
+        end
+      end)
+    end,
+  },
+  {
+    name = "scene tree opens a new pane when tracked tree window is stale",
+    run = function()
+      h.clear_module("godotdev.scene_tree")
+      h.clear_module("godotdev")
+      local scene_tree = require("godotdev.scene_tree")
+      require("godotdev").opts.scene_tree = {
+        icons = false,
+      }
+
+      with_temp_project(function(root)
+        local scene = root .. "/scenes/Main.tscn"
+        vim.fn.mkdir(vim.fs.dirname(scene), "p")
+        vim.fn.writefile({
+          "[gd_scene format=3]",
+          '[node name="Main" type="Node2D"]',
+        }, scene)
+
+        local source_buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(source_buf, scene)
+        vim.api.nvim_set_current_buf(source_buf)
+        local source_win = vim.api.nvim_get_current_win()
+
+        h.assert_truthy(scene_tree.open())
+        local tree_win = scene_tree._state.window
+        local tree_buf = scene_tree._state.buffer
+
+        vim.api.nvim_win_set_buf(tree_win, source_buf)
+        vim.api.nvim_set_current_win(source_win)
+
+        h.assert_truthy(scene_tree.open())
+        h.assert_equal(vim.api.nvim_win_get_buf(source_win), source_buf)
+        h.assert_equal(vim.api.nvim_win_get_buf(scene_tree._state.window), tree_buf)
+        h.assert_truthy(scene_tree._state.window ~= source_win)
 
         pcall(vim.api.nvim_buf_delete, scene_tree._state.buffer, { force = true })
-        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+        pcall(vim.api.nvim_buf_delete, source_buf, { force = true })
+        if #vim.api.nvim_tabpage_list_wins(0) > 1 then
+          vim.cmd("only")
+        end
       end)
     end,
   },
