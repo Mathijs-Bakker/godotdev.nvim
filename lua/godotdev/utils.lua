@@ -38,4 +38,53 @@ function M.suppress_client_messages(client, patterns)
   end)
 end
 
+local function normalize_separators(path)
+  return path:gsub("\\", "/")
+end
+
+local function trim_trailing_slashes(path)
+  if path == "/" or path:match("^%a:/$") then
+    return path
+  end
+
+  return (path:gsub("/+$", ""))
+end
+
+function M.is_absolute_path(path)
+  return type(path) == "string"
+    and (path:match("^/") ~= nil or path:match("^%a:[/\\]") ~= nil or path:match("^[/\\][/\\]") ~= nil)
+end
+
+function M.to_res_path(root, path)
+  if type(root) ~= "string" or root == "" or type(path) ~= "string" or path == "" then
+    return nil
+  end
+
+  if path:match("^res://") then
+    return path
+  end
+
+  local absolute = path
+  if not M.is_absolute_path(path) then
+    absolute = root .. "/" .. path
+  end
+
+  absolute = trim_trailing_slashes(normalize_separators(vim.fs.normalize(absolute)))
+  root = trim_trailing_slashes(normalize_separators(vim.fs.normalize(root)))
+
+  local absolute_key = absolute
+  local root_key = root
+  if absolute:match("^%a:/") or root:match("^%a:/") or absolute:match("^//") or root:match("^//") then
+    absolute_key = absolute:lower()
+    root_key = root:lower()
+  end
+
+  if absolute_key ~= root_key and absolute_key:sub(1, #root_key + 1) ~= root_key .. "/" then
+    return nil
+  end
+
+  local relative = absolute_key == root_key and "" or absolute:sub(#root + 2)
+  return "res://" .. relative
+end
+
 return M

@@ -43,23 +43,7 @@ local function normalize_scene_arg(scene)
     return nil
   end
 
-  if scene:match("^res://") then
-    return scene
-  end
-
-  local absolute = scene
-  if not scene:match("^/") then
-    absolute = root .. "/" .. scene
-  end
-
-  absolute = vim.fs.normalize(absolute)
-  root = vim.fs.normalize(root)
-
-  if absolute ~= root and absolute:sub(1, #root + 1) ~= root .. "/" then
-    return nil
-  end
-
-  return "res://" .. absolute:sub(#root + 2)
+  return require("godotdev.utils").to_res_path(root, scene)
 end
 
 local function current_scene_arg()

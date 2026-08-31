@@ -619,23 +619,7 @@ local function normalize_res_path(path)
     return nil
   end
 
-  if path:match("^res://") then
-    return path
-  end
-
-  local absolute = path
-  if not path:match("^/") then
-    absolute = root .. "/" .. path
-  end
-
-  absolute = vim.fs.normalize(absolute)
-  root = vim.fs.normalize(root)
-
-  if absolute ~= root and absolute:sub(1, #root + 1) ~= root .. "/" then
-    return nil
-  end
-
-  return "res://" .. absolute:sub(#root + 2)
+  return require("godotdev.utils").to_res_path(root, path)
 end
 
 local function res_to_absolute(path)
