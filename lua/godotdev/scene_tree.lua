@@ -15,6 +15,7 @@ local state = {
 }
 
 local namespace = vim.api.nvim_create_namespace("godotdev.scene_tree")
+local autocmd_group = vim.api.nvim_create_augroup("godotdev.scene_tree", { clear = true })
 
 local default_icons = {
   generic = "󰐾",
@@ -1034,6 +1035,32 @@ local function set_scene_tree_buffer_name(buf, scene)
   vim.api.nvim_buf_set_name(buf, target)
 end
 
+local function clear_scene_tree_state(buf)
+  if state.buffer ~= buf then
+    return
+  end
+
+  state.buffer = nil
+  state.window = nil
+  state.source_path = nil
+  state.project_root = nil
+  state.scene = nil
+  state.lines = {}
+  state.nodes_by_line = {}
+  state.icon_spans = {}
+  state.header_line_count = 1
+end
+
+local function clear_closed_window(win)
+  if state.window == win then
+    state.window = nil
+  end
+
+  if state.source_window == win then
+    state.source_window = nil
+  end
+end
+
 local function ensure_buffer()
   local buf = state.buffer
   if buf and vim.api.nvim_buf_is_valid(buf) then
@@ -1062,9 +1089,24 @@ local function ensure_buffer()
     M.refresh()
   end, { buffer = buf, silent = true, desc = "Refresh scene tree" })
 
+  vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
+    group = autocmd_group,
+    buffer = buf,
+    callback = function(args)
+      clear_scene_tree_state(args.buf)
+    end,
+  })
+
   state.buffer = buf
   return buf
 end
+
+vim.api.nvim_create_autocmd("WinClosed", {
+  group = autocmd_group,
+  callback = function(args)
+    clear_closed_window(tonumber(args.match))
+  end,
+})
 
 local function open_window(buf)
   local config = require("godotdev").opts.scene_tree or {}
