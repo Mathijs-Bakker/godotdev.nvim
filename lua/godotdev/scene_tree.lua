@@ -1100,15 +1100,48 @@ local function open_window(buf)
   return win
 end
 
+local function is_scene_tree_window(win, buf)
+  return win and vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == buf
+end
+
+local function find_source_window()
+  local tree_buf = state.buffer
+  local source_win = state.source_window
+
+  if
+    source_win
+    and vim.api.nvim_win_is_valid(source_win)
+    and (not tree_buf or vim.api.nvim_win_get_buf(source_win) ~= tree_buf)
+  then
+    return source_win
+  end
+
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if not tree_buf or vim.api.nvim_win_get_buf(win) ~= tree_buf then
+      return win
+    end
+  end
+
+  return nil
+end
+
+local function remember_source_window()
+  local current_win = vim.api.nvim_get_current_win()
+  local tree_buf = state.buffer
+
+  if tree_buf and vim.api.nvim_get_current_buf() == tree_buf then
+    return
+  end
+
+  state.source_window = current_win
+end
+
 local function focus_or_open_buffer()
   local buf = ensure_buffer()
   local win = state.window
 
-  if win and vim.api.nvim_win_is_valid(win) then
+  if is_scene_tree_window(win, buf) then
     vim.api.nvim_set_current_win(win)
-    if vim.api.nvim_win_get_buf(win) ~= buf then
-      vim.api.nvim_win_set_buf(win, buf)
-    end
     return buf, win
   end
 
@@ -1230,13 +1263,15 @@ function M.jump_to_node()
     return false
   end
 
-  if state.source_window and vim.api.nvim_win_is_valid(state.source_window) then
-    vim.api.nvim_set_current_win(state.source_window)
+  local source_win = find_source_window()
+  if source_win then
+    vim.api.nvim_set_current_win(source_win)
     vim.cmd(("edit %s"):format(vim.fn.fnameescape(state.source_path)))
   else
-    vim.cmd(("edit %s"):format(vim.fn.fnameescape(state.source_path)))
+    vim.cmd(("vsplit %s"):format(vim.fn.fnameescape(state.source_path)))
   end
 
+  state.source_window = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_cursor(0, { node.line, 0 })
   return true
 end
@@ -1270,14 +1305,22 @@ function M.jump_to_script()
     return false
   end
 
-  vim.cmd(("edit %s"):format(vim.fn.fnameescape(absolute)))
+  local source_win = find_source_window()
+  if source_win then
+    vim.api.nvim_set_current_win(source_win)
+    vim.cmd(("edit %s"):format(vim.fn.fnameescape(absolute)))
+  else
+    vim.cmd(("vsplit %s"):format(vim.fn.fnameescape(absolute)))
+  end
+
+  state.source_window = vim.api.nvim_get_current_win()
   return true
 end
 
 function M.setup()
   if vim.fn.exists(":GodotSceneTree") ~= 2 then
     vim.api.nvim_create_user_command("GodotSceneTree", function(opts)
-      state.source_window = vim.api.nvim_get_current_win()
+      remember_source_window()
       M.open(opts.args ~= "" and opts.args or nil)
     end, {
       nargs = "?",
