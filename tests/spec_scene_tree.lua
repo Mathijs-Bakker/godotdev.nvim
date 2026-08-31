@@ -349,6 +349,7 @@ return {
         h.assert_equal(vim.api.nvim_win_get_buf(source_win), source_buf)
         h.assert_equal(vim.api.nvim_win_get_buf(scene_tree._state.window), tree_buf)
         h.assert_truthy(scene_tree._state.window ~= source_win)
+        h.assert_truthy(scene_tree._state.window ~= tree_win)
 
         pcall(vim.api.nvim_buf_delete, scene_tree._state.buffer, { force = true })
         pcall(vim.api.nvim_buf_delete, source_buf, { force = true })

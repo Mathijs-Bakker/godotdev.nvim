@@ -1145,6 +1145,7 @@ local function focus_or_open_buffer()
     return buf, win
   end
 
+  state.window = nil
   return buf, open_window(buf)
 end
 
