@@ -1,4 +1,5 @@
 local M = {}
+local utils = require("godotdev.utils")
 
 M.opts = {
   godot_path = "godot",
@@ -22,28 +23,13 @@ local function missing_godot_message(executable)
   }, "\n")
 end
 
-local function find_project_root()
-  local file = vim.api.nvim_buf_get_name(0)
-  local start_path = file ~= "" and vim.fs.dirname(file) or vim.uv.cwd()
-  local project_file = vim.fs.find("project.godot", {
-    upward = true,
-    path = start_path,
-  })[1]
-
-  if not project_file then
-    return nil
-  end
-
-  return vim.fs.dirname(project_file)
-end
-
 local function normalize_scene_arg(scene)
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not root or type(scene) ~= "string" or scene == "" then
     return nil
   end
 
-  return require("godotdev.utils").to_res_path(root, scene)
+  return utils.to_res_path(root, scene)
 end
 
 local function current_scene_arg()
@@ -75,7 +61,7 @@ local function telescope_modules()
 end
 
 local function project_scene_args()
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not root then
     return nil
   end
@@ -101,7 +87,7 @@ local function scenes_for_script()
   end
 
   local script = normalize_scene_arg(file)
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not script or not root then
     return nil
   end
@@ -154,7 +140,7 @@ local function pick_scene_list(scenes, title)
 end
 
 local function run_godot(args)
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not root then
     vim.notify("project.godot not found", vim.log.levels.ERROR)
     return false
@@ -225,7 +211,7 @@ function M.run_scene(scene)
 end
 
 function M.pick_scene()
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not root then
     vim.notify("project.godot not found", vim.log.levels.ERROR)
     return false

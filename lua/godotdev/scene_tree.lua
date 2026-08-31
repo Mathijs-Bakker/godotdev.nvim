@@ -1,4 +1,5 @@
 local M = {}
+local utils = require("godotdev.utils")
 
 local state = {
   buffer = nil,
@@ -598,32 +599,17 @@ local function sanitize_size(size)
   return math.min(size, 0.9)
 end
 
-local function find_project_root()
-  local file = vim.api.nvim_buf_get_name(0)
-  local start_path = file ~= "" and vim.fs.dirname(file) or vim.uv.cwd()
-  local project_file = vim.fs.find("project.godot", {
-    upward = true,
-    path = start_path,
-  })[1]
-
-  if not project_file then
-    return nil
-  end
-
-  return vim.fs.dirname(project_file)
-end
-
 local function normalize_res_path(path)
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not root or type(path) ~= "string" or path == "" then
     return nil
   end
 
-  return require("godotdev.utils").to_res_path(root, path)
+  return utils.to_res_path(root, path)
 end
 
 local function res_to_absolute(path)
-  local root = state.project_root or find_project_root()
+  local root = state.project_root or utils.find_project_root()
   if not root or type(path) ~= "string" or not path:match("^res://") then
     return nil
   end
@@ -647,7 +633,7 @@ local function scenes_for_script()
   end
 
   local script = normalize_res_path(file)
-  local root = find_project_root()
+  local root = utils.find_project_root()
   if not script or not root then
     return nil
   end

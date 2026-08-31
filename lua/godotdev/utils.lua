@@ -38,6 +38,21 @@ function M.suppress_client_messages(client, patterns)
   end)
 end
 
+function M.find_project_root()
+  local file = vim.api.nvim_buf_get_name(0)
+  local start_path = file ~= "" and vim.fs.dirname(file) or vim.uv.cwd()
+  local project_file = vim.fs.find("project.godot", {
+    upward = true,
+    path = start_path,
+  })[1]
+
+  if not project_file then
+    return nil
+  end
+
+  return vim.fs.dirname(project_file)
+end
+
 local function normalize_separators(path)
   return path:gsub("\\", "/")
 end
