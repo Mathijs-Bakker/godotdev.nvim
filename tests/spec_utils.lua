@@ -1,5 +1,19 @@
 local h = require("tests.helpers")
 
+local function with_temp_project(fn)
+  local root = vim.fn.tempname()
+  vim.fn.mkdir(root .. "/scripts", "p")
+  vim.fn.writefile({ "; Engine configuration file." }, root .. "/project.godot")
+
+  local ok, err = pcall(fn, root)
+
+  pcall(vim.fn.delete, root, "rf")
+
+  if not ok then
+    error(err)
+  end
+end
+
 return {
   {
     name = "suppress_client_messages filters only matching client messages",
@@ -31,6 +45,26 @@ return {
       if not ok then
         error(err)
       end
+    end,
+  },
+  {
+    name = "find_project_root finds project.godot from the current buffer",
+    run = function()
+      h.clear_module("godotdev.utils")
+      local utils = require("godotdev.utils")
+
+      with_temp_project(function(root)
+        local script = root .. "/scripts/player.gd"
+        vim.fn.writefile({ "extends Node" }, script)
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_name(buf, script)
+        vim.api.nvim_set_current_buf(buf)
+
+        h.assert_equal(vim.fn.resolve(utils.find_project_root()), vim.fn.resolve(root))
+
+        pcall(vim.api.nvim_buf_delete, buf, { force = true })
+      end)
     end,
   },
   {
